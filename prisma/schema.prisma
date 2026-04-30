@@ -1,0 +1,601 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AppRole {
+  OWNER
+  MANAGER
+  EMPLOYEE
+  TEMP_WORKER
+  MODERATOR
+}
+
+enum MarketplaceCode {
+  OZON
+  WB
+  YANDEX
+  OTHER
+}
+
+enum ShiftPostType {
+  URGENT_REPLACEMENT
+  DAY_SHIFT
+  PERMANENT_JOB
+}
+
+enum ShiftPostStatus {
+  PUBLISHED
+  IN_REVIEW
+  MATCHED
+  CLOSED
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentType {
+  FIXED_SHIFT
+  HOURLY
+  MONTHLY
+}
+
+enum ExperienceLevel {
+  NO_EXPERIENCE
+  LESS_THAN_3_MONTHS
+  THREE_TO_TWELVE_MONTHS
+  ONE_PLUS_YEAR
+}
+
+enum ApplicationStatus {
+  APPLIED
+  SHORTLISTED
+  REJECTED
+  WITHDRAWN
+  CONFIRMED
+  CANCELLED_BY_WORKER
+  CANCELLED_BY_EMPLOYER
+}
+
+enum AssignmentStatus {
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+  DISPUTED
+}
+
+enum VerificationType {
+  WORKER_ID
+  SELFIE
+  EMPLOYER_PVZ
+  MANUAL
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum ReportStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  DISMISSED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ReportTargetType {
+  USER
+  SHIFT_POST
+  APPLICATION
+  ASSIGNMENT
+  REVIEW
+  PICKUP_POINT
+}
+
+enum NotificationChannel {
+  TELEGRAM
+  IN_APP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  READ
+}
+
+model User {
+  id                        String          @id @default(cuid())
+  telegramId                String          @unique
+  username                  String?
+  firstName                 String
+  lastName                  String?
+  age                       Int?
+  photoUrl                  String?
+  pickupPointCode           String?
+  experienceSummary         String?
+  phone                     String?
+  bio                       String?
+  gender                    String?
+  regionId                  String?
+  cityId                    String?
+  district                  String?
+  marketplaces              MarketplaceCode[]
+  isOnboardingCompleted     Boolean         @default(false)
+  ratingAvg                 Float           @default(0)
+  ratingCount               Int             @default(0)
+  completedAssignmentsCount Int             @default(0)
+  isActive                  Boolean         @default(true)
+  isBanned                  Boolean         @default(false)
+  banReason                 String?
+  bannedAt                  DateTime?
+  notifyOnNewMessage        Boolean         @default(true)
+  lastActiveAt              DateTime        @default(now())
+  createdAt                 DateTime        @default(now())
+  updatedAt                 DateTime        @updatedAt
+
+  region                    Region?         @relation(fields: [regionId], references: [id])
+  city                      City?           @relation(fields: [cityId], references: [id])
+  roles                     UserRole[]
+  ownedPickupPoints         PickupPoint[]   @relation("PickupPointOwner")
+  managedPickupPoints       PickupPoint[]   @relation("PickupPointManager")
+  managerPickupPointAccesses PickupPointManagerAccess[] @relation("PickupPointManagerAccessUser")
+  ownerGrantedManagerAccesses PickupPointManagerAccess[] @relation("PickupPointManagerAccessOwner")
+  createdShiftPosts         ShiftPost[]     @relation("ShiftPostCreator")
+  applications              Application[]
+  workerAssignments         Assignment[]    @relation("AssignmentWorker")
+  employerAssignments       Assignment[]    @relation("AssignmentEmployer")
+  authoredReviews           Review[]        @relation("ReviewAuthor")
+  receivedReviews           Review[]        @relation("ReviewSubject")
+  createdReports            Report[]        @relation("ReportReporter")
+  moderatedReports          Report[]        @relation("ReportModerator")
+  verifications             Verification[]  @relation("VerificationUser")
+  reviewedVerifications     Verification[]  @relation("VerificationReviewer")
+  notifications             Notification[]
+  favorites                 Favorite[]
+  auditLogs                 AuditLog[]
+  conversationParticipations ConversationParticipant[]
+  sentMessages              Message[]       @relation("MessageAuthor")
+  uploadedMedia             MediaUpload[]
+
+  @@index([cityId])
+  @@index([lastActiveAt])
+  @@index([username])
+}
+
+model BotLoginToken {
+  id         String    @id @default(cuid())
+  token      String    @unique
+  telegramId String
+  username   String?
+  firstName  String
+  lastName   String?
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([telegramId])
+  @@index([expiresAt])
+  @@index([usedAt])
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  role      AppRole
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role])
+  @@index([role])
+}
+
+model Region {
+  id              String  @id @default(cuid())
+  name            String  @unique
+  slug            String  @unique
+  federalDistrict String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  cities         City[]
+  users          User[]
+  pickupPoints   PickupPoint[]
+  shiftPosts     ShiftPost[]
+}
+
+model City {
+  id         String   @id @default(cuid())
+  regionId   String
+  name       String
+  slug       String
+  timezone   String   @default("Europe/Moscow")
+  population Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  region      Region      @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  users       User[]
+  pickupPoints PickupPoint[]
+  shiftPosts  ShiftPost[]
+
+  @@unique([regionId, slug])
+  @@index([regionId])
+}
+
+model Marketplace {
+  id        String          @id @default(cuid())
+  code      MarketplaceCode @unique
+  name      String
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  pickupPoints PickupPoint[]
+  shiftPosts   ShiftPost[]
+}
+
+model PickupPoint {
+  id                 String             @id @default(cuid())
+  ownerUserId        String?
+  managerUserId      String?
+  marketplaceId      String
+  regionId           String
+  cityId             String
+  title              String
+  district           String?
+  address            String
+  landmark           String?
+  lat                Decimal?           @db.Decimal(9, 6)
+  lng                Decimal?           @db.Decimal(9, 6)
+  verificationStatus VerificationStatus @default(PENDING)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  owner         User?          @relation("PickupPointOwner", fields: [ownerUserId], references: [id])
+  manager       User?          @relation("PickupPointManager", fields: [managerUserId], references: [id])
+  marketplace   Marketplace    @relation(fields: [marketplaceId], references: [id])
+  region        Region         @relation(fields: [regionId], references: [id])
+  city          City           @relation(fields: [cityId], references: [id])
+  shiftPosts    ShiftPost[]
+  verifications Verification[] @relation("VerificationPickupPoint")
+  managerAccesses PickupPointManagerAccess[]
+
+  @@index([ownerUserId])
+  @@index([cityId])
+  @@index([marketplaceId])
+}
+
+model PickupPointManagerAccess {
+  id            String   @id @default(cuid())
+  pickupPointId String
+  ownerUserId   String
+  managerUserId String
+  createdAt     DateTime @default(now())
+
+  pickupPoint PickupPoint @relation(fields: [pickupPointId], references: [id], onDelete: Cascade)
+  owner       User        @relation("PickupPointManagerAccessOwner", fields: [ownerUserId], references: [id], onDelete: Cascade)
+  manager     User        @relation("PickupPointManagerAccessUser", fields: [managerUserId], references: [id], onDelete: Cascade)
+
+  @@unique([pickupPointId, managerUserId])
+  @@index([managerUserId])
+  @@index([ownerUserId])
+}
+
+model ShiftPost {
+  id                      String             @id @default(cuid())
+  createdByUserId         String
+  pickupPointId           String?
+  regionId                String
+  cityId                  String
+  marketplaceId           String
+  title                   String
+  type                    ShiftPostType
+  status                  ShiftPostStatus    @default(PUBLISHED)
+  district                String
+  address                 String
+  landmark                String?
+  description             String
+  shiftDate               DateTime
+  startAt                 DateTime?
+  endAt                   DateTime?
+  paymentAmountRub        Int
+  paymentType             PaymentType        @default(FIXED_SHIFT)
+  experienceLevelRequired ExperienceLevel    @default(NO_EXPERIENCE)
+  workersNeeded           Int                @default(1)
+  isUrgent                Boolean            @default(false)
+  promotedUntil           DateTime?
+  publishedAt             DateTime           @default(now())
+  expiresAt               DateTime?
+  closedAt                DateTime?
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
+
+  createdBy  User         @relation("ShiftPostCreator", fields: [createdByUserId], references: [id], onDelete: Cascade)
+  pickupPoint PickupPoint? @relation(fields: [pickupPointId], references: [id])
+  region     Region       @relation(fields: [regionId], references: [id])
+  city       City         @relation(fields: [cityId], references: [id])
+  marketplace Marketplace @relation(fields: [marketplaceId], references: [id])
+  applications Application[]
+  assignment   Assignment?
+  favorites    Favorite[]
+
+  @@index([cityId, status, shiftDate])
+  @@index([cityId, status, isUrgent, publishedAt])
+  @@index([cityId, marketplaceId, status, shiftDate])
+  @@index([cityId, marketplaceId, status, isUrgent, publishedAt])
+  @@index([marketplaceId, status])
+  @@index([createdByUserId, createdAt])
+  @@index([createdByUserId, status, createdAt])
+  @@index([isUrgent, publishedAt])
+}
+
+model Application {
+  id                String            @id @default(cuid())
+  shiftPostId       String
+  applicantUserId   String
+  status            ApplicationStatus @default(APPLIED)
+  message           String?
+  expectedPaymentRub Int?
+  score             Int?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  shiftPost   ShiftPost   @relation(fields: [shiftPostId], references: [id], onDelete: Cascade)
+  applicant   User        @relation(fields: [applicantUserId], references: [id], onDelete: Cascade)
+  assignment  Assignment?
+
+  @@unique([shiftPostId, applicantUserId])
+  @@index([shiftPostId])
+  @@index([shiftPostId, score, createdAt])
+  @@index([shiftPostId, status, score, createdAt])
+  @@index([applicantUserId])
+  @@index([applicantUserId, createdAt])
+  @@index([applicantUserId, status, createdAt])
+  @@index([status])
+}
+
+model Assignment {
+  id             String           @id @default(cuid())
+  shiftPostId    String           @unique
+  applicationId  String           @unique
+  workerUserId   String
+  employerUserId String
+  status         AssignmentStatus @default(CONFIRMED)
+  confirmedAt    DateTime         @default(now())
+  startedAt      DateTime?
+  completedAt    DateTime?
+  cancelledAt    DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  shiftPost    ShiftPost @relation(fields: [shiftPostId], references: [id], onDelete: Cascade)
+  application  Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  worker       User      @relation("AssignmentWorker", fields: [workerUserId], references: [id])
+  employer     User      @relation("AssignmentEmployer", fields: [employerUserId], references: [id])
+  reviews      Review[]
+
+  @@index([workerUserId])
+  @@index([employerUserId])
+  @@index([workerUserId, status, completedAt])
+  @@index([employerUserId, status, completedAt])
+  @@index([status])
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  assignmentId String
+  authorUserId String
+  subjectUserId String
+  rating       Int
+  text         String
+  tags         String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  author     User       @relation("ReviewAuthor", fields: [authorUserId], references: [id], onDelete: Cascade)
+  subject    User       @relation("ReviewSubject", fields: [subjectUserId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, authorUserId])
+  @@index([subjectUserId])
+}
+
+model Report {
+  id             String          @id @default(cuid())
+  reporterUserId String
+  moderatorUserId String?
+  targetType     ReportTargetType
+  targetId       String
+  reasonCode     String
+  description    String?
+  status         ReportStatus    @default(OPEN)
+  riskLevel      RiskLevel       @default(LOW)
+  resolutionNote String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  reporter User  @relation("ReportReporter", fields: [reporterUserId], references: [id], onDelete: Cascade)
+  moderator User? @relation("ReportModerator", fields: [moderatorUserId], references: [id])
+
+  @@index([targetType, targetId])
+  @@index([status])
+  @@index([riskLevel])
+  @@index([riskLevel, createdAt])
+}
+
+model Verification {
+  id               String             @id @default(cuid())
+  userId           String?
+  pickupPointId    String?
+  reviewedByUserId String?
+  type             VerificationType
+  status           VerificationStatus @default(PENDING)
+  fileKey          String?
+  reviewedAt       DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  user        User?       @relation("VerificationUser", fields: [userId], references: [id], onDelete: Cascade)
+  pickupPoint PickupPoint? @relation("VerificationPickupPoint", fields: [pickupPointId], references: [id], onDelete: Cascade)
+  reviewedBy  User?       @relation("VerificationReviewer", fields: [reviewedByUserId], references: [id])
+
+  @@index([userId])
+  @@index([pickupPointId])
+  @@index([status])
+}
+
+model Notification {
+  id          String             @id @default(cuid())
+  userId      String
+  type        String
+  channel     NotificationChannel @default(TELEGRAM)
+  payloadJson Json?
+  status      NotificationStatus  @default(PENDING)
+  sentAt      DateTime?
+  readAt      DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId, status, createdAt])
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  shiftPostId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shiftPost ShiftPost @relation(fields: [shiftPostId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, shiftPostId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorUserId String?
+  entityType String
+  entityId   String
+  action     String
+  metaJson   Json?
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model Conversation {
+  id             String   @id @default(cuid())
+  participantKey String   @unique
+  lastMessageAt  DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@index([lastMessageAt])
+}
+
+model ConversationParticipant {
+  id             String   @id @default(cuid())
+  conversationId String
+  userId         String
+  lastReadAt     DateTime @default(now())
+  isArchived     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+  @@index([userId, isArchived])
+  @@index([userId, isArchived, lastReadAt])
+}
+
+model Message {
+  id             String    @id @default(cuid())
+  conversationId String
+  authorUserId   String
+  body           String
+  createdAt      DateTime  @default(now())
+  editedAt       DateTime?
+  deletedAt      DateTime?
+
+  conversation Conversation        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  author       User                @relation("MessageAuthor", fields: [authorUserId], references: [id], onDelete: Cascade)
+  attachments  MessageAttachment[]
+
+  @@index([conversationId, createdAt])
+  @@index([conversationId, createdAt, id])
+  @@index([authorUserId, createdAt])
+}
+
+model MessageAttachment {
+  id        String   @id @default(cuid())
+  messageId String
+  mediaId   String
+  createdAt DateTime @default(now())
+
+  message Message     @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  media   MediaUpload @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([mediaId])
+  @@index([messageId])
+}
+
+model RateLimitAttempt {
+  id         String   @id @default(cuid())
+  // Логический скоуп rate-limit'а (например, "admin-login").
+  scope      String
+  // Идентификатор актора: IP, userId или составной ключ.
+  identifier String
+  createdAt  DateTime @default(now())
+
+  // Главный индекс под "посчитай попытки за окно". scope+identifier
+  // сужают выборку, createdAt позволяет range-скан внутри окна.
+  @@index([scope, identifier, createdAt])
+  // Под фоновую очистку устаревших записей.
+  @@index([createdAt])
+}
+
+model MediaUpload {
+  id             String   @id @default(cuid())
+  uploaderUserId String
+  storageKey     String   @unique
+  mimeType       String
+  byteSize       Int
+  width          Int?
+  height         Int?
+  originalName   String?
+  createdAt      DateTime @default(now())
+
+  uploader    User                @relation(fields: [uploaderUserId], references: [id], onDelete: Cascade)
+  attachments MessageAttachment[]
+
+  @@index([uploaderUserId, createdAt])
+}

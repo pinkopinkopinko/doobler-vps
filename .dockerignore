@@ -1,0 +1,33 @@
+.git
+.gitignore
+.next
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Env-файлы НЕ кладём в образ — они подставляются через docker compose
+# environment: на этапе run, не build.
+.env
+.env.*
+
+# Дев-логи / артефакты
+.app-start*.log
+.ngrok*.log
+.dev-ngrok-url
+*.tsbuildinfo
+
+# Локальные uploads / бэкапы — в образ не нужны.
+/uploads
+/backups
+
+# Документация и дизайн — на сервере не нужны.
+/design
+/design-test
+/.devin
+README.md
+
+# Сама deploy-папка попадает в build context, но нам она внутри
+# образа не нужна (compose берёт файлы напрямую с хоста).
+/deploy

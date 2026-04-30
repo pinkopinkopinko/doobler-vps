@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #18202b;
+  --muted: #f4f7fb;
+  --muted-foreground: #6e7d90;
+  --card: rgba(255, 255, 255, 0.94);
+  --card-foreground: #18202b;
+  --border: rgba(22, 33, 51, 0.08);
+  --accent: #2aabee;
+  --accent-foreground: #ffffff;
+  --accent-secondary: #4caf8d;
+  --accent-secondary-foreground: #f4fffb;
+  --danger: #df4f5f;
+  --shadow-card: 0 18px 48px rgba(25, 61, 109, 0.08);
+  --nav-height: 78px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-wix-madefor-display);
+  --font-mono: var(--font-wix-madefor-display);
+}
+
+html[data-tg-scheme="dark"] {
+  --background: #18222d;
+  --foreground: #f3f7fb;
+  --muted: #202b36;
+  --muted-foreground: #9eb0c3;
+  --card: rgba(28, 39, 51, 0.92);
+  --card-foreground: #f3f7fb;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #2aabee;
+  --accent-foreground: #ffffff;
+  --accent-secondary: #53b19a;
+  --accent-secondary-foreground: #0c1d1a;
+  --danger: #ff7d7d;
+  --shadow-card: 0 18px 48px rgba(4, 11, 19, 0.32);
+}
+
+html {
+  background: var(--background);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+*::selection {
+  background: rgba(42, 171, 238, 0.22);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-wix-madefor-display), "Wix Madefor Display", sans-serif;
+  font-weight: 500;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+.app-shell {
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: calc(var(--nav-height) + 20px + env(safe-area-inset-bottom, 0px));
+}
+
+.glass-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 28px rgba(20, 27, 33, 0.08);
+  backdrop-filter: none;
+}

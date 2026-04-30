@@ -1,0 +1,125 @@
+# Production-стек Дублера для VPS (Selectel VDS 2-4-50 или аналог).
+#
+# Сервисы:
+#   postgres — БД, локальный volume для данных, не торчит наружу
+#   app      — Next.js, слушает 3000 в локалхосте контейнера
+#   nginx    — reverse-proxy 80/443 → app:3000, отдаёт TLS
+#   certbot  — выпуск/продление Let's Encrypt-сертификатов
+#
+# Запускать из каталога /opt/doobler:
+#   docker compose --env-file .env.production -f deploy/docker-compose.yml up -d --build
+
+name: doobler
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: doobler-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    # Тюнинг под 4 GB RAM VPS — см. ./postgres/postgresql.conf
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks:
+      - internal
+    # Наружу 5432 не публикуем сознательно. Подключаться к БД с хоста —
+    # через `docker exec -it doobler-postgres psql -U doobler doobler`.
+
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: doobler-app:latest
+    container_name: doobler-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: ${DATABASE_URL}
+      SESSION_SECRET: ${SESSION_SECRET}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME}
+      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME}
+      ALLOW_DEV_AUTH_FALLBACK: "false"
+      ALLOW_DEV_DATA_FALLBACK: "false"
+      ADMIN_LOGIN: ${ADMIN_LOGIN}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH}
+      UPLOADS_DIR: /var/lib/doobler/uploads
+      LOG_VERBOSE: "false"
+      NEXT_PUBLIC_LOG_VERBOSE: "false"
+    volumes:
+      - uploads_data:/var/lib/doobler/uploads
+    networks:
+      - internal
+    # Лимит памяти на случай рекурсивных утечек.
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: doobler-nginx
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - certbot_certs:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    networks:
+      - internal
+    environment:
+      - DOMAIN=${DOMAIN}
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: doobler-certbot
+    # Один раз выпускаем, потом контейнер раз в 12 часов сам пытается
+    # обновить сертификат. Перезагрузка nginx — через docker-exec из cron'а.
+    entrypoint: >
+      sh -c "trap exit TERM;
+             while :; do
+               certbot renew --webroot -w /var/www/certbot --quiet;
+               sleep 12h & wait $${!};
+             done"
+    volumes:
+      - certbot_certs:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+
+volumes:
+  postgres_data:
+    name: doobler_postgres_data
+  uploads_data:
+    name: doobler_uploads_data
+  certbot_certs:
+    name: doobler_certbot_certs
+  certbot_www:
+    name: doobler_certbot_www
+
+networks:
+  internal:
+    name: doobler_internal
+    driver: bridge
