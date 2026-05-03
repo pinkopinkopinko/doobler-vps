@@ -46,3 +46,14 @@ Changes:
 - Ported phone verification, profile photo SVG support, owner apply restrictions, dark theme, theme toggle, UX fixes, chat/avatar fixes, and smoke tests into the VDS codebase.
 - Added /backups to .gitignore and rewrote README.md as a VDS-oriented project overview with local checks and deploy pointers.
 - Ran db:generate with a temporary local DATABASE_URL, npm run typecheck, npm run lint, npm run test, and npm run build successfully.
+
+Version 6
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Updated src/lib/telegram/webapp.ts so the theme follows Telegram colorScheme by default and falls back to the device prefers-color-scheme outside Telegram.
+- Added runtime listeners for Telegram themeChanged and OS prefers-color-scheme changes so the Mini App updates theme without reload.
+- Changed manual theme override storage to doobler-theme-override and cleared the legacy doobler-theme key so old local overrides do not block device theme syncing.
+- Updated TelegramThemeProvider to register and clean up theme listeners.
+- Updated ThemeToggle so it reflects the current resolved theme, stores only explicit manual overrides, and supports double-click reset back to device theme.
+- Verified with npm run lint, npm run test, npm run build, and npm run typecheck after build regenerated Next.js route types.

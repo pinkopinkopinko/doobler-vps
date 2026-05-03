@@ -21,10 +21,18 @@ declare global {
         HapticFeedback?: {
           impactOccurred: (style: "light" | "medium" | "heavy") => void;
         };
+        onEvent?: (eventType: "themeChanged", eventHandler: () => void) => void;
+        offEvent?: (eventType: "themeChanged", eventHandler: () => void) => void;
       };
     };
   }
 }
+
+export type ThemeMode = "light" | "dark";
+
+export const THEME_OVERRIDE_STORAGE_KEY = "doobler-theme-override";
+const LEGACY_THEME_STORAGE_KEY = "doobler-theme";
+const THEME_APPLIED_EVENT = "doobler-theme-applied";
 
 type WaitForWebAppOptions = {
   timeoutMs?: number;
@@ -212,6 +220,76 @@ export function getTelegramUserId() {
   return extractTelegramUserIdFromInitData(webApp?.initData ?? "");
 }
 
+function isThemeMode(value: string | null): value is ThemeMode {
+  return value === "dark" || value === "light";
+}
+
+function getSystemTheme(): ThemeMode {
+  if (typeof window === "undefined") {
+    return "light";
+  }
+
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function getStoredThemeOverride(): ThemeMode | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const stored = window.localStorage.getItem(THEME_OVERRIDE_STORAGE_KEY);
+  return isThemeMode(stored) ? stored : null;
+}
+
+function getForcedThemeFromQuery(): ThemeMode | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const forcedTheme = new URLSearchParams(window.location.search).get("theme");
+  return isThemeMode(forcedTheme) ? forcedTheme : null;
+}
+
+export function getPreferredTheme(): ThemeMode {
+  const webApp = getTelegramWebApp();
+  return webApp?.colorScheme ?? getSystemTheme();
+}
+
+export function getCurrentTheme(): ThemeMode {
+  if (typeof document === "undefined") {
+    return "light";
+  }
+
+  const current = document.documentElement.dataset.theme ?? null;
+  if (isThemeMode(current)) {
+    return current;
+  }
+
+  return getPreferredTheme();
+}
+
+function dispatchThemeApplied(mode: ThemeMode, source: "query" | "manual" | "device") {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(
+    new CustomEvent(THEME_APPLIED_EVENT, {
+      detail: { mode, source },
+    }),
+  );
+}
+
+function cleanupLegacyThemeStorage() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  // Older builds used this key as a permanent override. The VDS build now
+  // follows the device by default, so stale values should not pin the theme.
+  window.localStorage.removeItem(LEGACY_THEME_STORAGE_KEY);
+}
+
 export async function getTelegramUserIdSafe() {
   const webApp = await waitForTelegramWebApp({ requireInitData: true });
   const unsafeUserId = webApp?.initDataUnsafe?.user?.id;
@@ -224,27 +302,62 @@ export async function getTelegramUserIdSafe() {
 }
 
 export function applyTelegramTheme() {
-  const root = document.documentElement;
-  const forcedTheme =
-    new URLSearchParams(window.location.search).get("theme") ??
-    window.localStorage.getItem("doobler-theme");
-  const hasForcedTheme = forcedTheme === "dark" || forcedTheme === "light";
-
-  if (hasForcedTheme) {
-    root.dataset.theme = forcedTheme;
-    root.dataset.tgScheme = forcedTheme;
+  if (typeof document === "undefined") {
+    return "light";
   }
+
+  const root = document.documentElement;
+  cleanupLegacyThemeStorage();
 
   const webApp = getTelegramWebApp();
-  if (!webApp?.themeParams || typeof document === "undefined") {
-    return;
+  const queryTheme = getForcedThemeFromQuery();
+  const manualTheme = getStoredThemeOverride();
+  const source = queryTheme ? "query" : manualTheme ? "manual" : "device";
+  const theme = queryTheme ?? manualTheme ?? getPreferredTheme();
+
+  root.dataset.theme = theme;
+  root.dataset.tgScheme = theme;
+  root.dataset.themeSource = source;
+
+  if (webApp?.themeParams) {
+    Object.entries(webApp.themeParams).forEach(([key, value]) => {
+      root.style.setProperty(`--tg-${key.replaceAll("_", "-")}`, value);
+    });
   }
 
-  Object.entries(webApp.themeParams).forEach(([key, value]) => {
-    root.style.setProperty(`--tg-${key.replaceAll("_", "-")}`, value);
-  });
+  dispatchThemeApplied(theme, source);
+  return theme;
+}
 
-  root.dataset.tgScheme = hasForcedTheme ? forcedTheme : (webApp.colorScheme ?? "light");
+export function setManualThemeOverride(mode: ThemeMode) {
+  window.localStorage.setItem(THEME_OVERRIDE_STORAGE_KEY, mode);
+  applyTelegramTheme();
+}
+
+export function clearManualThemeOverride() {
+  window.localStorage.removeItem(THEME_OVERRIDE_STORAGE_KEY);
+  applyTelegramTheme();
+}
+
+export function subscribeToDeviceThemeChanges() {
+  if (typeof window === "undefined") {
+    return () => undefined;
+  }
+
+  const mediaQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
+  const handleThemeChange = () => {
+    applyTelegramTheme();
+  };
+
+  mediaQuery?.addEventListener?.("change", handleThemeChange);
+
+  const webApp = getTelegramWebApp();
+  webApp?.onEvent?.("themeChanged", handleThemeChange);
+
+  return () => {
+    mediaQuery?.removeEventListener?.("change", handleThemeChange);
+    webApp?.offEvent?.("themeChanged", handleThemeChange);
+  };
 }
 
 export async function prepareTelegramWebApp() {
@@ -252,4 +365,5 @@ export async function prepareTelegramWebApp() {
   webApp?.ready?.();
   webApp?.expand?.();
   applyTelegramTheme();
+  return subscribeToDeviceThemeChanges();
 }
