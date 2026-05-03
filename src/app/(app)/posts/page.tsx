@@ -32,6 +32,8 @@ export default async function PostsPage() {
           <EmptyState
             title="У вас пока нет объявлений"
             description="Создайте первую смену, чтобы начать получать отклики от сотрудников и подменных работников."
+            actionHref="/shifts/new"
+            actionLabel="Создать смену"
           />
         )}
       </section>
@@ -46,6 +48,8 @@ export default async function PostsPage() {
           <EmptyState
             title="Кандидатов пока нет"
             description="Как только на ваши объявления начнут откликаться сотрудники, они появятся здесь."
+            actionHref="/shifts/new"
+            actionLabel="Опубликовать смену"
           />
         )}
       </section>

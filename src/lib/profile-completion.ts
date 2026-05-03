@@ -69,12 +69,12 @@ export function isProfileComplete(profile: ProfileLike | null | undefined) {
 
   const roles = normalizeRoles(profile);
   const hasBaseFields = Boolean(
-    profile.firstName?.trim() &&
+      profile.firstName?.trim() &&
       profile.lastName?.trim() &&
       profile.age &&
-      profile.age >= 14 &&
+      profile.age >= 16 &&
+      profile.age <= 99 &&
       profile.cityId &&
-      profile.photoUrl?.trim() &&
       roles.length,
   );
 
@@ -110,9 +110,8 @@ export function getProfileCompletionScore(profile: ProfileLike | null | undefine
   const checks = [
     Boolean(profile.firstName?.trim()),
     Boolean(profile.lastName?.trim()),
-    Boolean(profile.age && profile.age >= 14),
+    Boolean(profile.age && profile.age >= 16 && profile.age <= 99),
     Boolean(profile.cityId),
-    Boolean(profile.photoUrl?.trim()),
     roles.length > 0,
     isOwnerRole(roles)
       ? hasAtLeastOneMarketplace(profile)

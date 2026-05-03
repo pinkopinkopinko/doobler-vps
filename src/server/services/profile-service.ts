@@ -1,7 +1,7 @@
 import { cache } from "react";
 
 import { getCurrentUserRecord } from "@/lib/auth/app-access";
-import { validateProfilePhotoUrl } from "@/lib/profile-photo";
+import { compactProfilePhotoUrl, validateProfilePhotoUrl } from "@/lib/profile-photo";
 import type { ProfileView } from "@/lib/types";
 import { isProfileComplete } from "@/lib/profile-completion";
 import { prisma } from "@/lib/prisma";
@@ -27,6 +27,7 @@ const profileShellSelect = {
   completedAssignmentsCount: true,
   bio: true,
   phone: true,
+  isPhoneVerified: true,
   roles: {
     select: {
       role: true,
@@ -73,12 +74,15 @@ function mapProfileBase(
     completedAssignmentsCount: number;
     bio: string | null;
     phone: string | null;
+    isPhoneVerified: boolean;
     roles: Array<{ role: ProfileView["roles"][number] }>;
     city: { name: string } | null;
     verifications: Array<{ status: ProfileView["verificationStatus"] }>;
   },
+  options?: { compactPhoto?: boolean },
 ) {
   const roles = user.roles.map((role) => role.role);
+  const photoUrl = options?.compactPhoto ? compactProfilePhotoUrl(user.photoUrl) : user.photoUrl;
 
   return {
     id: user.id,
@@ -87,7 +91,7 @@ function mapProfileBase(
     lastName: user.lastName,
     age: user.age,
     username: user.username,
-    photoUrl: user.photoUrl,
+    photoUrl,
     pickupPointCode: user.pickupPointCode,
     experienceSummary: user.experienceSummary,
     isOnboardingCompleted: user.isOnboardingCompleted,
@@ -103,16 +107,30 @@ function mapProfileBase(
     verificationStatus: user.verifications[0]?.status ?? "PENDING",
     bio: user.bio,
     phone: user.phone,
+    isPhoneVerified: user.isPhoneVerified,
   };
 }
 
-function buildBadges(profile: Pick<ProfileView, "verificationStatus" | "completedAssignmentsCount">) {
+function buildBadges(
+  profile: Pick<ProfileView, "verificationStatus" | "completedAssignmentsCount" | "isPhoneVerified">,
+) {
   return [
     profile.verificationStatus === "APPROVED"
       ? "Проверенный профиль"
       : "Без верификации",
     `${profile.completedAssignmentsCount} завершённых смен`,
   ];
+}
+
+function withPhoneBadge(
+  profile: Pick<ProfileView, "isPhoneVerified">,
+  badges: string[],
+) {
+  if (!profile.isPhoneVerified) {
+    return badges;
+  }
+
+  return [badges[0] ?? "РџСЂРѕС„РёР»СЊ", "РќРѕРјРµСЂ С‚РµР»РµС„РѕРЅР° РїРѕРґС‚РІРµСЂР¶РґС‘РЅ", ...badges.slice(1)];
 }
 
 /**
@@ -142,10 +160,10 @@ export const getProfileShell = cache(async (userId: string): Promise<ProfileView
     // в (app)/layout). Это убирает второй SQL-запрос на каждой странице Mini App.
     const cachedRecord = await getCurrentUserRecord();
     if (cachedRecord && cachedRecord.session.userId === userId) {
-      const profile = mapProfileBase(cachedRecord.user);
+      const profile = mapProfileBase(cachedRecord.user, { compactPhoto: true });
       return {
         ...profile,
-        badges: buildBadges(profile),
+        badges: withPhoneBadge(profile, buildBadges(profile)),
         recentReviews: [],
       };
     }
@@ -159,11 +177,11 @@ export const getProfileShell = cache(async (userId: string): Promise<ProfileView
       return null;
     }
 
-    const profile = mapProfileBase(user);
+    const profile = mapProfileBase(user, { compactPhoto: true });
 
     return {
       ...profile,
-      badges: buildBadges(profile),
+      badges: withPhoneBadge(profile, buildBadges(profile)),
       recentReviews: [],
     };
   } catch (error) {
@@ -193,7 +211,7 @@ export const getProfile = cache(async (userId: string): Promise<ProfileView | nu
 
     return {
       ...profile,
-      badges: buildBadges(profile),
+      badges: withPhoneBadge(profile, buildBadges(profile)),
       recentReviews: user.receivedReviews.map((review) => ({
         id: review.id,
         authorName: `${review.author.firstName} ${review.author.lastName ?? ""}`.trim(),

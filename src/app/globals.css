@@ -103,3 +103,183 @@ textarea {
   box-shadow: 0 12px 28px rgba(20, 27, 33, 0.08);
   backdrop-filter: none;
 }
+
+/* Full dark color layer.
+   Keeps the existing Tailwind layout classes intact and only remaps colors when
+   Telegram reports dark mode. html[data-theme="dark"] is kept for local previews. */
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) {
+  --background: #11161c;
+  --foreground: #eef3f7;
+  --muted: #202b36;
+  --muted-foreground: #9aa8b5;
+  --card: #1b2630;
+  --card-foreground: #eef3f7;
+  --border: rgba(230, 238, 245, 0.08);
+  --accent: #4c9be0;
+  --accent-foreground: #071018;
+  --accent-secondary: #64c394;
+  --accent-secondary-foreground: #071018;
+  --danger: #ee9b95;
+  --shadow-card: 0 12px 28px rgba(0, 0, 0, 0.24);
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) body,
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .app-shell {
+  background: #11161c !important;
+  color: #eef3f7 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#eef3f7]"] {
+  background-color: #121a22 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-white"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#ffffff]"] {
+  background-color: #1b2630 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#f8fbfd]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#f2f5f8]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#f3f6f9]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#f4f8fb]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#eef1f4]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#eef3f7]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#eef4fb]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#e7edf3]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#e7eef5]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#e8edf2]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#e8eef4]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#e6ecf2]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#e3e8ed]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#e3e9ef]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#dfe7ee]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#dfe8f1]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#dce6f0]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#d7dfe7]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#d7e2ec]"] {
+  background-color: #202d38 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#3387d1]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#56a3e0]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#2aabee]"] {
+  background-color: #4c9be0 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#e5f4ea]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#e9f6ef]"] {
+  background-color: #1f4033 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#fff7ea]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#fff7eb]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#fff4e8]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#fff3ef]"] {
+  background-color: #253443 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#f9e7e5]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#fde7e5]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-[#f5d9d6]"] {
+  background-color: #6b3b3b !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class*="from-["],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class*="via-["],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class*="to-["] {
+  background-image: none !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#101214]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#15131c]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#1c232b]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#3a4352]"] {
+  color: #eef3f7 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#4e5d6c]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#5f6975]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#667381]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#6f7984]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#7d8895]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#7f8791]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#95a1ad]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#9aa5b1]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#a6abb2]"] {
+  color: #9aa8b5 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-white"] {
+  color: #ffffff !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#1c4f7a]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#1c4f8a]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#1f3a52]"] {
+  color: #9fd2ff !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#2f7a53]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#2f8a59]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#397252]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#42a16d]"] {
+  color: #91d8b3 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#7f6a4f]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#8a6420]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#b8752b]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#c27a2c]"] {
+  color: #f0c778 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#b35b54]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#c25a4f]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#c44747]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#cf534a]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#df4f5f]"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#df6d64]"] {
+  color: #ffc4bd !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class*="border-[#"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="border-white"] {
+  border-color: rgba(230, 238, 245, 0.08) !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="divide-[#eef1f4]"] > :not([hidden]) ~ :not([hidden]),
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="divide-[#eef3f7]"] > :not([hidden]) ~ :not([hidden]),
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="divide-white"] > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(230, 238, 245, 0.08) !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class*="shadow-["] {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24) !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .soft-action-link {
+  background-color: #d8ecff !important;
+  color: #102232 !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18) !important;
+}
+
+.chat-list-card > li + li {
+  border-top: 1px solid #eef1f4;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .chat-list-card > li + li {
+  border-top-color: rgba(230, 238, 245, 0.06) !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) input,
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) select,
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) textarea {
+  background-color: #202d38 !important;
+  border-color: rgba(230, 238, 245, 0.08) !important;
+  color: #eef3f7 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) input::placeholder,
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) textarea::placeholder {
+  color: #72808d !important;
+}

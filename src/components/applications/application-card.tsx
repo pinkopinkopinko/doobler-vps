@@ -28,10 +28,15 @@ function buildEmployerName(employer: ApplicationCardType["employer"]) {
   return full || employer.username || "Работодатель";
 }
 
+function buildApplicantLocation(applicant: ApplicationCardType["applicant"]) {
+  return [applicant.cityName, applicant.district].filter(Boolean).join(", ");
+}
+
 export function ApplicationCard({ application, perspective = "worker" }: ApplicationCardProps) {
   const showEmployerBlock = perspective === "worker";
   const employer = application.employer;
   const employerName = buildEmployerName(employer);
+  const applicantLocation = buildApplicantLocation(application.applicant);
   const employerInitials =
     `${employer.firstName?.[0] ?? ""}${employer.lastName?.[0] ?? ""}`.trim() || "PV";
 
@@ -40,9 +45,9 @@ export function ApplicationCard({ application, perspective = "worker" }: Applica
       <div className="mb-3 flex items-start justify-between gap-4">
         <div>
           <p className="text-[12px] font-medium text-[#a6abb2]">
-            {getMarketplaceLabel(application.applicant.marketplaces[0] ?? "OTHER")}
+            {getMarketplaceLabel(application.shiftMarketplace)}
           </p>
-          <h3 className="mt-1 text-[20px] font-semibold tracking-[-0.04em] text-[#101214]">
+          <h3 className="mt-1 break-words text-[20px] font-semibold tracking-[-0.04em] text-[#101214] [overflow-wrap:anywhere]">
             {application.shiftTitle}
           </h3>
         </div>
@@ -52,9 +57,10 @@ export function ApplicationCard({ application, perspective = "worker" }: Applica
       </div>
 
       <div className="space-y-1 text-[14px] font-medium leading-6 text-[#7f8791]">
-        <p>
+        <p className="break-words [overflow-wrap:anywhere]">
           {application.applicant.firstName} {application.applicant.lastName ?? ""}
         </p>
+        {applicantLocation ? <p>{applicantLocation}</p> : null}
         <p>
           Рейтинг {application.applicant.ratingAvg.toFixed(1)} • завершённых смен:{" "}
           {application.applicant.completedAssignmentsCount}
@@ -75,7 +81,7 @@ export function ApplicationCard({ application, perspective = "worker" }: Applica
       </div>
 
       {application.message ? (
-        <p className="mt-4 rounded-[20px] bg-[#f2f5f8] px-3 py-3 text-[14px] leading-6 text-[#4e5d6c]">
+        <p className="mt-4 break-words rounded-[20px] bg-[#f2f5f8] px-3 py-3 text-[14px] leading-6 text-[#4e5d6c] [overflow-wrap:anywhere]">
           {application.message}
         </p>
       ) : null}
@@ -97,13 +103,15 @@ export function ApplicationCard({ application, perspective = "worker" }: Applica
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[12px] font-medium text-[#a6abb2]">Работодатель</p>
-              <p className="truncate text-[15px] font-semibold text-[#101214]">{employerName}</p>
+              <p className="break-words text-[15px] font-semibold text-[#101214] [overflow-wrap:anywhere]">
+                {employerName}
+              </p>
             </div>
             <Link
               href={`/profiles/${employer.id}`}
-              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-white px-3 text-[13px] font-medium text-[#1c4f7a] shadow-[inset_0_0_0_1px_rgba(28,79,122,0.18)]"
+              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-white px-3 text-[13px] font-medium !text-[#101214] shadow-[inset_0_0_0_1px_rgba(16,18,20,0.2)] [&_svg]:!text-[#101214]"
             >
-              <ExternalLink className="h-3.5 w-3.5" />
+              <ExternalLink className="h-3.5 w-3.5 text-[#101214]" />
               Профиль
             </Link>
           </div>

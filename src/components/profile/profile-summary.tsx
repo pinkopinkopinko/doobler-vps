@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { OwnerManagerPanel } from "@/components/profile/owner-manager-panel";
+import { PhoneVerificationPanel } from "@/components/profile/phone-verification-panel";
 import {
   hasEmployerCapabilities,
   isEmployeeRole,
@@ -86,6 +87,11 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
         <span className="inline-flex h-8 items-center rounded-full bg-white px-4 text-sm font-medium text-[#101214] shadow-[inset_0_0_0_1px_rgba(16,18,20,0.04)]">
           {verificationLabel}
         </span>
+        {profile.isPhoneVerified ? (
+          <span className="inline-flex h-8 items-center rounded-full bg-[#e5f4ea] px-4 text-sm font-medium text-[#397252] shadow-[inset_0_0_0_1px_rgba(57,114,82,0.08)]">
+            Номер телефона подтвержден
+          </span>
+        ) : null}
       </div>
 
       <article className="rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
@@ -143,6 +149,8 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
           </p>
         </article>
       </div>
+
+      {!isPublic ? <PhoneVerificationPanel isPhoneVerified={profile.isPhoneVerified} /> : null}
 
       {showMarketplacesBlock ? (
         <div>
@@ -229,7 +237,7 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
                 </div>
                 <Link
                   href="/posts"
-                  className="inline-flex h-10 shrink-0 items-center rounded-full bg-[#e7edf3] px-5 text-[14px] font-medium !text-[#1c232b]"
+                  className="soft-action-link inline-flex h-10 shrink-0 items-center rounded-full bg-[#e7edf3] px-5 text-[14px] font-medium !text-[#1c232b]"
                 >
                   Смотреть
                 </Link>
@@ -245,7 +253,7 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
                   </div>
                   <Link
                     href="/applications"
-                    className="inline-flex h-10 shrink-0 items-center rounded-full bg-[#e7edf3] px-5 text-[14px] font-medium !text-[#1c232b]"
+                    className="soft-action-link inline-flex h-10 shrink-0 items-center rounded-full bg-[#e7edf3] px-5 text-[14px] font-medium !text-[#1c232b]"
                   >
                     Смотреть
                   </Link>
@@ -311,7 +319,7 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
                   </div>
                   <Link
                     href="/applications"
-                    className="inline-flex h-10 shrink-0 items-center rounded-full bg-[#e7edf3] px-5 text-[14px] font-medium !text-[#1c232b]"
+                    className="soft-action-link inline-flex h-10 shrink-0 items-center rounded-full bg-[#e7edf3] px-5 text-[14px] font-medium !text-[#1c232b]"
                   >
                     Смотреть
                   </Link>

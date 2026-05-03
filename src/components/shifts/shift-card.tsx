@@ -44,7 +44,8 @@ export function ShiftCard({ shift }: ShiftCardProps) {
           Время: <span className="text-[#101214]">{timeRange || "По договоренности"}</span>
         </p>
         <p>
-          Локация: <span className="text-[#101214]">{location}</span>
+          Локация:{" "}
+          <span className="break-words text-[#101214] [overflow-wrap:anywhere]">{location}</span>
         </p>
         <p>
           Заработная плата: <span className="text-[#101214]">{formatMoney(shift.paymentAmountRub)}</span>

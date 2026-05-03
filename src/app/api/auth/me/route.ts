@@ -1,17 +1,15 @@
 import { fail, ok } from "@/lib/api";
-import { getAppAccessState } from "@/lib/auth/app-access";
-import { getSessionPayload } from "@/lib/auth/session";
+import { getAppAccessState, getCurrentUserRecord } from "@/lib/auth/app-access";
 import { inspectTelegramInitData } from "@/lib/auth/telegram";
 import { tgDebug } from "@/lib/log";
 import {
   getProfileCompletionScore,
   resolveOnboardingCompleted,
 } from "@/lib/profile-completion";
-import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
   const initData = request.headers.get("x-telegram-init-data") ?? "";
-  const session = await getSessionPayload();
+  const record = await getCurrentUserRecord();
   const access = await getAppAccessState();
   const baseLogPayload = {
     userAgent: request.headers.get("user-agent") ?? "unknown",
@@ -23,16 +21,18 @@ export async function GET(request: Request) {
   };
 
   tgDebug("server:auth-me-start", {
-    hasSession: Boolean(session),
-    sessionUserId: session?.userId ?? null,
-    sessionTelegramId: session?.telegramId ?? null,
+    hasSession: Boolean(record?.session),
+    sessionUserId: record?.session.userId ?? null,
+    sessionTelegramId: record?.session.telegramId ?? null,
     ...baseLogPayload,
   });
 
-  if (!session || access.kind === "guest") {
+  if (!record || access.kind === "guest") {
     console.warn("[tg-auth] auth/me no-session", baseLogPayload);
-    return fail("Сессия не найдена.", 401);
+    return fail("РЎРµСЃСЃРёСЏ РЅРµ РЅР°Р№РґРµРЅР°.", 401);
   }
+
+  const session = record.session;
 
   const inspection = inspectTelegramInitData(initData);
 
@@ -47,43 +47,7 @@ export async function GET(request: Request) {
   });
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: session.userId },
-      select: {
-        id: true,
-        telegramId: true,
-        firstName: true,
-        lastName: true,
-        age: true,
-        cityId: true,
-        district: true,
-        photoUrl: true,
-        pickupPointCode: true,
-        experienceSummary: true,
-        isOnboardingCompleted: true,
-        isBanned: true,
-        city: {
-          select: {
-            name: true,
-          },
-        },
-        roles: {
-          select: {
-            role: true,
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      tgDebug("server:auth-me-user-not-found", {
-        sessionUserId: session.userId,
-        sessionTelegramId: session.telegramId,
-        ...baseLogPayload,
-      });
-
-      return fail("Пользователь не найден.", 401);
-    }
+    const user = record.user;
 
     if (inspection.ok) {
       const incomingTelegramId = String(inspection.user.id);
@@ -104,13 +68,13 @@ export async function GET(request: Request) {
           ...baseLogPayload,
         });
 
-        return fail("Сессия принадлежит другому Telegram-аккаунту.", 401);
+        return fail("РЎРµСЃСЃРёСЏ РїСЂРёРЅР°РґР»РµР¶РёС‚ РґСЂСѓРіРѕРјСѓ Telegram-Р°РєРєР°СѓРЅС‚Сѓ.", 401);
       }
     } else {
-      // Запрос пришёл из Telegram-клиента (Android/iOS WebView), но initData
-      // не был прислан. На Android cookies шарятся между аккаунтами, поэтому
-      // нельзя доверять старой cookie без проверки identity. Заставим клиент
-      // переавторизоваться через initData.
+      // Р—Р°РїСЂРѕСЃ РїСЂРёС€С‘Р» РёР· Telegram-РєР»РёРµРЅС‚Р° (Android/iOS WebView), РЅРѕ initData
+      // РЅРµ Р±С‹Р» РїСЂРёСЃР»Р°РЅ. РќР° Android cookies С€Р°СЂСЏС‚СЃСЏ РјРµР¶РґСѓ Р°РєРєР°СѓРЅС‚Р°РјРё, РїРѕСЌС‚РѕРјСѓ
+      // РЅРµР»СЊР·СЏ РґРѕРІРµСЂСЏС‚СЊ СЃС‚Р°СЂРѕР№ cookie Р±РµР· РїСЂРѕРІРµСЂРєРё identity. Р—Р°СЃС‚Р°РІРёРј РєР»РёРµРЅС‚
+      // РїРµСЂРµР°РІС‚РѕСЂРёР·РѕРІР°С‚СЊСЃСЏ С‡РµСЂРµР· initData.
       const ua = baseLogPayload.userAgent.toLowerCase();
       const isTelegramWebView =
         ua.includes("telegram-android") ||
@@ -134,7 +98,7 @@ export async function GET(request: Request) {
           ...baseLogPayload,
         });
 
-        return fail("Нужна свежая авторизация Telegram.", 401);
+        return fail("РќСѓР¶РЅР° СЃРІРµР¶Р°СЏ Р°РІС‚РѕСЂРёР·Р°С†РёСЏ Telegram.", 401);
       }
     }
 
@@ -176,15 +140,10 @@ export async function GET(request: Request) {
     });
 
     return ok({
-      user: {
-        id: user.id,
-        telegramId: user.telegramId,
-      },
       roles,
       isBanned: user.isBanned,
       bannedProfile,
       onboardingCompleted,
-      profileCompletion,
     });
   } catch (error) {
     console.error("[tg-auth] auth/me failed", {
@@ -200,6 +159,6 @@ export async function GET(request: Request) {
       ...baseLogPayload,
     });
 
-    return fail("Не удалось получить профиль.", 500);
+    return fail("РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РїСЂРѕС„РёР»СЊ.", 500);
   }
 }

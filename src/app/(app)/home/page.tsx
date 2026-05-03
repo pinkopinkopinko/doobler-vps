@@ -13,6 +13,8 @@ import {
 import { PageHeader } from "@/components/layout/page-header";
 import { BrandMark } from "@/components/layout/splash-frame";
 import { ShiftCard } from "@/components/shifts/shift-card";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getSessionPayload } from "@/lib/auth/session";
 import { demoProfile } from "@/lib/demo-data";
@@ -146,13 +148,18 @@ export default async function HomePage() {
       </div>
 
       <div className="relative z-[1] space-y-5">
-        <div className="mb-1 inline-flex w-fit items-center gap-2 rounded-full bg-white py-2 pl-2 pr-3.5 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
-          <BrandMark size={24} opacity={1} />
-          <span className="text-[13px] font-semibold tracking-[-0.02em] text-[#101214]">
-            Дублер
-          </span>
-          <span className="h-3.5 w-px bg-black/10" />
-          <span className="text-[12px] text-[#a6abb2]">{profile.cityName ?? "Город не выбран"}</span>
+        <div className="mb-1 flex items-center justify-between gap-3">
+          <div className="inline-flex min-w-0 items-center gap-2 rounded-full bg-white py-2 pl-2 pr-3.5 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
+            <BrandMark size={24} opacity={1} />
+            <span className="text-[13px] font-semibold tracking-[-0.02em] text-[#101214]">
+              Дублер
+            </span>
+            <span className="h-3.5 w-px bg-black/10" />
+            <span className="truncate text-[12px] text-[#a6abb2]">
+              {profile.cityName ?? "Город не выбран"}
+            </span>
+          </div>
+          <ThemeToggle />
         </div>
 
         <PageHeader
@@ -272,9 +279,20 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="space-y-4">
-          {urgentPosts.map((shift) => (
-            <ShiftCard key={shift.id} shift={shift} />
-          ))}
+          {urgentPosts.length ? (
+            urgentPosts.map((shift) => <ShiftCard key={shift.id} shift={shift} />)
+          ) : (
+            <EmptyState
+              title={isEmployer ? "Срочных смен пока нет" : "Рядом пока нет срочных смен"}
+              description={
+                isEmployer
+                  ? "Когда появится срочная потребность в замене, она сразу отобразится здесь. Пока можно открыть все объявления или создать новую смену."
+                  : "Сейчас в вашей зоне нет срочных заявок. Откройте полную ленту смен — там могут быть обычные дневные смены и вакансии."
+              }
+              actionHref={isEmployer ? "/shifts/new" : "/shifts"}
+              actionLabel={isEmployer ? "Создать смену" : "Открыть все смены"}
+            />
+          )}
         </div>
       </section>
       </div>

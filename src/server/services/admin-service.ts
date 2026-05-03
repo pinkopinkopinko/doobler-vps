@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { compactProfilePhotoUrl } from "@/lib/profile-photo";
 import { prisma } from "@/lib/prisma";
 import type { AppRole, ReportStatus, ShiftPostStatus } from "@/lib/types";
 
@@ -95,7 +96,7 @@ export async function searchUsers(rawQuery: string | null, limit = 20) {
     firstName: user.firstName,
     lastName: user.lastName ?? null,
     phone: user.phone ?? null,
-    photoUrl: user.photoUrl ?? null,
+    photoUrl: compactProfilePhotoUrl(user.photoUrl),
     cityName: user.city?.name ?? null,
     isBanned: user.isBanned,
     isActive: user.isActive,
@@ -211,7 +212,7 @@ export async function getUserDetails(userId: string): Promise<UserDetails | null
     firstName: user.firstName,
     lastName: user.lastName ?? null,
     phone: user.phone ?? null,
-    photoUrl: user.photoUrl ?? null,
+    photoUrl: compactProfilePhotoUrl(user.photoUrl),
     cityName: user.city?.name ?? null,
     regionName: user.region?.name ?? null,
     district: user.district ?? null,

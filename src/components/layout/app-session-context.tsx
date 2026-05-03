@@ -10,6 +10,11 @@ export type AppSessionState = {
   onboardingCompleted: boolean | null;
 };
 
+export type ProfileUpdatedEventDetail = {
+  onboardingCompleted?: boolean;
+  roles?: AppRole[];
+};
+
 const AppSessionContext = createContext<AppSessionState>({
   roles: [],
   onboardingCompleted: null,

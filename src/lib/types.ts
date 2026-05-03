@@ -68,6 +68,7 @@ export type UserSummary = {
   ratingCount: number;
   completedAssignmentsCount: number;
   verificationStatus: VerificationStatus;
+  isPhoneVerified: boolean;
 };
 
 export type ShiftCard = {
@@ -103,11 +104,25 @@ export type ApplicationEmployerView = {
   photoUrl: string | null;
 };
 
+export type ApplicationApplicantView = {
+  id: string;
+  firstName: string;
+  lastName: string | null;
+  photoUrl: string | null;
+  experienceSummary: string | null;
+  cityName: string;
+  district: string | null;
+  marketplaces: MarketplaceCode[];
+  ratingAvg: number;
+  completedAssignmentsCount: number;
+};
+
 export type ApplicationCard = {
   id: string;
   shiftPostId: string;
   shiftTitle: string;
-  applicant: UserSummary;
+  shiftMarketplace: MarketplaceCode;
+  applicant: ApplicationApplicantView;
   employer: ApplicationEmployerView;
   status: ApplicationStatus;
   message: string | null;

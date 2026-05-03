@@ -1,12 +1,17 @@
 import { z } from "zod";
 
+import { isTrustedRemoteProfilePhotoUrl } from "@/lib/profile-photo";
 import { getTodayDateValue } from "@/lib/utils";
+
+const NAME_RE = /^[\p{L}\s'-]+$/u;
+const PHOTO_DATA_URI_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
+const PHOTO_UPLOAD_PATH_RE = /^\/api\/uploads\/[a-z0-9]+$/;
 
 export const shiftPostSchema = z
   .object({
     pickupPointId: z.string().optional().nullable(),
     title: z.string().trim().min(5).max(120),
-    type: z.enum(["URGENT_REPLACEMENT", "DAY_SHIFT", "PERMANENT_JOB"]),
+    type: z.enum(["URGENT_REPLACEMENT", "DAY_SHIFT"]),
     marketplaceId: z.string().min(1),
     cityId: z.string().min(1),
     regionId: z.string().min(1),
@@ -27,7 +32,7 @@ export const shiftPostSchema = z
       (value) => (value === "" || value === null || value === undefined ? undefined : value),
       z.coerce.number().int().positive("Укажите оплату больше 0 ₽."),
     ),
-    paymentType: z.enum(["FIXED_SHIFT", "HOURLY", "MONTHLY"]).default("FIXED_SHIFT"),
+    paymentType: z.enum(["FIXED_SHIFT", "HOURLY"]).default("FIXED_SHIFT"),
     experienceLevelRequired: z.enum([
       "NO_EXPERIENCE",
       "LESS_THAN_3_MONTHS",
@@ -58,23 +63,6 @@ export const applicationSchema = z.object({
   message: z.string().max(500).optional().nullable(),
 });
 
-// Аватарка профиля. До этой ревизии profileSchema принимала «любую строку
-// до 5 МБ» — это позволяло пихать в БД мегабайтовые data: URI с любыми MIME
-// (svg+xml со скриптами, gif-анимации, всё что угодно), плюс раздувало
-// payload и хранилище. Теперь:
-//  - либо пусто / null,
-//  - либо строгий data: URI на jpeg/png/webp + base64 (никаких svg/gif/html),
-//  - либо same-origin ссылка вида /api/uploads/<cuid> (под будущую миграцию
-//    на media-storage).
-//
-// 2_800_000 символов base64 ≈ 2 МБ исходного бинаря с запасом на padding
-// и заголовок data: URI. Сам бинарь ограничен в magic-byte хелпере
-// (profile-photo.ts) уже до 2 МБ, чтобы лимит работал и при идеально
-// плотной кодировке. Финальная проверка соответствия MIME реальным
-// байтам — там же.
-const PHOTO_DATA_URI_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
-const PHOTO_UPLOAD_PATH_RE = /^\/api\/uploads\/[a-z0-9]+$/;
-
 const photoUrlSchema = z
   .string()
   .max(2_800_000, "Фото должно быть меньше 2 МБ.")
@@ -82,20 +70,26 @@ const photoUrlSchema = z
     (value) =>
       value === "" ||
       PHOTO_DATA_URI_RE.test(value) ||
-      PHOTO_UPLOAD_PATH_RE.test(value),
-    "Поддерживаются только JPEG, PNG и WebP до 2 МБ.",
+      PHOTO_UPLOAD_PATH_RE.test(value) ||
+      isTrustedRemoteProfilePhotoUrl(value),
+    "Поддерживаются только JPEG, PNG, WebP и Telegram userpic SVG до 2 МБ.",
   )
   .optional()
   .nullable();
 
 export const profileSchema = z
   .object({
-    firstName: z.string().min(2).max(80),
-    lastName: z.string().min(2).max(80).optional().nullable(),
-    age: z.coerce.number().int().min(14).max(80).optional().nullable(),
+    firstName: z.string().trim().min(2).max(80).regex(NAME_RE, "Имя не должно содержать цифры."),
+    lastName: z
+      .string()
+      .trim()
+      .min(2)
+      .max(80)
+      .regex(NAME_RE, "Фамилия не должна содержать цифры.")
+      .optional()
+      .nullable(),
+    age: z.coerce.number().int().min(16).max(99).optional().nullable(),
     photoUrl: photoUrlSchema,
-    // Поле осталось в БД для будущей верификации, но в UI его сейчас нет —
-    // отдаём свободный текст до 64 символов, без обязательного формата.
     pickupPointCode: z.string().max(64).optional().nullable(),
     experienceSummary: z
       .string()
@@ -111,19 +105,11 @@ export const profileSchema = z
     marketplaces: z.array(z.enum(["OZON", "WB", "YANDEX", "OTHER"])).default([]),
   })
   .superRefine((value, ctx) => {
-    if (!value.age || value.age < 14) {
+    if (!value.age || value.age < 16 || value.age > 99) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Укажите возраст.",
+        message: "Укажите возраст от 16 до 99 лет.",
         path: ["age"],
-      });
-    }
-
-    if (!value.photoUrl) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Добавьте аватарку профиля.",
-        path: ["photoUrl"],
       });
     }
 

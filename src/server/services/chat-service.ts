@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { Prisma } from "@/generated/prisma/client";
 
+import { buildCompactProfilePhotoSource } from "@/lib/profile-photo";
 import { prisma } from "@/lib/prisma";
 import { buildParticipantKey } from "@/lib/chat/participant-key";
 import { notifyPeerAboutNewMessage } from "@/server/services/chat-notifier";
@@ -98,14 +99,11 @@ export type ConversationRow = {
     id: string;
     firstName: string;
     lastName: string | null;
-    username: string | null;
     photoUrl: string | null;
     isBanned: boolean;
   };
   lastMessage: {
-    id: string;
     body: string;
-    authorUserId: string;
     createdAt: string;
     hasAttachments: boolean;
   } | null;
@@ -130,7 +128,6 @@ export async function listConversations(currentUserId: string): Promise<Conversa
                   id: true,
                   firstName: true,
                   lastName: true,
-                  username: true,
                   photoUrl: true,
                   isBanned: true,
                 },
@@ -193,27 +190,27 @@ export async function listConversations(currentUserId: string): Promise<Conversa
     const lastMessage = convo.messages[0] ?? null;
 
     rows.push({
-      id: convo.id,
-      lastMessageAt: convo.lastMessageAt.toISOString(),
-      peer: {
-        id: peer.id,
-        firstName: peer.firstName,
-        lastName: peer.lastName ?? null,
-        username: peer.username ?? null,
-        photoUrl: peer.photoUrl ?? null,
-        isBanned: peer.isBanned,
-      },
-      lastMessage: lastMessage
-        ? {
-            id: lastMessage.id,
-            body: lastMessage.body,
-            authorUserId: lastMessage.authorUserId,
-            createdAt: lastMessage.createdAt.toISOString(),
-            hasAttachments: lastMessage._count.attachments > 0,
-          }
-        : null,
-      unreadCount: unreadMap.get(convo.id) ?? 0,
-    });
+        id: convo.id,
+        lastMessageAt: convo.lastMessageAt.toISOString(),
+        peer: {
+          id: peer.id,
+          firstName: peer.firstName,
+          lastName: peer.lastName ?? null,
+          photoUrl: buildCompactProfilePhotoSource({
+            userId: peer.id,
+            photoUrl: peer.photoUrl,
+          }),
+          isBanned: peer.isBanned,
+        },
+        lastMessage: lastMessage
+          ? {
+              body: lastMessage.body,
+              createdAt: lastMessage.createdAt.toISOString(),
+              hasAttachments: lastMessage._count.attachments > 0,
+            }
+          : null,
+        unreadCount: unreadMap.get(convo.id) ?? 0,
+      });
   }
 
   return rows;
@@ -241,14 +238,9 @@ export type ChatMessage = {
   body: string;
   authorUserId: string;
   createdAt: string;
-  editedAt: string | null;
-  deletedAt: string | null;
   attachments: Array<{
     id: string;
     mediaId: string;
-    mimeType: string;
-    width: number | null;
-    height: number | null;
   }>;
 };
 
@@ -282,7 +274,6 @@ export async function getConversationForUser(params: {
               id: true,
               firstName: true,
               lastName: true,
-              username: true,
               photoUrl: true,
               isBanned: true,
             },
@@ -303,14 +294,16 @@ export async function getConversationForUser(params: {
   return {
     id: conversation.id,
     peer: peerParticipant
-      ? {
-          id: peerParticipant.user.id,
-          firstName: peerParticipant.user.firstName,
-          lastName: peerParticipant.user.lastName ?? null,
-          username: peerParticipant.user.username ?? null,
-          photoUrl: peerParticipant.user.photoUrl ?? null,
-          isBanned: peerParticipant.user.isBanned,
-        }
+        ? {
+            id: peerParticipant.user.id,
+            firstName: peerParticipant.user.firstName,
+            lastName: peerParticipant.user.lastName ?? null,
+            photoUrl: buildCompactProfilePhotoSource({
+              userId: peerParticipant.user.id,
+              photoUrl: peerParticipant.user.photoUrl,
+            }),
+            isBanned: peerParticipant.user.isBanned,
+          }
       : null,
   };
 }
@@ -351,19 +344,10 @@ export async function listMessages(params: {
       body: true,
       authorUserId: true,
       createdAt: true,
-      editedAt: true,
-      deletedAt: true,
       attachments: {
         select: {
           id: true,
           mediaId: true,
-          media: {
-            select: {
-              mimeType: true,
-              width: true,
-              height: true,
-            },
-          },
         },
       },
     },
@@ -380,14 +364,9 @@ export async function listMessages(params: {
         body: message.body,
         authorUserId: message.authorUserId,
         createdAt: message.createdAt.toISOString(),
-        editedAt: message.editedAt?.toISOString() ?? null,
-        deletedAt: message.deletedAt?.toISOString() ?? null,
         attachments: message.attachments.map((attachment) => ({
           id: attachment.id,
           mediaId: attachment.mediaId,
-          mimeType: attachment.media.mimeType,
-          width: attachment.media.width ?? null,
-          height: attachment.media.height ?? null,
         })),
       }))
       .reverse(),
@@ -477,15 +456,10 @@ export async function sendMessage(params: {
         body: true,
         authorUserId: true,
         createdAt: true,
-        editedAt: true,
-        deletedAt: true,
         attachments: {
           select: {
             id: true,
             mediaId: true,
-            media: {
-              select: { mimeType: true, width: true, height: true },
-            },
           },
         },
       },
@@ -549,14 +523,9 @@ export async function sendMessage(params: {
     body: message.body,
     authorUserId: message.authorUserId,
     createdAt: message.createdAt.toISOString(),
-    editedAt: message.editedAt?.toISOString() ?? null,
-    deletedAt: message.deletedAt?.toISOString() ?? null,
     attachments: message.attachments.map((attachment) => ({
       id: attachment.id,
       mediaId: attachment.mediaId,
-      mimeType: attachment.media.mimeType,
-      width: attachment.media.width ?? null,
-      height: attachment.media.height ?? null,
     })),
   };
 }

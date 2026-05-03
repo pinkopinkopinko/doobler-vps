@@ -6,6 +6,7 @@ import { ApplicationsList } from "@/components/applications/applications-list";
 import { PageHeader } from "@/components/layout/page-header";
 import { ShiftActions } from "@/components/shifts/shift-actions";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getCurrentUserRecord } from "@/lib/auth/app-access";
 import { getSessionPayload } from "@/lib/auth/session";
 import {
   formatDate,
@@ -28,12 +29,15 @@ export default async function ShiftDetailsPage({ params }: ShiftDetailsPageProps
   const { id } = await params;
   const shift = await getShiftPostById(id);
   const session = await getSessionPayload();
+  const currentUserRecord = session ? await getCurrentUserRecord() : null;
 
   if (!shift) {
     notFound();
   }
 
   const canManage = Boolean(session?.userId && shift.createdByUserId === session.userId);
+  const viewerRoles = currentUserRecord?.user.roles.map((role) => role.role) ?? [];
+  const ownerCannotApply = viewerRoles.includes("OWNER");
   const applications = canManage ? await listApplicationsForShift(id) : [];
   const location = formatShiftLocation(shift.cityName, shift.district, shift.address);
 
@@ -83,7 +87,16 @@ export default async function ShiftDetailsPage({ params }: ShiftDetailsPageProps
           </div>
         </div>
 
-        <ShiftActions shiftId={shift.id} initiallyFavorite={shift.favorite} canApply={!canManage} />
+        <ShiftActions
+          shiftId={shift.id}
+          initiallyFavorite={shift.favorite}
+          canApply={!canManage && !ownerCannotApply}
+          applyDisabledLabel={
+            ownerCannotApply
+              ? "Владельцы ПВЗ не могут откликаться"
+              : "Вы владелец этой смены"
+          }
+        />
 
         <div className="mt-4 flex flex-wrap gap-2 text-[12px] text-[#7f8791]">
           <span className="flex items-center gap-2 rounded-full bg-[#f2f5f8] px-3 py-2">

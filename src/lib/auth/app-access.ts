@@ -1,5 +1,6 @@
 import { cache } from "react";
 
+import { compactProfilePhotoUrl } from "@/lib/profile-photo";
 import { getSessionPayload } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 
@@ -28,6 +29,7 @@ const accessUserSelect = {
   completedAssignmentsCount: true,
   bio: true,
   phone: true,
+  isPhoneVerified: true,
   isBanned: true,
   banReason: true,
   bannedAt: true,
@@ -113,7 +115,7 @@ export const getAppAccessState = cache(async (): Promise<AppAccessState> => {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
-      photoUrl: user.photoUrl,
+      photoUrl: compactProfilePhotoUrl(user.photoUrl),
       cityName: user.city?.name ?? null,
       district: user.district ?? null,
       isBanned: user.isBanned,

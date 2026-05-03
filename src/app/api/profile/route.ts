@@ -1,6 +1,7 @@
 import { ZodError } from "zod";
 
 import { fail, ok } from "@/lib/api";
+import { getCurrentUserRecord } from "@/lib/auth/app-access";
 import { getSessionPayload } from "@/lib/auth/session";
 import {
   getProfileCompletionScore,
@@ -17,8 +18,9 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
+  const view = searchParams.get("view");
 
-  if (searchParams.get("view") === "location") {
+  if (view === "location") {
     const profile = await prisma.user.findUnique({
       where: { id: session.userId },
       select: {
@@ -42,6 +44,56 @@ export async function GET(request: Request) {
         : null,
       onboardingCompleted: Boolean(profile?.cityId),
       profileCompletion: profile?.cityId ? 1 : 0,
+    });
+  }
+
+  if (view === "phone-status") {
+    const record = await getCurrentUserRecord();
+    return ok({
+      profile: record
+        ? {
+            isPhoneVerified: record.user.isPhoneVerified,
+          }
+        : null,
+    });
+  }
+
+  if (view === "editor") {
+    const profile = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: {
+        firstName: true,
+        lastName: true,
+        age: true,
+        photoUrl: true,
+        experienceSummary: true,
+        regionId: true,
+        cityId: true,
+        marketplaces: true,
+        roles: {
+          select: {
+            role: true,
+          },
+        },
+      },
+    });
+
+    return ok({
+      profile: profile
+        ? {
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            age: profile.age,
+            photoUrl: profile.photoUrl,
+            experienceSummary: profile.experienceSummary,
+            regionId: profile.regionId,
+            cityId: profile.cityId,
+            roles: profile.roles.map((role) => role.role),
+            marketplaces: profile.marketplaces,
+          }
+        : null,
+      onboardingCompleted: resolveOnboardingCompleted(profile),
+      profileCompletion: getProfileCompletionScore(profile),
     });
   }
 

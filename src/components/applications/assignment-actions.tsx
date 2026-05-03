@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LoaderCircle, MessageSquarePlus, ShieldCheck } from "lucide-react";
+import { AlertCircle, CheckCircle2, LoaderCircle, MessageSquarePlus, ShieldCheck } from "lucide-react";
 
 import { fetchWithTelegramAuth } from "@/lib/auth/client";
 import type { AssignmentStatus } from "@/lib/types";
@@ -14,6 +14,11 @@ type AssignmentActionsProps = {
   reviewTargetLabel?: string;
   reviewPlaceholder?: string;
 };
+
+type FeedbackState =
+  | { tone: "success"; text: string }
+  | { tone: "error"; text: string }
+  | null;
 
 export function AssignmentActions({
   assignmentId,
@@ -29,11 +34,11 @@ export function AssignmentActions({
   const [rating, setRating] = useState("5");
   const [text, setText] = useState("");
   const [pendingAction, setPendingAction] = useState<"complete" | "review" | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackState>(null);
 
   async function handleComplete() {
     setPendingAction("complete");
-    setMessage(null);
+    setFeedback(null);
 
     try {
       const response = await fetchWithTelegramAuth(`/api/assignments/${assignmentId}/complete`, {
@@ -41,13 +46,14 @@ export function AssignmentActions({
       });
 
       if (!response.ok) {
-        setMessage("Не удалось закрыть смену.");
+        setFeedback({ tone: "error", text: "Не удалось закрыть смену." });
         return;
       }
 
       setStatus("COMPLETED");
+      setFeedback({ tone: "success", text: "Смена закрыта. Теперь можно оставить отзыв." });
     } catch {
-      setMessage("Не удалось закрыть смену.");
+      setFeedback({ tone: "error", text: "Не удалось закрыть смену." });
     } finally {
       setPendingAction(null);
     }
@@ -55,7 +61,7 @@ export function AssignmentActions({
 
   async function handleReviewSubmit() {
     setPendingAction("review");
-    setMessage(null);
+    setFeedback(null);
 
     try {
       const response = await fetchWithTelegramAuth(`/api/assignments/${assignmentId}/reviews`, {
@@ -72,19 +78,37 @@ export function AssignmentActions({
       const payload = (await response.json().catch(() => null)) as { error?: string } | null;
 
       if (!response.ok) {
-        setMessage(payload?.error ?? "Не удалось сохранить отзыв.");
+        setFeedback({ tone: "error", text: payload?.error ?? "Не удалось сохранить отзыв." });
         return;
       }
 
       setReviewSubmitted(true);
       setShowReviewForm(false);
       setText("");
+      setFeedback({ tone: "success", text: "Отзыв сохранён." });
     } catch {
-      setMessage("Не удалось сохранить отзыв.");
+      setFeedback({ tone: "error", text: "Не удалось сохранить отзыв." });
     } finally {
       setPendingAction(null);
     }
   }
+
+  const feedbackNode = feedback ? (
+    <p
+      className={`flex items-start gap-2 rounded-[16px] border px-3 py-2 text-[13px] ${
+        feedback.tone === "success"
+          ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+          : "border-rose-100 bg-rose-50 text-rose-700"
+      }`}
+    >
+      {feedback.tone === "success" ? (
+        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+      ) : (
+        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+      )}
+      <span>{feedback.text}</span>
+    </p>
+  ) : null;
 
   if (status !== "COMPLETED" && canComplete) {
     return (
@@ -102,7 +126,7 @@ export function AssignmentActions({
           )}
           Закрыть смену
         </button>
-        {message ? <p className="text-[13px] text-[#df6d64]">{message}</p> : null}
+        {feedbackNode}
       </div>
     );
   }
@@ -117,8 +141,11 @@ export function AssignmentActions({
 
   if (reviewSubmitted) {
     return (
-      <div className="rounded-[20px] bg-[#f2f5f8] px-4 py-3 text-[14px] text-[#7f8791]">
-        Отзыв по этой смене уже оставлен.
+      <div className="space-y-3">
+        <div className="rounded-[20px] bg-[#f2f5f8] px-4 py-3 text-[14px] text-[#7f8791]">
+          Отзыв по этой смене уже оставлен.
+        </div>
+        {feedbackNode}
       </div>
     );
   }
@@ -183,7 +210,7 @@ export function AssignmentActions({
         </div>
       )}
 
-      {message ? <p className="text-[13px] text-[#df6d64]">{message}</p> : null}
+      {feedbackNode}
     </div>
   );
 }

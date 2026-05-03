@@ -58,6 +58,7 @@ export const demoUsers: UserSummary[] = [
     ratingCount: 16,
     completedAssignmentsCount: 34,
     verificationStatus: "APPROVED",
+    isPhoneVerified: false,
   },
   {
     id: "user_worker_1",
@@ -77,6 +78,7 @@ export const demoUsers: UserSummary[] = [
     ratingCount: 21,
     completedAssignmentsCount: 27,
     verificationStatus: "APPROVED",
+    isPhoneVerified: false,
   },
   {
     id: "user_worker_2",
@@ -96,6 +98,7 @@ export const demoUsers: UserSummary[] = [
     ratingCount: 8,
     completedAssignmentsCount: 11,
     verificationStatus: "PENDING",
+    isPhoneVerified: false,
   },
 ];
 
@@ -152,8 +155,8 @@ export const demoShiftPosts: ShiftCard[] = [
   {
     id: "shift_3",
     createdByUserId: "user_owner_1",
-    title: "Постоянная вакансия управляющего ПВЗ",
-    type: "PERMANENT_JOB",
+    title: "Замена старшего сотрудника ПВЗ",
+    type: "DAY_SHIFT",
     status: "PUBLISHED",
     marketplace: "YANDEX",
     cityName: "Казань",
@@ -164,12 +167,12 @@ export const demoShiftPosts: ShiftCard[] = [
     shiftDate: inThreeDays,
     startAt: null,
     endAt: null,
-    paymentAmountRub: 65000,
-    paymentType: "MONTHLY",
+    paymentAmountRub: 6500,
+    paymentType: "FIXED_SHIFT",
     experienceLevelRequired: "ONE_PLUS_YEAR",
     isUrgent: false,
     description:
-      "Ищем управляющего с опытом работы в ПВЗ и контроля кассовой дисциплины.",
+      "Нужна замена на один день для ПВЗ с опытом работы на выдаче и возвратах.",
     createdByName: "Сеть ПВЗ Казань",
     applicationsCount: 5,
     favorite: false,
@@ -184,12 +187,26 @@ const demoEmployerView = {
   photoUrl: demoUsers[0].photoUrl ?? null,
 };
 
+const demoApplicantViews = demoUsers.slice(1).map((user) => ({
+  id: user.id,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  photoUrl: user.photoUrl ?? null,
+  experienceSummary: user.experienceSummary ?? null,
+  cityName: user.cityName,
+  district: user.district,
+  marketplaces: user.marketplaces,
+  ratingAvg: user.ratingAvg,
+  completedAssignmentsCount: user.completedAssignmentsCount,
+}));
+
 export const demoApplications: ApplicationCard[] = [
   {
     id: "application_1",
     shiftPostId: "shift_1",
     shiftTitle: "Срочно нужен сотрудник на вечернюю смену",
-    applicant: demoUsers[1],
+    shiftMarketplace: "OZON",
+    applicant: demoApplicantViews[0],
     employer: demoEmployerView,
     status: "SHORTLISTED",
     message: "Готов выйти завтра, опыт в Ozon 8 месяцев.",
@@ -200,11 +217,12 @@ export const demoApplications: ApplicationCard[] = [
   {
     id: "application_2",
     shiftPostId: "shift_3",
-    shiftTitle: "Постоянная вакансия управляющего ПВЗ",
-    applicant: demoUsers[2],
+    shiftTitle: "Замена старшего сотрудника ПВЗ",
+    shiftMarketplace: "YANDEX",
+    applicant: demoApplicantViews[1],
     employer: demoEmployerView,
     status: "APPLIED",
-    message: "Ранее управляла точкой Яндекс Маркета в Казани.",
+    message: "Готова выйти на замену, есть опыт работы в ПВЗ.",
     score: 78,
     createdAt: "2026-04-17T10:05:00.000Z",
     assignment: null,

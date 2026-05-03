@@ -8,6 +8,10 @@
 // чтобы строковый лимит не обходился padding'ом.
 
 const DATA_URI_PREFIX = /^data:image\/(jpeg|png|webp);base64,/;
+const DATA_IMAGE_PREFIX = /^data:image\//i;
+const TELEGRAM_USERPIC_URL_RE =
+  /^https:\/\/t\.me\/i\/userpic\/\d+\/[A-Za-z0-9_-]+\.(svg|jpg|jpeg|png|webp)$/i;
+const DEFAULT_COMPACT_INLINE_PHOTO_LIMIT = 8 * 1024;
 
 const MAX_DECODED_BYTES = 2 * 1024 * 1024; // 2 МБ финального бинаря.
 
@@ -35,6 +39,14 @@ export type PhotoValidationResult =
   | { ok: true }
   | { ok: false; reason: "format_mismatch" | "decode_failed" | "too_large" };
 
+export function isTrustedRemoteProfilePhotoUrl(photoUrl: string | null | undefined) {
+  if (!photoUrl) {
+    return false;
+  }
+
+  return TELEGRAM_USERPIC_URL_RE.test(photoUrl);
+}
+
 /**
  * Проверяет, что photoUrl — либо same-origin ссылка на /api/uploads, либо
  * валидный data: URI, реально содержащий JPEG/PNG/WebP. Возвращает ok:true
@@ -48,6 +60,10 @@ export function validateProfilePhotoUrl(photoUrl: string | null | undefined): Ph
   // Same-origin upload: магию проверять нечего, сам файл уже прошёл
   // через /api/uploads с MIME-валидацией.
   if (photoUrl.startsWith("/api/uploads/")) {
+    return { ok: true };
+  }
+
+  if (isTrustedRemoteProfilePhotoUrl(photoUrl)) {
     return { ok: true };
   }
 
@@ -91,4 +107,70 @@ export function validateProfilePhotoUrl(photoUrl: string | null | undefined): Ph
   }
 
   return { ok: false, reason: "format_mismatch" };
+}
+
+export function compactProfilePhotoUrl(
+  photoUrl: string | null | undefined,
+  options?: { maxInlineLength?: number },
+) {
+  if (!photoUrl) {
+    return null;
+  }
+
+  if (!DATA_IMAGE_PREFIX.test(photoUrl)) {
+    return photoUrl;
+  }
+
+  const maxInlineLength = options?.maxInlineLength ?? DEFAULT_COMPACT_INLINE_PHOTO_LIMIT;
+  return photoUrl.length <= maxInlineLength ? photoUrl : null;
+}
+
+export function buildCompactProfilePhotoSource(params: {
+  userId: string;
+  photoUrl: string | null | undefined;
+  fallbackPath?: string;
+  maxInlineLength?: number;
+}) {
+  const { photoUrl, fallbackPath = `/api/profile-photo/${params.userId}` } = params;
+  const compact = compactProfilePhotoUrl(photoUrl, {
+    maxInlineLength: params.maxInlineLength,
+  });
+
+  if (compact) {
+    return compact;
+  }
+
+  if (photoUrl && DATA_IMAGE_PREFIX.test(photoUrl)) {
+    return fallbackPath;
+  }
+
+  return null;
+}
+
+export function decodeInlineProfilePhoto(photoUrl: string | null | undefined) {
+  if (!photoUrl) {
+    return null;
+  }
+
+  const match = photoUrl.match(DATA_URI_PREFIX);
+  if (!match) {
+    return null;
+  }
+
+  const contentType = `image/${match[1]}`;
+  const base64 = photoUrl.slice(match[0].length);
+
+  try {
+    const buffer = Buffer.from(base64, "base64");
+    if (buffer.length === 0) {
+      return null;
+    }
+
+    return {
+      buffer,
+      contentType,
+    };
+  } catch {
+    return null;
+  }
 }

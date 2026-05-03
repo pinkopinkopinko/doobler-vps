@@ -86,6 +86,8 @@ export function ShiftFeed({
         <EmptyState
           title="По этим фильтрам ничего не найдено"
           description="Попробуйте расширить диапазон дат, убрать ограничение по району или поменять компанию."
+          actionHref="/shifts"
+          actionLabel="Сбросить фильтры"
         />
       ) : (
         <div className="space-y-4">

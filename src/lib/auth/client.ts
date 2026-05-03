@@ -188,13 +188,7 @@ async function bootstrapTelegramSession(expectedTelegramUserId: string | null) {
       expectedTelegramUserId,
       status: authResponse.status,
       payload: errorPayload,
-      fallbackLoginTokenPresent: Boolean(loginToken),
     });
-
-    const tokenResult = await bootstrapWithBotLoginToken(expectedTelegramUserId);
-    if (tokenResult) {
-      return true;
-    }
 
     bootstrappedTelegramUserId = null;
     return false;
@@ -230,6 +224,7 @@ async function bootstrapTelegramSession(expectedTelegramUserId: string | null) {
   }
 
   bootstrappedTelegramUserId = expectedTelegramUserId ?? sessionTelegramUserId ?? null;
+  removeBotLoginTokenFromUrl();
   logAuthClientDebug("bootstrap-finished", {
     bootstrappedTelegramUserId,
   });

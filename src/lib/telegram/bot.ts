@@ -1,7 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { randomBytes } from "node:crypto";
-
 import { prisma } from "@/lib/prisma";
 
 type TelegramApiResponse<T> = {
@@ -21,11 +19,20 @@ type TelegramFrom = {
   username?: string;
 };
 
+type TelegramContact = {
+  phone_number: string;
+  first_name: string;
+  last_name?: string;
+  user_id?: number;
+  vcard?: string;
+};
+
 type TelegramMessage = {
   message_id: number;
   chat: TelegramChat;
   from?: TelegramFrom;
   text?: string;
+  contact?: TelegramContact;
 };
 
 export type TelegramUpdate = {
@@ -65,6 +72,16 @@ function getBotToken() {
   return token;
 }
 
+function normalizeTelegramPhoneNumber(value: string) {
+  const digits = value.replace(/\D/g, "");
+
+  if (!digits) {
+    return null;
+  }
+
+  return `+${digits}`;
+}
+
 export function getMiniAppUrl() {
   const devUrlPath = join(process.cwd(), ".dev-ngrok-url");
   const devNgrokUrl =
@@ -73,39 +90,6 @@ export function getMiniAppUrl() {
       : "";
   const appUrl = devNgrokUrl || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   return `${appUrl.replace(/\/$/, "")}/home`;
-}
-
-async function createBotLoginUrl(from?: TelegramFrom) {
-  const appUrl = getMiniAppUrl();
-
-  if (!from?.id) {
-    return appUrl;
-  }
-
-  const token = randomBytes(32).toString("base64url");
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-  await prisma.botLoginToken.create({
-    data: {
-      token,
-      telegramId: String(from.id),
-      username: from.username ?? null,
-      firstName: from.first_name?.trim() || "Пользователь",
-      lastName: from.last_name?.trim() || null,
-      expiresAt,
-    },
-  });
-
-  const url = new URL(appUrl);
-  url.searchParams.set("loginToken", token);
-
-  console.info("[bot-debug] login-token-created", {
-    telegramId: String(from.id),
-    hasUsername: Boolean(from.username),
-    expiresAt: expiresAt.toISOString(),
-  });
-
-  return url.toString();
 }
 
 export function getWebhookSecret() {
@@ -185,12 +169,12 @@ export async function sendTelegramText(chatId: number | string, text: string) {
 }
 
 export async function sendMiniAppInvite(chatId: number | string, from?: TelegramFrom) {
-  const appUrl = await createBotLoginUrl(from);
+  const appUrl = getMiniAppUrl();
 
   console.info("[bot-debug] send-mini-app-invite", {
     chatId,
-    appUrl: maskLoginToken(appUrl),
-    hasLoginToken: appUrl.includes("loginToken="),
+    appUrl,
+    hasLoginToken: false,
     telegramId: from?.id ? String(from.id) : null,
   });
 
@@ -211,6 +195,137 @@ export async function sendMiniAppInvite(chatId: number | string, from?: Telegram
       ],
     },
   });
+}
+
+export async function sendPhoneVerificationRequest(chatId: number | string, from?: TelegramFrom) {
+  const firstName = from?.first_name?.trim();
+  const greeting = firstName ? `${firstName}, ` : "";
+
+  console.info("[bot-debug] send-phone-verification-request", {
+    chatId,
+    telegramId: from?.id ? String(from.id) : null,
+  });
+
+  return callTelegramApi("sendMessage", {
+    chat_id: chatId,
+    text:
+      `${greeting}чтобы подтвердить номер телефона в профиле, нажмите кнопку ниже и отправьте контакт из Telegram.` +
+      "\n\nМы сохраним номер в анкете и отметим профиль как подтверждённый по телефону.",
+    reply_markup: {
+      keyboard: [
+        [
+          {
+            text: "Поделиться номером телефона",
+            request_contact: true,
+          },
+        ],
+      ],
+      resize_keyboard: true,
+      one_time_keyboard: true,
+      input_field_placeholder: "Нажмите кнопку ниже",
+    },
+  });
+}
+
+async function sendPhoneVerificationResult(chatId: number | string, text: string) {
+  return callTelegramApi("sendMessage", {
+    chat_id: chatId,
+    text,
+    reply_markup: {
+      remove_keyboard: true,
+    },
+  });
+}
+
+async function handlePhoneVerificationContact(message: TelegramMessage) {
+  const fromId = message.from?.id;
+  const contactUserId = message.contact?.user_id;
+  const phoneNumber = message.contact?.phone_number ?? "";
+
+  if (!fromId) {
+    console.warn("[bot-debug] phone-verification-missing-from", {
+      chatId: message.chat.id,
+      messageId: message.message_id,
+    });
+
+    await sendPhoneVerificationResult(
+      message.chat.id,
+      "Не удалось определить ваш Telegram-профиль. Откройте Mini App ещё раз и повторите попытку.",
+    );
+
+    return { handled: true, action: "phone_verification_missing_from" };
+  }
+
+  if (!contactUserId || String(contactUserId) !== String(fromId)) {
+    console.warn("[bot-debug] phone-verification-mismatch", {
+      chatId: message.chat.id,
+      fromId: String(fromId),
+      contactUserId: contactUserId ? String(contactUserId) : null,
+    });
+
+    await sendPhoneVerificationResult(
+      message.chat.id,
+      "Подтвердить можно только свой собственный номер. Нажмите кнопку ещё раз и отправьте контакт текущего Telegram-аккаунта.",
+    );
+
+    return { handled: true, action: "phone_verification_mismatch" };
+  }
+
+  const normalizedPhoneNumber = normalizeTelegramPhoneNumber(phoneNumber);
+
+  if (!normalizedPhoneNumber) {
+    await sendPhoneVerificationResult(
+      message.chat.id,
+      "Не удалось прочитать номер телефона. Попробуйте ещё раз через кнопку подтверждения.",
+    );
+
+    return { handled: true, action: "phone_verification_invalid_phone" };
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      telegramId: String(fromId),
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!user) {
+    await sendPhoneVerificationResult(
+      message.chat.id,
+      "Сначала откройте Mini App, чтобы мы связали Telegram-аккаунт с профилем, а потом повторите подтверждение номера.",
+    );
+
+    return { handled: true, action: "phone_verification_user_not_found" };
+  }
+
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      phone: normalizedPhoneNumber,
+      isPhoneVerified: true,
+    },
+  });
+
+  console.info("[bot-debug] phone-verification-complete", {
+    chatId: message.chat.id,
+    userId: user.id,
+    telegramId: String(fromId),
+  });
+
+  await sendPhoneVerificationResult(
+    message.chat.id,
+    "Номер телефона подтверждён. Возвращайтесь в Mini App — отметка появится в вашем профиле.",
+  );
+
+  return {
+    handled: true,
+    action: "phone_verification_completed",
+    userId: user.id,
+  };
 }
 
 export async function setTelegramWebhook(webhookUrl: string) {
@@ -255,7 +370,26 @@ export async function setTelegramChatMenuButton() {
 export async function handleTelegramUpdate(update: TelegramUpdate) {
   const message = update.message;
 
-  if (!message?.text) {
+  if (!message) {
+    console.info("[bot-debug] update-ignored", {
+      updateId: update.update_id,
+      reason: "no_message",
+    });
+    return { handled: false, reason: "No message" };
+  }
+
+  if (message.contact) {
+    console.info("[bot-debug] update-contact", {
+      updateId: update.update_id,
+      chatId: message.chat.id,
+      fromId: message.from?.id ?? null,
+      contactUserId: message.contact.user_id ?? null,
+    });
+
+    return handlePhoneVerificationContact(message);
+  }
+
+  if (!message.text) {
     console.info("[bot-debug] update-ignored", {
       updateId: update.update_id,
       reason: "no_text_message",

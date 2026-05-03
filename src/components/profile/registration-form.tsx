@@ -4,10 +4,11 @@ import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Camera, LoaderCircle, Upload } from "lucide-react";
 
+import type { ProfileUpdatedEventDetail } from "@/components/layout/app-session-context";
 import { fetchWithTelegramAuth } from "@/lib/auth/client";
 import { getCachedResource } from "@/lib/client/reference-cache";
 import { demoCities, demoRegions } from "@/lib/demo-data";
-import type { MarketplaceCode } from "@/lib/types";
+import type { AppRole, MarketplaceCode } from "@/lib/types";
 import { isValidExperienceYears, normalizeExperienceYearsInput } from "@/lib/utils";
 
 const MARKETPLACE_OPTIONS: Array<{ code: MarketplaceCode; label: string }> = [
@@ -35,14 +36,10 @@ type ProfilePayload = {
     firstName: string;
     lastName: string | null;
     age?: number | null;
-    username: string | null;
     photoUrl?: string | null;
-    pickupPointCode?: string | null;
     experienceSummary?: string | null;
     regionId?: string | null;
     cityId?: string | null;
-    cityName: string;
-    district: string | null;
     roles: string[];
     marketplaces: MarketplaceCode[];
   };
@@ -63,6 +60,13 @@ type FormState = {
   photoUrl: string;
   marketplaces: MarketplaceCode[];
 };
+
+type FeedbackState =
+  | { tone: "neutral" | "success" | "error"; text: string }
+  | null;
+
+const MIN_PROFILE_AGE = 16;
+const MAX_PROFILE_AGE = 99;
 
 const fieldClassName =
   "w-full rounded-[22px] border border-[#e1e6eb] bg-[#f8fbfd] px-4 py-3.5 text-[15px] text-[#101214] outline-none transition placeholder:text-[#a6abb2] focus:border-[#3387d1] focus:bg-white";
@@ -103,7 +107,7 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
   const [allCities, setAllCities] = useState<CityOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [form, setForm] = useState<FormState>({
     firstName: "",
     lastName: "",
@@ -121,7 +125,7 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
 
     async function loadBootstrap() {
       setLoading(true);
-      setMessage(null);
+      setFeedback(null);
 
       try {
         const [regionsPayload, citiesPayload] = await Promise.all([
@@ -148,7 +152,9 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
           : getSafeRegions();
         const nextCities = citiesPayload?.cities?.length ? citiesPayload.cities : getSafeCities();
 
-        const profileRes = await fetchWithTelegramAuth("/api/profile", { cache: "no-store" });
+        const profileRes = await fetchWithTelegramAuth("/api/profile?view=editor", {
+          cache: "no-store",
+        });
         const profilePayload = profileRes?.ok
           ? (((await profileRes.json().catch(() => null)) as ProfilePayload | null) ?? null)
           : null;
@@ -187,7 +193,10 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
         });
 
         if (!profileRes.ok) {
-          setMessage("Для регистрации сейчас доступны Москва, Казань и Санкт-Петербург.");
+          setFeedback({
+            tone: "neutral",
+            text: "Для регистрации сейчас доступны Москва, Казань и Санкт-Петербург.",
+          });
         }
       } catch {
         if (ignore) {
@@ -203,7 +212,10 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
           regionId: current.regionId || safeRegions[0]?.id || "",
           cityId: current.cityId || safeCities[0]?.id || "",
         }));
-        setMessage("Показал базовые города для регистрации: Москва, Казань и Санкт-Петербург.");
+        setFeedback({
+          tone: "neutral",
+          text: "Показал базовые города для регистрации: Москва, Казань и Санкт-Петербург.",
+        });
       } finally {
         if (!ignore) {
           setLoading(false);
@@ -229,10 +241,10 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
     const hasBaseFields =
       form.firstName.trim().length >= 2 &&
       form.lastName.trim().length >= 2 &&
-      Number(form.age) >= 14 &&
+      Number(form.age) >= MIN_PROFILE_AGE &&
+      Number(form.age) <= MAX_PROFILE_AGE &&
       Boolean(form.regionId) &&
-      Boolean(selectedCityId) &&
-      Boolean(form.photoUrl);
+      Boolean(selectedCityId);
 
     if (!hasBaseFields) {
       return false;
@@ -258,6 +270,10 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
     }
   }
 
+  function sanitizePersonName(value: string) {
+    return value.replace(/\d+/g, "");
+  }
+
   async function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     // Очищаем input сразу — иначе повторный выбор того же файла после ошибки
@@ -273,7 +289,10 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
     // что принимает серверный profileSchema. SVG исключён намеренно.
     const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
     if (!allowedTypes.has(file.type)) {
-      setMessage("Для аватарки подойдут только JPEG, PNG или WebP.");
+      setFeedback({
+        tone: "error",
+        text: "Для аватарки подойдут только JPEG, PNG или WebP.",
+      });
       return;
     }
 
@@ -281,7 +300,10 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
     // строки лимит будет ~2.7 МБ — сходится с серверной проверкой 2_800_000.
     const MAX_BYTES = 2 * 1024 * 1024;
     if (file.size > MAX_BYTES) {
-      setMessage("Выберите фото меньше 2 МБ — это требование сервера.");
+      setFeedback({
+        tone: "error",
+        text: "Выберите фото меньше 2 МБ — это требование сервера.",
+      });
       return;
     }
 
@@ -289,18 +311,22 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
     reader.onload = () => {
       const result = typeof reader.result === "string" ? reader.result : "";
       setForm((current) => ({ ...current, photoUrl: result }));
-      setMessage(null);
+      setFeedback(null);
     };
-    reader.onerror = () => setMessage("Не удалось прочитать изображение.");
+    reader.onerror = () =>
+      setFeedback({
+        tone: "error",
+        text: "Не удалось прочитать изображение.",
+      });
     reader.readAsDataURL(file);
   }
 
   async function handleSubmit() {
     setSaving(true);
-    setMessage(null);
+    setFeedback(null);
 
     try {
-        const roles = form.role === "OWNER" ? ["OWNER"] : ["EMPLOYEE"];
+        const roles: AppRole[] = form.role === "OWNER" ? ["OWNER"] : ["EMPLOYEE"];
       const payload = {
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
@@ -333,31 +359,37 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
         | null;
 
       if (!safeResponse.ok) {
-        setMessage(
-          safeResponse.status === 401
-            ? "Не удалось автоматически подтвердить Telegram-сессию. Откройте Mini App из бота ещё раз."
-            : (result?.error ?? result?.message ?? "Не удалось сохранить профиль."),
-        );
+        setFeedback({
+          tone: "error",
+          text:
+            safeResponse.status === 401
+              ? "Не удалось автоматически подтвердить Telegram-сессию. Откройте Mini App из бота ещё раз."
+              : (result?.error ?? result?.message ?? "Не удалось сохранить профиль."),
+        });
         return;
       }
 
       if (typeof window !== "undefined") {
         window.dispatchEvent(
-          new CustomEvent("profile:updated", {
-            detail: { onboardingCompleted: true },
+          new CustomEvent<ProfileUpdatedEventDetail>("profile:updated", {
+            detail: { onboardingCompleted: true, roles },
           }),
         );
       }
 
       if (mode === "onboarding") {
+        router.refresh();
         router.replace("/home");
         return;
       }
 
-      setMessage("Профиль сохранён.");
+      setFeedback({ tone: "success", text: "Профиль сохранён." });
       router.refresh();
     } catch {
-      setMessage("Сервис профиля временно недоступен. Попробуйте ещё раз.");
+      setFeedback({
+        tone: "error",
+        text: "Сервис профиля временно недоступен. Попробуйте ещё раз.",
+      });
     } finally {
       setSaving(false);
     }
@@ -392,7 +424,10 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
               <input
                 value={form.firstName}
                 onChange={(event) =>
-                  setForm((current) => ({ ...current, firstName: event.target.value }))
+                  setForm((current) => ({
+                    ...current,
+                    firstName: sanitizePersonName(event.target.value),
+                  }))
                 }
                 className={fieldClassName}
                 placeholder="Иван"
@@ -404,7 +439,10 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
               <input
                 value={form.lastName}
                 onChange={(event) =>
-                  setForm((current) => ({ ...current, lastName: event.target.value }))
+                  setForm((current) => ({
+                    ...current,
+                    lastName: sanitizePersonName(event.target.value),
+                  }))
                 }
                 className={fieldClassName}
                 placeholder="Иванов"
@@ -416,13 +454,14 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
             <span>Возраст</span>
             <input
               type="number"
-              min={14}
-              max={80}
+              min={MIN_PROFILE_AGE}
+              max={MAX_PROFILE_AGE}
               value={form.age}
               onChange={(event) => setForm((current) => ({ ...current, age: event.target.value }))}
               className={fieldClassName}
               placeholder="Например, 24"
             />
+            <span className={hintClassName}>Возраст должен быть от 16 до 99 лет.</span>
           </label>
 
           <div className="grid gap-2 text-[14px] font-medium text-[#101214]">
@@ -604,7 +643,19 @@ export function RegistrationForm({ mode = "onboarding" }: RegistrationFormProps)
             {mode === "onboarding" ? "Завершить регистрацию" : "Сохранить профиль"}
           </button>
 
-          {message ? <p className="text-[14px] text-[#7f8791]">{message}</p> : null}
+          {feedback ? (
+            <p
+              className={`text-[14px] ${
+                feedback.tone === "error"
+                  ? "text-[#b35b54]"
+                  : feedback.tone === "success"
+                    ? "text-[#2f7a53]"
+                    : "text-[#7f8791]"
+              }`}
+            >
+              {feedback.text}
+            </p>
+          ) : null}
         </div>
       )}
     </section>

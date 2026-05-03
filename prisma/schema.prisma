@@ -128,6 +128,7 @@ model User {
   pickupPointCode           String?
   experienceSummary         String?
   phone                     String?
+  isPhoneVerified           Boolean         @default(false)
   bio                       String?
   gender                    String?
   regionId                  String?

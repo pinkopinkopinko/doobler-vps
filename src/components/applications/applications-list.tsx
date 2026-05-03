@@ -34,11 +34,11 @@ export function ApplicationsList({ applications, canConfirm = false }: Applicati
                 )}
               </div>
 
-              <div>
-                <p className="text-[13px] font-medium text-[#667381]">
+              <div className="min-w-0">
+                <p className="break-words text-[13px] font-medium text-[#667381] [overflow-wrap:anywhere]">
                   {application.applicant.firstName} {application.applicant.lastName ?? ""}
                 </p>
-                <h3 className="mt-1 text-[20px] font-semibold tracking-[-0.04em] text-[#101214]">
+                <h3 className="mt-1 break-words text-[20px] font-semibold tracking-[-0.04em] text-[#101214] [overflow-wrap:anywhere]">
                   {application.shiftTitle}
                 </h3>
               </div>
@@ -49,7 +49,7 @@ export function ApplicationsList({ applications, canConfirm = false }: Applicati
           </div>
 
           <div className="grid gap-1 text-[14px] font-medium leading-6 text-[#667381]">
-            <p>
+            <p className="break-words [overflow-wrap:anywhere]">
               Город: {application.applicant.cityName}
               {application.applicant.district ? `, ${application.applicant.district}` : ""}
             </p>
@@ -61,7 +61,11 @@ export function ApplicationsList({ applications, canConfirm = false }: Applicati
               <p>Опыт: {formatExperienceYears(application.applicant.experienceSummary)}</p>
             ) : null}
             <p>Скоринг: {application.score} / 100</p>
-            {application.message ? <p>Комментарий: {application.message}</p> : null}
+            {application.message ? (
+              <p className="break-words [overflow-wrap:anywhere]">
+                Комментарий: {application.message}
+              </p>
+            ) : null}
           </div>
 
           <div className="mt-4">

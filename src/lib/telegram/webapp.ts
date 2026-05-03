@@ -224,17 +224,27 @@ export async function getTelegramUserIdSafe() {
 }
 
 export function applyTelegramTheme() {
+  const root = document.documentElement;
+  const forcedTheme =
+    new URLSearchParams(window.location.search).get("theme") ??
+    window.localStorage.getItem("doobler-theme");
+  const hasForcedTheme = forcedTheme === "dark" || forcedTheme === "light";
+
+  if (hasForcedTheme) {
+    root.dataset.theme = forcedTheme;
+    root.dataset.tgScheme = forcedTheme;
+  }
+
   const webApp = getTelegramWebApp();
   if (!webApp?.themeParams || typeof document === "undefined") {
     return;
   }
 
-  const root = document.documentElement;
   Object.entries(webApp.themeParams).forEach(([key, value]) => {
     root.style.setProperty(`--tg-${key.replaceAll("_", "-")}`, value);
   });
 
-  root.dataset.tgScheme = webApp.colorScheme ?? "light";
+  root.dataset.tgScheme = hasForcedTheme ? forcedTheme : (webApp.colorScheme ?? "light");
 }
 
 export async function prepareTelegramWebApp() {

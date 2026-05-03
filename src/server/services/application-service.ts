@@ -7,6 +7,7 @@ import {
 import { demoApplications } from "@/lib/demo-data";
 import { isDevFallbackEnabled, logDevFallbackUsed } from "@/lib/dev-fallback";
 import { sendTelegramMessage } from "@/lib/notifications/telegram";
+import { buildCompactProfilePhotoSource } from "@/lib/profile-photo";
 import { prisma } from "@/lib/prisma";
 import { applicationSchema, reviewSchema } from "@/lib/validations/shift-post";
 
@@ -22,6 +23,7 @@ function shouldUseDemoFallback(error: unknown) {
   if (error instanceof Error) {
     const businessErrors = new Set([
       "forbidden",
+      "owner_cannot_apply",
       "assignment_not_completed",
       "applicant_not_found",
       "applicant_banned",
@@ -62,6 +64,9 @@ type ApplicationRecord = {
   createdAt: Date;
   shiftPost: {
     title: string;
+    marketplace: {
+      code: "OZON" | "WB" | "YANDEX" | "OTHER";
+    };
     createdBy: {
       id: string;
       firstName: string;
@@ -72,21 +77,15 @@ type ApplicationRecord = {
   };
   applicant: {
     id: string;
-    telegramId: string;
     firstName: string;
     lastName: string | null;
-    age: number | null;
-    username: string | null;
     photoUrl: string | null;
     experienceSummary: string | null;
     district: string | null;
     marketplaces: Array<"OZON" | "WB" | "YANDEX" | "OTHER">;
     ratingAvg: number;
-    ratingCount: number;
     completedAssignmentsCount: number;
     city: { name: string } | null;
-    roles: Array<{ role: "OWNER" | "MANAGER" | "EMPLOYEE" | "TEMP_WORKER" | "MODERATOR" }>;
-    verifications: Array<{ status: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED" }>;
   };
   assignment: {
     id: string;
@@ -103,36 +102,35 @@ function buildApplicationCard(application: ApplicationRecord) {
     id: application.id,
     shiftPostId: application.shiftPostId,
     shiftTitle: application.shiftPost.title,
+    shiftMarketplace: application.shiftPost.marketplace.code,
     status: application.status,
     message: application.message,
     score: application.score ?? 0,
     createdAt: application.createdAt.toISOString(),
     applicant: {
       id: application.applicant.id,
-      telegramId: application.applicant.telegramId,
       firstName: application.applicant.firstName,
       lastName: application.applicant.lastName,
-      age: application.applicant.age,
-      username: application.applicant.username,
-      photoUrl: application.applicant.photoUrl,
-      pickupPointCode: null,
+      photoUrl: buildCompactProfilePhotoSource({
+        userId: application.applicant.id,
+        photoUrl: application.applicant.photoUrl,
+      }),
       experienceSummary: application.applicant.experienceSummary,
-      isOnboardingCompleted: true,
       cityName: application.applicant.city?.name ?? "Не указан",
       district: application.applicant.district,
-      roles: application.applicant.roles.map((role) => role.role),
       marketplaces: application.applicant.marketplaces,
       ratingAvg: application.applicant.ratingAvg,
-      ratingCount: application.applicant.ratingCount,
       completedAssignmentsCount: application.applicant.completedAssignmentsCount,
-      verificationStatus: application.applicant.verifications[0]?.status ?? "PENDING",
     },
     employer: {
       id: application.shiftPost.createdBy.id,
       firstName: application.shiftPost.createdBy.firstName,
       lastName: application.shiftPost.createdBy.lastName,
       username: application.shiftPost.createdBy.username,
-      photoUrl: application.shiftPost.createdBy.photoUrl,
+      photoUrl: buildCompactProfilePhotoSource({
+        userId: application.shiftPost.createdBy.id,
+        photoUrl: application.shiftPost.createdBy.photoUrl,
+      }),
     },
     assignment: application.assignment
       ? {
@@ -150,6 +148,23 @@ function buildApplicationCard(application: ApplicationRecord) {
   };
 }
 
+const applicationApplicantSelect = {
+  id: true,
+  firstName: true,
+  lastName: true,
+  photoUrl: true,
+  experienceSummary: true,
+  district: true,
+  marketplaces: true,
+  ratingAvg: true,
+  completedAssignmentsCount: true,
+  city: {
+    select: {
+      name: true,
+    },
+  },
+} as const;
+
 export async function listApplicationsForShift(shiftPostId: string) {
   try {
     const applications = await prisma.application.findMany({
@@ -163,34 +178,7 @@ export async function listApplicationsForShift(shiftPostId: string) {
         score: true,
         createdAt: true,
         applicant: {
-          select: {
-            id: true,
-            telegramId: true,
-            firstName: true,
-            lastName: true,
-            age: true,
-            username: true,
-            photoUrl: true,
-            experienceSummary: true,
-            district: true,
-            marketplaces: true,
-            ratingAvg: true,
-            ratingCount: true,
-            completedAssignmentsCount: true,
-            roles: true,
-            city: {
-              select: {
-                name: true,
-              },
-            },
-            verifications: {
-              orderBy: { createdAt: "desc" },
-              take: 1,
-              select: {
-                status: true,
-              },
-            },
-          },
+          select: applicationApplicantSelect,
         },
         assignment: {
           select: {
@@ -209,6 +197,11 @@ export async function listApplicationsForShift(shiftPostId: string) {
         shiftPost: {
           select: {
             title: true,
+            marketplace: {
+              select: {
+                code: true,
+              },
+            },
             createdBy: {
               select: {
                 id: true,
@@ -248,6 +241,11 @@ export async function listMyApplications(userId: string) {
         shiftPost: {
           select: {
             title: true,
+            marketplace: {
+              select: {
+                code: true,
+              },
+            },
             createdBy: {
               select: {
                 id: true,
@@ -274,34 +272,7 @@ export async function listMyApplications(userId: string) {
           },
         },
         applicant: {
-          select: {
-            id: true,
-            telegramId: true,
-            firstName: true,
-            lastName: true,
-            age: true,
-            username: true,
-            photoUrl: true,
-            experienceSummary: true,
-            district: true,
-            marketplaces: true,
-            ratingAvg: true,
-            ratingCount: true,
-            completedAssignmentsCount: true,
-            roles: true,
-            city: {
-              select: {
-                name: true,
-              },
-            },
-            verifications: {
-              orderBy: { createdAt: "desc" },
-              take: 1,
-              select: {
-                status: true,
-              },
-            },
-          },
+          select: applicationApplicantSelect,
         },
       },
       orderBy: { createdAt: "desc" },
@@ -336,6 +307,11 @@ export async function listApplicationsForEmployer(employerUserId: string) {
         shiftPost: {
           select: {
             title: true,
+            marketplace: {
+              select: {
+                code: true,
+              },
+            },
             createdBy: {
               select: {
                 id: true,
@@ -362,34 +338,7 @@ export async function listApplicationsForEmployer(employerUserId: string) {
           },
         },
         applicant: {
-          select: {
-            id: true,
-            telegramId: true,
-            firstName: true,
-            lastName: true,
-            age: true,
-            username: true,
-            photoUrl: true,
-            experienceSummary: true,
-            district: true,
-            marketplaces: true,
-            ratingAvg: true,
-            ratingCount: true,
-            completedAssignmentsCount: true,
-            roles: true,
-            city: {
-              select: {
-                name: true,
-              },
-            },
-            verifications: {
-              orderBy: { createdAt: "desc" },
-              take: 1,
-              select: {
-                status: true,
-              },
-            },
-          },
+          select: applicationApplicantSelect,
         },
       },
       orderBy: [{ createdAt: "desc" }],
@@ -414,7 +363,15 @@ export async function applyToShift(shiftPostId: string, applicantUserId: string,
     const [applicant, shiftPost] = await Promise.all([
       prisma.user.findUnique({
         where: { id: applicantUserId },
-        select: { id: true, isBanned: true },
+        select: {
+          id: true,
+          isBanned: true,
+          roles: {
+            select: {
+              role: true,
+            },
+          },
+        },
       }),
       prisma.shiftPost.findUnique({
         where: { id: shiftPostId },
@@ -427,6 +384,9 @@ export async function applyToShift(shiftPostId: string, applicantUserId: string,
     }
     if (applicant.isBanned) {
       throw new Error("applicant_banned");
+    }
+    if (applicant.roles.some((role) => role.role === "OWNER")) {
+      throw new Error("owner_cannot_apply");
     }
     if (!shiftPost) {
       throw new Error("shift_not_found");
@@ -854,7 +814,13 @@ export async function getUpcomingAssignmentForWorker(
         endAt: assignment.shiftPost.endAt,
         cityName: assignment.shiftPost.city?.name ?? null,
       },
-      employer: assignment.employer,
+      employer: {
+        ...assignment.employer,
+        photoUrl: buildCompactProfilePhotoSource({
+          userId: assignment.employer.id,
+          photoUrl: assignment.employer.photoUrl,
+        }),
+      },
     };
   } catch (error) {
     console.error("[application-service] getUpcomingAssignmentForWorker failed", {

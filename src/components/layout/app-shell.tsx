@@ -3,7 +3,10 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { AppSessionProvider } from "@/components/layout/app-session-context";
+import {
+  AppSessionProvider,
+  type ProfileUpdatedEventDetail,
+} from "@/components/layout/app-session-context";
 import { BannedUserScreen } from "@/components/layout/banned-user-screen";
 import { BottomNav } from "@/components/navigation/bottom-nav";
 import { SplashFrame, SplashSpinner } from "@/components/layout/splash-frame";
@@ -143,15 +146,18 @@ export function AppShell({ children }: PropsWithChildren) {
 
   useEffect(() => {
     function handleProfileUpdated(event: Event) {
-      const detail = (event as CustomEvent<{ onboardingCompleted?: boolean }>).detail;
+      const detail = (event as CustomEvent<ProfileUpdatedEventDetail>).detail;
+      const nextRoles = Array.isArray(detail?.roles) ? detail.roles : roles;
       if (typeof detail?.onboardingCompleted === "boolean") {
         setOnboardingCompleted(detail.onboardingCompleted);
+        setRoles(nextRoles);
         writeCachedShellState({
           onboardingCompleted: detail.onboardingCompleted,
-          roles,
+          roles: nextRoles,
         });
         logShellDebug("profile-updated", {
           onboardingCompleted: detail.onboardingCompleted,
+          roles: nextRoles,
         });
       }
     }

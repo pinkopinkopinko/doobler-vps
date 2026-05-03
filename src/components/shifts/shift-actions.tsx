@@ -9,12 +9,14 @@ type ShiftActionsProps = {
   shiftId: string;
   initiallyFavorite?: boolean;
   canApply?: boolean;
+  applyDisabledLabel?: string;
 };
 
 export function ShiftActions({
   shiftId,
   initiallyFavorite = false,
   canApply = true,
+  applyDisabledLabel = "Отклик недоступен",
 }: ShiftActionsProps) {
   const [favorite, setFavorite] = useState(initiallyFavorite);
   const [applied, setApplied] = useState(false);
@@ -57,7 +59,8 @@ export function ShiftActions({
       });
 
       if (!response.ok) {
-        setMessage("Не удалось откликнуться на смену.");
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        setMessage(payload?.error ?? "Не удалось откликнуться на смену.");
         return;
       }
 
@@ -88,7 +91,7 @@ export function ShiftActions({
             ? "Отклик отправлен"
             : canApply
               ? "Откликнуться на смену"
-              : "Вы владелец объявления"}
+              : applyDisabledLabel}
         </button>
         <button
           type="button"

@@ -128,7 +128,12 @@ async function resolveCityContext(cityId: string): Promise<CityContext | null> {
       throw error;
     }
 
-    logDevFallbackUsed({ kind: "data", source: "resolveCityContext.suggest", reason: error, meta: { cityId } });
+    logDevFallbackUsed({
+      kind: "data",
+      source: "resolveCityContext.suggest",
+      reason: error,
+      meta: { cityId },
+    });
   }
 
   const city = demoCities.find((item) => item.id === cityId);

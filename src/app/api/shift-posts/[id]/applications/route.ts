@@ -43,6 +43,8 @@ export async function POST(request: Request, { params }: RouteParams) {
           return fail("Эта смена уже закрыта или снята с публикации.", 410);
         case "cannot_apply_to_own_shift":
           return fail("Нельзя откликаться на собственную смену.", 400);
+        case "owner_cannot_apply":
+          return fail("Владельцы ПВЗ не могут откликаться на смены.", 403);
         case "applicant_banned":
           return fail("Ваш аккаунт заблокирован.", 403);
         case "shift_not_found":

@@ -19,7 +19,6 @@ type Peer = {
   id: string;
   firstName: string;
   lastName: string | null;
-  username: string | null;
   photoUrl: string | null;
   isBanned: boolean;
 } | null;
@@ -27,9 +26,6 @@ type Peer = {
 type Attachment = {
   id: string;
   mediaId: string;
-  mimeType: string;
-  width: number | null;
-  height: number | null;
 };
 
 type Message = {
@@ -37,8 +33,6 @@ type Message = {
   body: string;
   authorUserId: string;
   createdAt: string;
-  editedAt: string | null;
-  deletedAt: string | null;
   attachments: Attachment[];
 };
 
@@ -94,8 +88,6 @@ function areMessagesEqual(left: Message[], right: Message[]) {
 
     if (
       leftMessage.id !== rightMessage.id ||
-      leftMessage.editedAt !== rightMessage.editedAt ||
-      leftMessage.deletedAt !== rightMessage.deletedAt ||
       leftMessage.body !== rightMessage.body ||
       leftMessage.attachments.length !== rightMessage.attachments.length
     ) {
@@ -383,10 +375,10 @@ export function ChatConversation({ conversationId, currentUserId, peer }: Props)
         <div className="flex items-center gap-3">
         <Link
           href="/chats"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f2f5f8] text-[#3a4352]"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#c9d3dd] bg-[#e8edf2] text-black shadow-[0_2px_8px_rgba(16,18,20,0.08)]"
           aria-label="Назад"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-5 w-5 text-black" strokeWidth={3.2} />
         </Link>
         {peer ? (
           <Link href={`/profiles/${peer.id}`} className="flex min-w-0 flex-1 items-center gap-3">
@@ -634,7 +626,9 @@ const MessageBubble = memo(function MessageBubble({
         ) : null}
         <div className={hasAttachments ? "px-2 pb-0.5 pt-1.5" : ""}>
           {message.body ? (
-            <p className="whitespace-pre-wrap break-words">{message.body}</p>
+            <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
+              {message.body}
+            </p>
           ) : null}
           <span
             className={`mt-1 block text-right text-[10px] ${

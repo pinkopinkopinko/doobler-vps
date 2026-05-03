@@ -14,14 +14,11 @@ type ConversationRow = {
     id: string;
     firstName: string;
     lastName: string | null;
-    username: string | null;
     photoUrl: string | null;
     isBanned: boolean;
   };
   lastMessage: {
-    id: string;
     body: string;
-    authorUserId: string;
     createdAt: string;
     hasAttachments: boolean;
   } | null;
@@ -88,8 +85,20 @@ export function ChatsIndex() {
 
   if (loading && !rows) {
     return (
-      <div className="flex items-center gap-2 rounded-[28px] bg-white px-5 py-6 text-sm text-[#7f8791] shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
-        <LoaderCircle className="h-4 w-4 animate-spin" /> Загружаем чаты…
+      <div className="space-y-3 rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div
+            key={index}
+            className="flex items-center gap-3 rounded-[24px] bg-[#f8fbfd] px-3 py-3"
+          >
+            <div className="h-12 w-12 animate-pulse rounded-full bg-[#e7edf3]" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="h-4 w-32 animate-pulse rounded-full bg-[#e7edf3]" />
+              <div className="h-3 w-48 animate-pulse rounded-full bg-[#eef3f7]" />
+            </div>
+            <LoaderCircle className="h-4 w-4 animate-spin text-[#9aa5b1]" />
+          </div>
+        ))}
       </div>
     );
   }
@@ -110,12 +119,26 @@ export function ChatsIndex() {
         <p className="mt-1 text-[13px] text-[#7f8791]">
           Откройте профиль работодателя или кандидата и нажмите «Написать», чтобы начать чат.
         </p>
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-center">
+          <Link
+            href="/applications"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[#3387d1] px-5 text-[14px] font-medium text-white"
+          >
+            Перейти к откликам
+          </Link>
+          <Link
+            href="/shifts"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[#eef3f7] px-5 text-[14px] font-medium text-[#101214]"
+          >
+            Открыть смены
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <ul className="divide-y divide-[#eef1f4] overflow-hidden rounded-[28px] bg-white shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
+    <ul className="chat-list-card overflow-hidden rounded-[28px] bg-white shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
       {rows.map((row) => {
         const peerName =
           [row.peer.firstName, row.peer.lastName].filter(Boolean).join(" ") ||

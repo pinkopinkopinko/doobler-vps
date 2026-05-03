@@ -34,3 +34,15 @@ Changes:
 - Re-ran `npm audit --json` and confirmed 5 moderate vulnerabilities still remain.
 - Verified that the remaining audit issues are tied to `next` -> `postcss` and `prisma` -> `@prisma/dev` -> `@hono/node-server`, with npm only offering unsafe breaking/downgrade fixes.
 - Re-ran `npm run lint` successfully after the dependency refresh.
+
+Version 5
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Created branch codex/port-pvzbot-updates-to-vds for porting the latest pvz_zamena_bot app changes into the VDS repository.
+- Preserved existing VDS hardening work in a separate commit before the app-layer port.
+- Copied current src/ and prisma/ app code from pvz_zamena_bot into doobler-vps while keeping deploy/, DEPLOY.md, .dockerignore, and VDS infrastructure untouched.
+- Added Vitest support, typecheck/test scripts, vitest.config.ts, and installed updated dependencies.
+- Ported phone verification, profile photo SVG support, owner apply restrictions, dark theme, theme toggle, UX fixes, chat/avatar fixes, and smoke tests into the VDS codebase.
+- Added /backups to .gitignore and rewrote README.md as a VDS-oriented project overview with local checks and deploy pointers.
+- Ran db:generate with a temporary local DATABASE_URL, npm run typecheck, npm run lint, npm run test, and npm run build successfully.

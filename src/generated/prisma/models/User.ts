@@ -51,6 +51,7 @@ export type UserMinAggregateOutputType = {
   pickupPointCode: string | null
   experienceSummary: string | null
   phone: string | null
+  isPhoneVerified: boolean | null
   bio: string | null
   gender: string | null
   regionId: string | null
@@ -81,6 +82,7 @@ export type UserMaxAggregateOutputType = {
   pickupPointCode: string | null
   experienceSummary: string | null
   phone: string | null
+  isPhoneVerified: boolean | null
   bio: string | null
   gender: string | null
   regionId: string | null
@@ -111,6 +113,7 @@ export type UserCountAggregateOutputType = {
   pickupPointCode: number
   experienceSummary: number
   phone: number
+  isPhoneVerified: number
   bio: number
   gender: number
   regionId: number
@@ -158,6 +161,7 @@ export type UserMinAggregateInputType = {
   pickupPointCode?: true
   experienceSummary?: true
   phone?: true
+  isPhoneVerified?: true
   bio?: true
   gender?: true
   regionId?: true
@@ -188,6 +192,7 @@ export type UserMaxAggregateInputType = {
   pickupPointCode?: true
   experienceSummary?: true
   phone?: true
+  isPhoneVerified?: true
   bio?: true
   gender?: true
   regionId?: true
@@ -218,6 +223,7 @@ export type UserCountAggregateInputType = {
   pickupPointCode?: true
   experienceSummary?: true
   phone?: true
+  isPhoneVerified?: true
   bio?: true
   gender?: true
   regionId?: true
@@ -336,6 +342,7 @@ export type UserGroupByOutputType = {
   pickupPointCode: string | null
   experienceSummary: string | null
   phone: string | null
+  isPhoneVerified: boolean
   bio: string | null
   gender: string | null
   regionId: string | null
@@ -390,6 +397,7 @@ export type UserWhereInput = {
   pickupPointCode?: Prisma.StringNullableFilter<"User"> | string | null
   experienceSummary?: Prisma.StringNullableFilter<"User"> | string | null
   phone?: Prisma.StringNullableFilter<"User"> | string | null
+  isPhoneVerified?: Prisma.BoolFilter<"User"> | boolean
   bio?: Prisma.StringNullableFilter<"User"> | string | null
   gender?: Prisma.StringNullableFilter<"User"> | string | null
   regionId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -444,6 +452,7 @@ export type UserOrderByWithRelationInput = {
   pickupPointCode?: Prisma.SortOrderInput | Prisma.SortOrder
   experienceSummary?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPhoneVerified?: Prisma.SortOrder
   bio?: Prisma.SortOrderInput | Prisma.SortOrder
   gender?: Prisma.SortOrderInput | Prisma.SortOrder
   regionId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -501,6 +510,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   pickupPointCode?: Prisma.StringNullableFilter<"User"> | string | null
   experienceSummary?: Prisma.StringNullableFilter<"User"> | string | null
   phone?: Prisma.StringNullableFilter<"User"> | string | null
+  isPhoneVerified?: Prisma.BoolFilter<"User"> | boolean
   bio?: Prisma.StringNullableFilter<"User"> | string | null
   gender?: Prisma.StringNullableFilter<"User"> | string | null
   regionId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -555,6 +565,7 @@ export type UserOrderByWithAggregationInput = {
   pickupPointCode?: Prisma.SortOrderInput | Prisma.SortOrder
   experienceSummary?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPhoneVerified?: Prisma.SortOrder
   bio?: Prisma.SortOrderInput | Prisma.SortOrder
   gender?: Prisma.SortOrderInput | Prisma.SortOrder
   regionId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -594,6 +605,7 @@ export type UserScalarWhereWithAggregatesInput = {
   pickupPointCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   experienceSummary?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  isPhoneVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   bio?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   gender?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   regionId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -625,6 +637,7 @@ export type UserCreateInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -677,6 +690,7 @@ export type UserUncheckedCreateInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -729,6 +743,7 @@ export type UserUpdateInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -781,6 +796,7 @@ export type UserUncheckedUpdateInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -833,6 +849,7 @@ export type UserCreateManyInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -864,6 +881,7 @@ export type UserUpdateManyMutationInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -893,6 +911,7 @@ export type UserUncheckedUpdateManyInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -932,6 +951,7 @@ export type UserCountOrderByAggregateInput = {
   pickupPointCode?: Prisma.SortOrder
   experienceSummary?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  isPhoneVerified?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   gender?: Prisma.SortOrder
   regionId?: Prisma.SortOrder
@@ -970,6 +990,7 @@ export type UserMaxOrderByAggregateInput = {
   pickupPointCode?: Prisma.SortOrder
   experienceSummary?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  isPhoneVerified?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   gender?: Prisma.SortOrder
   regionId?: Prisma.SortOrder
@@ -1000,6 +1021,7 @@ export type UserMinOrderByAggregateInput = {
   pickupPointCode?: Prisma.SortOrder
   experienceSummary?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  isPhoneVerified?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   gender?: Prisma.SortOrder
   regionId?: Prisma.SortOrder
@@ -1066,13 +1088,13 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type UserUpdatemarketplacesInput = {
   set?: $Enums.MarketplaceCode[]
   push?: $Enums.MarketplaceCode | $Enums.MarketplaceCode[]
-}
-
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
 }
 
 export type FloatFieldUpdateOperationsInput = {
@@ -1500,6 +1522,7 @@ export type UserCreateWithoutRolesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -1551,6 +1574,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -1618,6 +1642,7 @@ export type UserUpdateWithoutRolesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1669,6 +1694,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1720,6 +1746,7 @@ export type UserCreateWithoutRegionInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -1771,6 +1798,7 @@ export type UserUncheckedCreateWithoutRegionInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   cityId?: string | null
@@ -1851,6 +1879,7 @@ export type UserScalarWhereInput = {
   pickupPointCode?: Prisma.StringNullableFilter<"User"> | string | null
   experienceSummary?: Prisma.StringNullableFilter<"User"> | string | null
   phone?: Prisma.StringNullableFilter<"User"> | string | null
+  isPhoneVerified?: Prisma.BoolFilter<"User"> | boolean
   bio?: Prisma.StringNullableFilter<"User"> | string | null
   gender?: Prisma.StringNullableFilter<"User"> | string | null
   regionId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -1882,6 +1911,7 @@ export type UserCreateWithoutCityInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -1933,6 +1963,7 @@ export type UserUncheckedCreateWithoutCityInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -2010,6 +2041,7 @@ export type UserCreateWithoutOwnedPickupPointsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -2061,6 +2093,7 @@ export type UserUncheckedCreateWithoutOwnedPickupPointsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -2117,6 +2150,7 @@ export type UserCreateWithoutManagedPickupPointsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -2168,6 +2202,7 @@ export type UserUncheckedCreateWithoutManagedPickupPointsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -2235,6 +2270,7 @@ export type UserUpdateWithoutOwnedPickupPointsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2286,6 +2322,7 @@ export type UserUncheckedUpdateWithoutOwnedPickupPointsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2348,6 +2385,7 @@ export type UserUpdateWithoutManagedPickupPointsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2399,6 +2437,7 @@ export type UserUncheckedUpdateWithoutManagedPickupPointsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2450,6 +2489,7 @@ export type UserCreateWithoutOwnerGrantedManagerAccessesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -2501,6 +2541,7 @@ export type UserUncheckedCreateWithoutOwnerGrantedManagerAccessesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -2557,6 +2598,7 @@ export type UserCreateWithoutManagerPickupPointAccessesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -2608,6 +2650,7 @@ export type UserUncheckedCreateWithoutManagerPickupPointAccessesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -2675,6 +2718,7 @@ export type UserUpdateWithoutOwnerGrantedManagerAccessesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2726,6 +2770,7 @@ export type UserUncheckedUpdateWithoutOwnerGrantedManagerAccessesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2788,6 +2833,7 @@ export type UserUpdateWithoutManagerPickupPointAccessesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2839,6 +2885,7 @@ export type UserUncheckedUpdateWithoutManagerPickupPointAccessesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2890,6 +2937,7 @@ export type UserCreateWithoutCreatedShiftPostsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -2941,6 +2989,7 @@ export type UserUncheckedCreateWithoutCreatedShiftPostsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -3008,6 +3057,7 @@ export type UserUpdateWithoutCreatedShiftPostsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3059,6 +3109,7 @@ export type UserUncheckedUpdateWithoutCreatedShiftPostsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3110,6 +3161,7 @@ export type UserCreateWithoutApplicationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -3161,6 +3213,7 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -3228,6 +3281,7 @@ export type UserUpdateWithoutApplicationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3279,6 +3333,7 @@ export type UserUncheckedUpdateWithoutApplicationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3330,6 +3385,7 @@ export type UserCreateWithoutWorkerAssignmentsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -3381,6 +3437,7 @@ export type UserUncheckedCreateWithoutWorkerAssignmentsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -3437,6 +3494,7 @@ export type UserCreateWithoutEmployerAssignmentsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -3488,6 +3546,7 @@ export type UserUncheckedCreateWithoutEmployerAssignmentsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -3555,6 +3614,7 @@ export type UserUpdateWithoutWorkerAssignmentsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3606,6 +3666,7 @@ export type UserUncheckedUpdateWithoutWorkerAssignmentsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3668,6 +3729,7 @@ export type UserUpdateWithoutEmployerAssignmentsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3719,6 +3781,7 @@ export type UserUncheckedUpdateWithoutEmployerAssignmentsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3770,6 +3833,7 @@ export type UserCreateWithoutAuthoredReviewsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -3821,6 +3885,7 @@ export type UserUncheckedCreateWithoutAuthoredReviewsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -3877,6 +3942,7 @@ export type UserCreateWithoutReceivedReviewsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -3928,6 +3994,7 @@ export type UserUncheckedCreateWithoutReceivedReviewsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -3995,6 +4062,7 @@ export type UserUpdateWithoutAuthoredReviewsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4046,6 +4114,7 @@ export type UserUncheckedUpdateWithoutAuthoredReviewsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4108,6 +4177,7 @@ export type UserUpdateWithoutReceivedReviewsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4159,6 +4229,7 @@ export type UserUncheckedUpdateWithoutReceivedReviewsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4210,6 +4281,7 @@ export type UserCreateWithoutCreatedReportsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -4261,6 +4333,7 @@ export type UserUncheckedCreateWithoutCreatedReportsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -4317,6 +4390,7 @@ export type UserCreateWithoutModeratedReportsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -4368,6 +4442,7 @@ export type UserUncheckedCreateWithoutModeratedReportsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -4435,6 +4510,7 @@ export type UserUpdateWithoutCreatedReportsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4486,6 +4562,7 @@ export type UserUncheckedUpdateWithoutCreatedReportsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4548,6 +4625,7 @@ export type UserUpdateWithoutModeratedReportsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4599,6 +4677,7 @@ export type UserUncheckedUpdateWithoutModeratedReportsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4650,6 +4729,7 @@ export type UserCreateWithoutVerificationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -4701,6 +4781,7 @@ export type UserUncheckedCreateWithoutVerificationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -4757,6 +4838,7 @@ export type UserCreateWithoutReviewedVerificationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -4808,6 +4890,7 @@ export type UserUncheckedCreateWithoutReviewedVerificationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -4875,6 +4958,7 @@ export type UserUpdateWithoutVerificationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4926,6 +5010,7 @@ export type UserUncheckedUpdateWithoutVerificationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4988,6 +5073,7 @@ export type UserUpdateWithoutReviewedVerificationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5039,6 +5125,7 @@ export type UserUncheckedUpdateWithoutReviewedVerificationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5090,6 +5177,7 @@ export type UserCreateWithoutNotificationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -5141,6 +5229,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -5208,6 +5297,7 @@ export type UserUpdateWithoutNotificationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5259,6 +5349,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5310,6 +5401,7 @@ export type UserCreateWithoutFavoritesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -5361,6 +5453,7 @@ export type UserUncheckedCreateWithoutFavoritesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -5428,6 +5521,7 @@ export type UserUpdateWithoutFavoritesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5479,6 +5573,7 @@ export type UserUncheckedUpdateWithoutFavoritesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5530,6 +5625,7 @@ export type UserCreateWithoutAuditLogsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -5581,6 +5677,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -5648,6 +5745,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5699,6 +5797,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5750,6 +5849,7 @@ export type UserCreateWithoutConversationParticipationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -5801,6 +5901,7 @@ export type UserUncheckedCreateWithoutConversationParticipationsInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -5868,6 +5969,7 @@ export type UserUpdateWithoutConversationParticipationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5919,6 +6021,7 @@ export type UserUncheckedUpdateWithoutConversationParticipationsInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5970,6 +6073,7 @@ export type UserCreateWithoutSentMessagesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -6021,6 +6125,7 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -6088,6 +6193,7 @@ export type UserUpdateWithoutSentMessagesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6139,6 +6245,7 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6190,6 +6297,7 @@ export type UserCreateWithoutUploadedMediaInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   district?: string | null
@@ -6241,6 +6349,7 @@ export type UserUncheckedCreateWithoutUploadedMediaInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -6308,6 +6417,7 @@ export type UserUpdateWithoutUploadedMediaInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6359,6 +6469,7 @@ export type UserUncheckedUpdateWithoutUploadedMediaInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6410,6 +6521,7 @@ export type UserCreateManyRegionInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   cityId?: string | null
@@ -6440,6 +6552,7 @@ export type UserUpdateWithoutRegionInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6491,6 +6604,7 @@ export type UserUncheckedUpdateWithoutRegionInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6542,6 +6656,7 @@ export type UserUncheckedUpdateManyWithoutRegionInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6572,6 +6687,7 @@ export type UserCreateManyCityInput = {
   pickupPointCode?: string | null
   experienceSummary?: string | null
   phone?: string | null
+  isPhoneVerified?: boolean
   bio?: string | null
   gender?: string | null
   regionId?: string | null
@@ -6602,6 +6718,7 @@ export type UserUpdateWithoutCityInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6653,6 +6770,7 @@ export type UserUncheckedUpdateWithoutCityInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6704,6 +6822,7 @@ export type UserUncheckedUpdateManyWithoutCityInput = {
   pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6945,6 +7064,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   pickupPointCode?: boolean
   experienceSummary?: boolean
   phone?: boolean
+  isPhoneVerified?: boolean
   bio?: boolean
   gender?: boolean
   regionId?: boolean
@@ -7000,6 +7120,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   pickupPointCode?: boolean
   experienceSummary?: boolean
   phone?: boolean
+  isPhoneVerified?: boolean
   bio?: boolean
   gender?: boolean
   regionId?: boolean
@@ -7033,6 +7154,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   pickupPointCode?: boolean
   experienceSummary?: boolean
   phone?: boolean
+  isPhoneVerified?: boolean
   bio?: boolean
   gender?: boolean
   regionId?: boolean
@@ -7066,6 +7188,7 @@ export type UserSelectScalar = {
   pickupPointCode?: boolean
   experienceSummary?: boolean
   phone?: boolean
+  isPhoneVerified?: boolean
   bio?: boolean
   gender?: boolean
   regionId?: boolean
@@ -7086,7 +7209,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "telegramId" | "username" | "firstName" | "lastName" | "age" | "photoUrl" | "pickupPointCode" | "experienceSummary" | "phone" | "bio" | "gender" | "regionId" | "cityId" | "district" | "marketplaces" | "isOnboardingCompleted" | "ratingAvg" | "ratingCount" | "completedAssignmentsCount" | "isActive" | "isBanned" | "banReason" | "bannedAt" | "notifyOnNewMessage" | "lastActiveAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "telegramId" | "username" | "firstName" | "lastName" | "age" | "photoUrl" | "pickupPointCode" | "experienceSummary" | "phone" | "isPhoneVerified" | "bio" | "gender" | "regionId" | "cityId" | "district" | "marketplaces" | "isOnboardingCompleted" | "ratingAvg" | "ratingCount" | "completedAssignmentsCount" | "isActive" | "isBanned" | "banReason" | "bannedAt" | "notifyOnNewMessage" | "lastActiveAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   region?: boolean | Prisma.User$regionArgs<ExtArgs>
   city?: boolean | Prisma.User$cityArgs<ExtArgs>
@@ -7160,6 +7283,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     pickupPointCode: string | null
     experienceSummary: string | null
     phone: string | null
+    isPhoneVerified: boolean
     bio: string | null
     gender: string | null
     regionId: string | null
@@ -7634,6 +7758,7 @@ export interface UserFieldRefs {
   readonly pickupPointCode: Prisma.FieldRef<"User", 'String'>
   readonly experienceSummary: Prisma.FieldRef<"User", 'String'>
   readonly phone: Prisma.FieldRef<"User", 'String'>
+  readonly isPhoneVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly bio: Prisma.FieldRef<"User", 'String'>
   readonly gender: Prisma.FieldRef<"User", 'String'>
   readonly regionId: Prisma.FieldRef<"User", 'String'>

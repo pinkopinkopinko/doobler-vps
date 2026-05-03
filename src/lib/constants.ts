@@ -11,7 +11,6 @@ export const APP_ROLES = [
 export const SHIFT_POST_TYPES = [
   { value: "URGENT_REPLACEMENT", label: "Срочная замена" },
   { value: "DAY_SHIFT", label: "Смена на день" },
-  { value: "PERMANENT_JOB", label: "Постоянная вакансия" },
 ] as const;
 
 export const MARKETPLACE_CODES = [

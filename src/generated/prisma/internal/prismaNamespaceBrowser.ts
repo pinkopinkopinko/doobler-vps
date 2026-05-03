@@ -103,6 +103,7 @@ export const UserScalarFieldEnum = {
   pickupPointCode: 'pickupPointCode',
   experienceSummary: 'experienceSummary',
   phone: 'phone',
+  isPhoneVerified: 'isPhoneVerified',
   bio: 'bio',
   gender: 'gender',
   regionId: 'regionId',
