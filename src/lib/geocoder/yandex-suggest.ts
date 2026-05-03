@@ -1,4 +1,5 @@
 import { demoCities, demoRegions } from "@/lib/demo-data";
+import { isDevFallbackEnabled, logDevFallbackUsed } from "@/lib/dev-fallback";
 import { prisma } from "@/lib/prisma";
 
 type DaDataSuggestionData = {
@@ -122,8 +123,12 @@ async function resolveCityContext(cityId: string): Promise<CityContext | null> {
         regionName: city.region?.name ?? null,
       };
     }
-  } catch {
-    // Fallback to demo data.
+  } catch (error) {
+    if (!isDevFallbackEnabled("data")) {
+      throw error;
+    }
+
+    logDevFallbackUsed({ kind: "data", source: "resolveCityContext.suggest", reason: error, meta: { cityId } });
   }
 
   const city = demoCities.find((item) => item.id === cityId);

@@ -1,6 +1,7 @@
 import { ShiftPostStatus } from "@/generated/prisma/client";
 
 import { demoCities, demoShiftPosts } from "@/lib/demo-data";
+import { isDevFallbackEnabled, logDevFallbackUsed } from "@/lib/dev-fallback";
 import { verifyAddressSelection } from "@/lib/geocoder/yandex-geocode";
 import { prisma } from "@/lib/prisma";
 import type { ShiftCard as ShiftCardView } from "@/lib/types";
@@ -189,6 +190,10 @@ async function getAccessiblePickupPoint(pickupPointId: string, userId: string) {
 // достаточно, а при росте города можно будет включить курсорную пагинацию.
 const DEFAULT_LIST_SHIFT_POSTS_LIMIT = 200;
 
+function shouldUseDemoFallback() {
+  return isDevFallbackEnabled("data");
+}
+
 export async function listShiftPosts(filters: ListShiftPostFilters = {}) {
   const today = getTodayDateValue();
   const effectiveDateFrom = getEffectiveDateFrom(filters, today);
@@ -285,7 +290,12 @@ export async function listShiftPosts(filters: ListShiftPostFilters = {}) {
     return posts
       .map(mapShiftPost)
       .filter((post) => matchesDistrictFilter(post.district, filters.district));
-  } catch {
+  } catch (error) {
+    if (!shouldUseDemoFallback()) {
+      throw error;
+    }
+
+    logDevFallbackUsed({ kind: "data", source: "listShiftPosts", reason: error });
     const targetCityName = filters.cityId
       ? demoCities.find((city) => city.id === filters.cityId)?.name
       : null;
@@ -376,7 +386,12 @@ export async function listAvailableShiftDistricts(filters: {
     });
 
     return buildDistrictFacets(rows.map((row) => row.district));
-  } catch {
+  } catch (error) {
+    if (!shouldUseDemoFallback()) {
+      throw error;
+    }
+
+    logDevFallbackUsed({ kind: "data", source: "listAvailableShiftDistricts", reason: error });
     const targetCityName = demoCities.find((city) => city.id === filters.cityId)?.name;
 
     return buildDistrictFacets(
@@ -451,7 +466,12 @@ export async function getShiftPostById(id: string) {
     }
 
     return mapShiftPost(post);
-  } catch {
+  } catch (error) {
+    if (!shouldUseDemoFallback()) {
+      throw error;
+    }
+
+    logDevFallbackUsed({ kind: "data", source: "getShiftPostById", reason: error, meta: { id } });
     return demoShiftPosts.find((post) => post.id === id) ?? null;
   }
 }

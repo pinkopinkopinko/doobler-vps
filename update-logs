@@ -1,0 +1,36 @@
+Version 1
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Added `.devin/` to `.gitignore`.
+- Removed `.devin/config.local.json` from git tracking without deleting the local file.
+
+Version 2
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Added `src/lib/dev-fallback.ts` to centralize dev fallback gating and logging.
+- Updated `src/app/api/auth/telegram/route.ts` to use the shared auth fallback helper.
+- Removed hidden demo-profile fallback from `src/lib/auth/get-current-user.ts`; errors now log and return `null`.
+- Tightened demo fallback behavior in `src/server/services/application-service.ts` so it only works behind the explicit dev flag and logs when used.
+- Removed unsafe fallback return from `src/server/services/profile-service.ts::updateProfile`; errors now log and propagate.
+- Tightened demo fallback behavior in `src/server/services/shift-post-service.ts` so it only works behind the explicit dev flag and logs when used.
+- Tightened city-context fallback behavior in `src/lib/geocoder/yandex-geocode.ts` and `src/lib/geocoder/yandex-suggest.ts` so demo data is used only when explicit dev fallback is enabled.
+
+Version 3
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Installed project dependencies with `npm install`.
+- Renamed the application-service helper from `useDemoFallback` to `buildDemoFallbackResult` to satisfy ESLint hook rules.
+- Ran `npm run lint` successfully after the rename.
+
+Version 4
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Ran `npm audit --json` and reviewed the 5 moderate vulnerabilities.
+- Ran safe `npm audit fix` without `--force`; this updated transitive dependency resolution in `package-lock.json`.
+- Re-ran `npm audit --json` and confirmed 5 moderate vulnerabilities still remain.
+- Verified that the remaining audit issues are tied to `next` -> `postcss` and `prisma` -> `@prisma/dev` -> `@hono/node-server`, with npm only offering unsafe breaking/downgrade fixes.
+- Re-ran `npm run lint` successfully after the dependency refresh.

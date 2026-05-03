@@ -5,12 +5,13 @@ import {
 } from "@/generated/prisma/client";
 
 import { demoApplications } from "@/lib/demo-data";
+import { isDevFallbackEnabled, logDevFallbackUsed } from "@/lib/dev-fallback";
 import { sendTelegramMessage } from "@/lib/notifications/telegram";
 import { prisma } from "@/lib/prisma";
 import { applicationSchema, reviewSchema } from "@/lib/validations/shift-post";
 
 function allowDevDataFallback() {
-  return process.env.NODE_ENV !== "production" && process.env.ALLOW_DEV_DATA_FALLBACK === "true";
+  return isDevFallbackEnabled("data");
 }
 
 function shouldUseDemoFallback(error: unknown) {
@@ -36,6 +37,11 @@ function shouldUseDemoFallback(error: unknown) {
   }
 
   return true;
+}
+
+function buildDemoFallbackResult<T>(source: string, error: unknown, factory: () => T) {
+  logDevFallbackUsed({ kind: "data", source, reason: error });
+  return factory();
 }
 
 function formatTelegramContact(user: {
@@ -222,7 +228,9 @@ export async function listApplicationsForShift(shiftPostId: string) {
     if (!shouldUseDemoFallback(error)) {
       throw error;
     }
-    return demoApplications.filter((application) => application.shiftPostId === shiftPostId);
+    return buildDemoFallbackResult("listApplicationsForShift", error, () =>
+      demoApplications.filter((application) => application.shiftPostId === shiftPostId),
+    );
   }
 }
 
@@ -304,7 +312,9 @@ export async function listMyApplications(userId: string) {
     if (!shouldUseDemoFallback(error)) {
       throw error;
     }
-    return demoApplications.filter((application) => application.applicant.id === userId);
+    return buildDemoFallbackResult("listMyApplications", error, () =>
+      demoApplications.filter((application) => application.applicant.id === userId),
+    );
   }
 }
 
@@ -391,7 +401,9 @@ export async function listApplicationsForEmployer(employerUserId: string) {
       throw error;
     }
     const myDemoShiftIds = new Set(["shift_1", "shift_3"]);
-    return demoApplications.filter((application) => myDemoShiftIds.has(application.shiftPostId));
+    return buildDemoFallbackResult("listApplicationsForEmployer", error, () =>
+      demoApplications.filter((application) => myDemoShiftIds.has(application.shiftPostId)),
+    );
   }
 }
 
@@ -462,13 +474,13 @@ export async function applyToShift(shiftPostId: string, applicantUserId: string,
     if (!shouldUseDemoFallback(error)) {
       throw error;
     }
-    return {
+    return buildDemoFallbackResult("applyToShift", error, () => ({
       id: `mock_application_${Date.now()}`,
       shiftPostId,
       applicantUserId,
       message: data.message ?? null,
       status: ApplicationStatus.APPLIED,
-    };
+    }));
   }
 }
 
@@ -583,12 +595,12 @@ export async function confirmApplication(applicationId: string, employerUserId: 
     if (!shouldUseDemoFallback(error)) {
       throw error;
     }
-    return {
+    return buildDemoFallbackResult("confirmApplication", error, () => ({
       id: `mock_assignment_${Date.now()}`,
       applicationId,
       employerUserId,
       status: AssignmentStatus.CONFIRMED,
-    };
+    }));
   }
 }
 
@@ -663,10 +675,10 @@ export async function completeAssignment(assignmentId: string, actorUserId: stri
     if (!shouldUseDemoFallback(error)) {
       throw error;
     }
-    return {
+    return buildDemoFallbackResult("completeAssignment", error, () => ({
       id: assignmentId,
       status: AssignmentStatus.COMPLETED,
-    };
+    }));
   }
 }
 
@@ -750,13 +762,13 @@ export async function createAssignmentReview(
     if (!shouldUseDemoFallback(error)) {
       throw error;
     }
-    return {
+    return buildDemoFallbackResult("createAssignmentReview", error, () => ({
       id: `mock_review_${Date.now()}`,
       assignmentId,
       authorUserId,
       rating: data.rating,
       text: data.text,
-    };
+    }));
   }
 }
 

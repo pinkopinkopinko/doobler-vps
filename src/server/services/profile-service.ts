@@ -1,7 +1,6 @@
 import { cache } from "react";
 
 import { getCurrentUserRecord } from "@/lib/auth/app-access";
-import { demoProfile } from "@/lib/demo-data";
 import { validateProfilePhotoUrl } from "@/lib/profile-photo";
 import type { ProfileView } from "@/lib/types";
 import { isProfileComplete } from "@/lib/profile-completion";
@@ -298,25 +297,11 @@ export async function updateProfile(userId: string, input: unknown) {
     });
 
     return getProfile(userId);
-  } catch {
-    return {
-      ...demoProfile,
-      ...data,
-      age: data.age ?? demoProfile.age,
-      photoUrl: data.photoUrl ?? demoProfile.photoUrl,
-      pickupPointCode: data.pickupPointCode ?? demoProfile.pickupPointCode,
-      experienceSummary: data.experienceSummary ?? demoProfile.experienceSummary,
-      regionId: data.regionId,
-      cityId: data.cityId,
-      cityName: demoProfile.cityName,
-      badges: demoProfile.badges,
-      recentReviews: demoProfile.recentReviews,
-      ratingAvg: demoProfile.ratingAvg,
-      ratingCount: demoProfile.ratingCount,
-      completedAssignmentsCount: demoProfile.completedAssignmentsCount,
-      verificationStatus: demoProfile.verificationStatus,
-      phone: demoProfile.phone,
-      isOnboardingCompleted: onboardingCompleted,
-    };
+  } catch (error) {
+    console.error("[profile-service] updateProfile failed", {
+      userId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+    throw error;
   }
 }

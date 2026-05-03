@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 
 import { fail, ok } from "@/lib/api";
+import { isDevFallbackEnabled } from "@/lib/dev-fallback";
 import { createSessionToken, setSessionCookie } from "@/lib/auth/session";
 import {
   getDevelopmentTelegramUser,
@@ -10,7 +11,7 @@ import { tgDebug } from "@/lib/log";
 import { prisma } from "@/lib/prisma";
 
 function allowDevAuthFallback() {
-  return process.env.NODE_ENV !== "production" && process.env.ALLOW_DEV_AUTH_FALLBACK === "true";
+  return isDevFallbackEnabled("auth");
 }
 
 function getClientMeta(request: NextRequest) {

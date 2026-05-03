@@ -2,7 +2,6 @@ import { cache } from "react";
 
 import { prisma } from "@/lib/prisma";
 import { getSessionPayload } from "@/lib/auth/session";
-import { demoProfile, demoUsers } from "@/lib/demo-data";
 
 // Узкий select под реальные нужды callers: id (везде), roles (require-moderator,
 // managers, shift-posts, moderation), telegramId/firstName/lastName/username
@@ -34,13 +33,11 @@ export const getCurrentUser = cache(async () => {
       where: { id: session.userId },
       select: currentUserSelect,
     });
-  } catch {
-    const demoUser = demoUsers.find((item) => item.id === session.userId);
-    return (
-      demoUser && {
-        ...demoProfile,
-        id: demoUser.id,
-      }
-    );
+  } catch (error) {
+    console.error("[auth] getCurrentUser failed", {
+      userId: session.userId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+    return null;
   }
 });

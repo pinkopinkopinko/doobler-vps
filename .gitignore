@@ -45,3 +45,4 @@ next-env.d.ts
 # local chat media uploads
 /uploads
 .dev-ngrok-url
+.devin/
