@@ -1,10 +1,11 @@
 # Production-стек Дублера для VPS (Selectel VDS 2-4-50 или аналог).
 #
 # Сервисы:
-#   postgres — БД, локальный volume для данных, не торчит наружу
-#   app      — Next.js, слушает 3000 в локалхосте контейнера
-#   nginx    — reverse-proxy 80/443 → app:3000, отдаёт TLS
-#   certbot  — выпуск/продление Let's Encrypt-сертификатов
+#   postgres    — БД, локальный volume для данных, не торчит наружу
+#   app         — Next.js, слушает 3000 в локалхосте контейнера
+#   support-bot — отдельный Telegram-бот техподдержки (polling, без портов)
+#   nginx       — reverse-proxy 80/443 → app:3000, отдаёт TLS
+#   certbot     — выпуск/продление Let's Encrypt-сертификатов
 #
 # Запускать из каталога /opt/doobler:
 #   docker compose --env-file .env.production -f deploy/docker-compose.yml up -d --build
@@ -75,8 +76,44 @@ services:
         limits:
           memory: 2g
 
+  support-bot:
+    build:
+      context: ../support-bot
+      dockerfile: Dockerfile
+    image: doobler-support-bot:latest
+    container_name: doobler-support-bot
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Токен ОТДЕЛЬНОГО бота техподдержки (НЕ основной TELEGRAM_BOT_TOKEN)
+      TELEGRAM_BOT_TOKEN: ${SUPPORT_BOT_TOKEN}
+      SUPPORT_ADMIN_CHAT_ID: ${SUPPORT_ADMIN_CHAT_ID}
+      # Та же БД что у app — бот читает данные юзеров через pg
+      DUBLER_DATABASE_URL: ${DATABASE_URL}
+      DUBLER_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      SUPPORT_MAX_FILE_BYTES: ${SUPPORT_MAX_FILE_BYTES:-10485760}
+      SUPPORT_MESSAGE_INTERVAL_SECONDS: ${SUPPORT_MESSAGE_INTERVAL_SECONDS:-5}
+      # Прокси для api.telegram.org из РФ (те же значения что у app)
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      NO_PROXY: "postgres,redis,localhost,127.0.0.1,app,nginx"
+      NODE_OPTIONS: "--dns-result-order=ipv4first --use-env-proxy"
+    networks:
+      - internal
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
   nginx:
-    image: nginx:1.27-alpine
+    # Кастомный образ с njs-модулем для edge-валидации Telegram initData.
+    # См. ./nginx/Dockerfile и ./nginx/njs/validate-init-data.js.
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: doobler-nginx:latest
     container_name: doobler-nginx
     restart: unless-stopped
     depends_on:
@@ -92,7 +129,10 @@ services:
     networks:
       - internal
     environment:
-      - DOMAIN=${DOMAIN}
+      DOMAIN: ${DOMAIN}
+      # Токен для njs-модуля. Entrypoint-hook пишет его в
+      # /etc/nginx/njs/.bot-token при старте контейнера, njs читает оттуда.
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
 
   certbot:
     image: certbot/certbot:latest
