@@ -31,6 +31,7 @@ export type UserAvgAggregateOutputType = {
   ratingAvg: number | null
   ratingCount: number | null
   completedAssignmentsCount: number | null
+  balanceRub: number | null
 }
 
 export type UserSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type UserSumAggregateOutputType = {
   ratingAvg: number | null
   ratingCount: number | null
   completedAssignmentsCount: number | null
+  balanceRub: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -61,6 +63,7 @@ export type UserMinAggregateOutputType = {
   ratingAvg: number | null
   ratingCount: number | null
   completedAssignmentsCount: number | null
+  balanceRub: number | null
   isActive: boolean | null
   isBanned: boolean | null
   banReason: string | null
@@ -92,6 +95,7 @@ export type UserMaxAggregateOutputType = {
   ratingAvg: number | null
   ratingCount: number | null
   completedAssignmentsCount: number | null
+  balanceRub: number | null
   isActive: boolean | null
   isBanned: boolean | null
   banReason: string | null
@@ -124,6 +128,7 @@ export type UserCountAggregateOutputType = {
   ratingAvg: number
   ratingCount: number
   completedAssignmentsCount: number
+  balanceRub: number
   isActive: number
   isBanned: number
   banReason: number
@@ -141,6 +146,7 @@ export type UserAvgAggregateInputType = {
   ratingAvg?: true
   ratingCount?: true
   completedAssignmentsCount?: true
+  balanceRub?: true
 }
 
 export type UserSumAggregateInputType = {
@@ -148,6 +154,7 @@ export type UserSumAggregateInputType = {
   ratingAvg?: true
   ratingCount?: true
   completedAssignmentsCount?: true
+  balanceRub?: true
 }
 
 export type UserMinAggregateInputType = {
@@ -171,6 +178,7 @@ export type UserMinAggregateInputType = {
   ratingAvg?: true
   ratingCount?: true
   completedAssignmentsCount?: true
+  balanceRub?: true
   isActive?: true
   isBanned?: true
   banReason?: true
@@ -202,6 +210,7 @@ export type UserMaxAggregateInputType = {
   ratingAvg?: true
   ratingCount?: true
   completedAssignmentsCount?: true
+  balanceRub?: true
   isActive?: true
   isBanned?: true
   banReason?: true
@@ -234,6 +243,7 @@ export type UserCountAggregateInputType = {
   ratingAvg?: true
   ratingCount?: true
   completedAssignmentsCount?: true
+  balanceRub?: true
   isActive?: true
   isBanned?: true
   banReason?: true
@@ -353,6 +363,7 @@ export type UserGroupByOutputType = {
   ratingAvg: number
   ratingCount: number
   completedAssignmentsCount: number
+  balanceRub: number
   isActive: boolean
   isBanned: boolean
   banReason: string | null
@@ -408,6 +419,7 @@ export type UserWhereInput = {
   ratingAvg?: Prisma.FloatFilter<"User"> | number
   ratingCount?: Prisma.IntFilter<"User"> | number
   completedAssignmentsCount?: Prisma.IntFilter<"User"> | number
+  balanceRub?: Prisma.IntFilter<"User"> | number
   isActive?: Prisma.BoolFilter<"User"> | boolean
   isBanned?: Prisma.BoolFilter<"User"> | boolean
   banReason?: Prisma.StringNullableFilter<"User"> | string | null
@@ -424,6 +436,7 @@ export type UserWhereInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessListRelationFilter
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessListRelationFilter
   createdShiftPosts?: Prisma.ShiftPostListRelationFilter
+  createdShiftTemplates?: Prisma.ShiftTemplateListRelationFilter
   applications?: Prisma.ApplicationListRelationFilter
   workerAssignments?: Prisma.AssignmentListRelationFilter
   employerAssignments?: Prisma.AssignmentListRelationFilter
@@ -433,9 +446,11 @@ export type UserWhereInput = {
   moderatedReports?: Prisma.ReportListRelationFilter
   verifications?: Prisma.VerificationListRelationFilter
   reviewedVerifications?: Prisma.VerificationListRelationFilter
+  identityVerifications?: Prisma.IdentityVerificationListRelationFilter
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
-  favorites?: Prisma.FavoriteListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  legalEvents?: Prisma.UserLegalEventListRelationFilter
   conversationParticipations?: Prisma.ConversationParticipantListRelationFilter
   sentMessages?: Prisma.MessageListRelationFilter
   uploadedMedia?: Prisma.MediaUploadListRelationFilter
@@ -463,6 +478,7 @@ export type UserOrderByWithRelationInput = {
   ratingAvg?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
   completedAssignmentsCount?: Prisma.SortOrder
+  balanceRub?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isBanned?: Prisma.SortOrder
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -479,6 +495,7 @@ export type UserOrderByWithRelationInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessOrderByRelationAggregateInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessOrderByRelationAggregateInput
   createdShiftPosts?: Prisma.ShiftPostOrderByRelationAggregateInput
+  createdShiftTemplates?: Prisma.ShiftTemplateOrderByRelationAggregateInput
   applications?: Prisma.ApplicationOrderByRelationAggregateInput
   workerAssignments?: Prisma.AssignmentOrderByRelationAggregateInput
   employerAssignments?: Prisma.AssignmentOrderByRelationAggregateInput
@@ -488,9 +505,11 @@ export type UserOrderByWithRelationInput = {
   moderatedReports?: Prisma.ReportOrderByRelationAggregateInput
   verifications?: Prisma.VerificationOrderByRelationAggregateInput
   reviewedVerifications?: Prisma.VerificationOrderByRelationAggregateInput
+  identityVerifications?: Prisma.IdentityVerificationOrderByRelationAggregateInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
-  favorites?: Prisma.FavoriteOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  legalEvents?: Prisma.UserLegalEventOrderByRelationAggregateInput
   conversationParticipations?: Prisma.ConversationParticipantOrderByRelationAggregateInput
   sentMessages?: Prisma.MessageOrderByRelationAggregateInput
   uploadedMedia?: Prisma.MediaUploadOrderByRelationAggregateInput
@@ -521,6 +540,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   ratingAvg?: Prisma.FloatFilter<"User"> | number
   ratingCount?: Prisma.IntFilter<"User"> | number
   completedAssignmentsCount?: Prisma.IntFilter<"User"> | number
+  balanceRub?: Prisma.IntFilter<"User"> | number
   isActive?: Prisma.BoolFilter<"User"> | boolean
   isBanned?: Prisma.BoolFilter<"User"> | boolean
   banReason?: Prisma.StringNullableFilter<"User"> | string | null
@@ -537,6 +557,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessListRelationFilter
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessListRelationFilter
   createdShiftPosts?: Prisma.ShiftPostListRelationFilter
+  createdShiftTemplates?: Prisma.ShiftTemplateListRelationFilter
   applications?: Prisma.ApplicationListRelationFilter
   workerAssignments?: Prisma.AssignmentListRelationFilter
   employerAssignments?: Prisma.AssignmentListRelationFilter
@@ -546,9 +567,11 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   moderatedReports?: Prisma.ReportListRelationFilter
   verifications?: Prisma.VerificationListRelationFilter
   reviewedVerifications?: Prisma.VerificationListRelationFilter
+  identityVerifications?: Prisma.IdentityVerificationListRelationFilter
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
-  favorites?: Prisma.FavoriteListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  legalEvents?: Prisma.UserLegalEventListRelationFilter
   conversationParticipations?: Prisma.ConversationParticipantListRelationFilter
   sentMessages?: Prisma.MessageListRelationFilter
   uploadedMedia?: Prisma.MediaUploadListRelationFilter
@@ -576,6 +599,7 @@ export type UserOrderByWithAggregationInput = {
   ratingAvg?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
   completedAssignmentsCount?: Prisma.SortOrder
+  balanceRub?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isBanned?: Prisma.SortOrder
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -616,6 +640,7 @@ export type UserScalarWhereWithAggregatesInput = {
   ratingAvg?: Prisma.FloatWithAggregatesFilter<"User"> | number
   ratingCount?: Prisma.IntWithAggregatesFilter<"User"> | number
   completedAssignmentsCount?: Prisma.IntWithAggregatesFilter<"User"> | number
+  balanceRub?: Prisma.IntWithAggregatesFilter<"User"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   isBanned?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   banReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -646,6 +671,7 @@ export type UserCreateInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -662,6 +688,7 @@ export type UserCreateInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -671,9 +698,11 @@ export type UserCreateInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -701,6 +730,7 @@ export type UserUncheckedCreateInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -715,6 +745,7 @@ export type UserUncheckedCreateInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -724,9 +755,11 @@ export type UserUncheckedCreateInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -752,6 +785,7 @@ export type UserUpdateInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -768,6 +802,7 @@ export type UserUpdateInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -777,9 +812,11 @@ export type UserUpdateInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -807,6 +844,7 @@ export type UserUncheckedUpdateInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -821,6 +859,7 @@ export type UserUncheckedUpdateInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -830,9 +869,11 @@ export type UserUncheckedUpdateInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -860,6 +901,7 @@ export type UserCreateManyInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -890,6 +932,7 @@ export type UserUpdateManyMutationInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -922,6 +965,7 @@ export type UserUncheckedUpdateManyInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -962,6 +1006,7 @@ export type UserCountOrderByAggregateInput = {
   ratingAvg?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
   completedAssignmentsCount?: Prisma.SortOrder
+  balanceRub?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isBanned?: Prisma.SortOrder
   banReason?: Prisma.SortOrder
@@ -977,6 +1022,7 @@ export type UserAvgOrderByAggregateInput = {
   ratingAvg?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
   completedAssignmentsCount?: Prisma.SortOrder
+  balanceRub?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -1000,6 +1046,7 @@ export type UserMaxOrderByAggregateInput = {
   ratingAvg?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
   completedAssignmentsCount?: Prisma.SortOrder
+  balanceRub?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isBanned?: Prisma.SortOrder
   banReason?: Prisma.SortOrder
@@ -1031,6 +1078,7 @@ export type UserMinOrderByAggregateInput = {
   ratingAvg?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
   completedAssignmentsCount?: Prisma.SortOrder
+  balanceRub?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isBanned?: Prisma.SortOrder
   banReason?: Prisma.SortOrder
@@ -1046,6 +1094,7 @@ export type UserSumOrderByAggregateInput = {
   ratingAvg?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
   completedAssignmentsCount?: Prisma.SortOrder
+  balanceRub?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -1293,6 +1342,20 @@ export type UserUpdateOneRequiredWithoutCreatedShiftPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedShiftPostsInput, Prisma.UserUpdateWithoutCreatedShiftPostsInput>, Prisma.UserUncheckedUpdateWithoutCreatedShiftPostsInput>
 }
 
+export type UserCreateNestedOneWithoutCreatedShiftTemplatesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedShiftTemplatesInput, Prisma.UserUncheckedCreateWithoutCreatedShiftTemplatesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedShiftTemplatesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCreatedShiftTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedShiftTemplatesInput, Prisma.UserUncheckedCreateWithoutCreatedShiftTemplatesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedShiftTemplatesInput
+  upsert?: Prisma.UserUpsertWithoutCreatedShiftTemplatesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedShiftTemplatesInput, Prisma.UserUpdateWithoutCreatedShiftTemplatesInput>, Prisma.UserUncheckedUpdateWithoutCreatedShiftTemplatesInput>
+}
+
 export type UserCreateNestedOneWithoutApplicationsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutApplicationsInput, Prisma.UserUncheckedCreateWithoutApplicationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutApplicationsInput
@@ -1425,6 +1488,36 @@ export type UserUpdateOneWithoutReviewedVerificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewedVerificationsInput, Prisma.UserUpdateWithoutReviewedVerificationsInput>, Prisma.UserUncheckedUpdateWithoutReviewedVerificationsInput>
 }
 
+export type UserCreateNestedOneWithoutIdentityVerificationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutIdentityVerificationsInput, Prisma.UserUncheckedCreateWithoutIdentityVerificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutIdentityVerificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutReviewedIdentityVerificationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedIdentityVerificationsInput, Prisma.UserUncheckedCreateWithoutReviewedIdentityVerificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedIdentityVerificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutIdentityVerificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutIdentityVerificationsInput, Prisma.UserUncheckedCreateWithoutIdentityVerificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutIdentityVerificationsInput
+  upsert?: Prisma.UserUpsertWithoutIdentityVerificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutIdentityVerificationsInput, Prisma.UserUpdateWithoutIdentityVerificationsInput>, Prisma.UserUncheckedUpdateWithoutIdentityVerificationsInput>
+}
+
+export type UserUpdateOneWithoutReviewedIdentityVerificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedIdentityVerificationsInput, Prisma.UserUncheckedCreateWithoutReviewedIdentityVerificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedIdentityVerificationsInput
+  upsert?: Prisma.UserUpsertWithoutReviewedIdentityVerificationsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewedIdentityVerificationsInput, Prisma.UserUpdateWithoutReviewedIdentityVerificationsInput>, Prisma.UserUncheckedUpdateWithoutReviewedIdentityVerificationsInput>
+}
+
 export type UserCreateNestedOneWithoutNotificationsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationsInput, Prisma.UserUncheckedCreateWithoutNotificationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationsInput
@@ -1437,20 +1530,6 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutNotificationsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
-}
-
-export type UserCreateNestedOneWithoutFavoritesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutFavoritesInput, Prisma.UserUncheckedCreateWithoutFavoritesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFavoritesInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutFavoritesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutFavoritesInput, Prisma.UserUncheckedCreateWithoutFavoritesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFavoritesInput
-  upsert?: Prisma.UserUpsertWithoutFavoritesInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFavoritesInput, Prisma.UserUpdateWithoutFavoritesInput>, Prisma.UserUncheckedUpdateWithoutFavoritesInput>
 }
 
 export type UserCreateNestedOneWithoutAuditLogsInput = {
@@ -1467,6 +1546,20 @@ export type UserUpdateOneWithoutAuditLogsNestedInput = {
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.UserUpdateWithoutAuditLogsInput>, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
+}
+
+export type UserCreateNestedOneWithoutLegalEventsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLegalEventsInput, Prisma.UserUncheckedCreateWithoutLegalEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLegalEventsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutLegalEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLegalEventsInput, Prisma.UserUncheckedCreateWithoutLegalEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLegalEventsInput
+  upsert?: Prisma.UserUpsertWithoutLegalEventsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLegalEventsInput, Prisma.UserUpdateWithoutLegalEventsInput>, Prisma.UserUncheckedUpdateWithoutLegalEventsInput>
 }
 
 export type UserCreateNestedOneWithoutConversationParticipationsInput = {
@@ -1531,6 +1624,7 @@ export type UserCreateWithoutRolesInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -1546,6 +1640,7 @@ export type UserCreateWithoutRolesInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -1555,9 +1650,11 @@ export type UserCreateWithoutRolesInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -1585,6 +1682,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -1598,6 +1696,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -1607,9 +1706,11 @@ export type UserUncheckedCreateWithoutRolesInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -1651,6 +1752,7 @@ export type UserUpdateWithoutRolesInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1666,6 +1768,7 @@ export type UserUpdateWithoutRolesInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -1675,9 +1778,11 @@ export type UserUpdateWithoutRolesInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -1705,6 +1810,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1718,6 +1824,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -1727,9 +1834,11 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -1755,6 +1864,7 @@ export type UserCreateWithoutRegionInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -1770,6 +1880,7 @@ export type UserCreateWithoutRegionInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -1779,9 +1890,11 @@ export type UserCreateWithoutRegionInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -1808,6 +1921,7 @@ export type UserUncheckedCreateWithoutRegionInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -1822,6 +1936,7 @@ export type UserUncheckedCreateWithoutRegionInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -1831,9 +1946,11 @@ export type UserUncheckedCreateWithoutRegionInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -1890,6 +2007,7 @@ export type UserScalarWhereInput = {
   ratingAvg?: Prisma.FloatFilter<"User"> | number
   ratingCount?: Prisma.IntFilter<"User"> | number
   completedAssignmentsCount?: Prisma.IntFilter<"User"> | number
+  balanceRub?: Prisma.IntFilter<"User"> | number
   isActive?: Prisma.BoolFilter<"User"> | boolean
   isBanned?: Prisma.BoolFilter<"User"> | boolean
   banReason?: Prisma.StringNullableFilter<"User"> | string | null
@@ -1920,6 +2038,7 @@ export type UserCreateWithoutCityInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -1935,6 +2054,7 @@ export type UserCreateWithoutCityInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -1944,9 +2064,11 @@ export type UserCreateWithoutCityInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -1973,6 +2095,7 @@ export type UserUncheckedCreateWithoutCityInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -1987,6 +2110,7 @@ export type UserUncheckedCreateWithoutCityInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -1996,9 +2120,11 @@ export type UserUncheckedCreateWithoutCityInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -2050,6 +2176,7 @@ export type UserCreateWithoutOwnedPickupPointsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -2065,6 +2192,7 @@ export type UserCreateWithoutOwnedPickupPointsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -2074,9 +2202,11 @@ export type UserCreateWithoutOwnedPickupPointsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -2104,6 +2234,7 @@ export type UserUncheckedCreateWithoutOwnedPickupPointsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -2117,6 +2248,7 @@ export type UserUncheckedCreateWithoutOwnedPickupPointsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -2126,9 +2258,11 @@ export type UserUncheckedCreateWithoutOwnedPickupPointsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -2159,6 +2293,7 @@ export type UserCreateWithoutManagedPickupPointsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -2174,6 +2309,7 @@ export type UserCreateWithoutManagedPickupPointsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -2183,9 +2319,11 @@ export type UserCreateWithoutManagedPickupPointsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -2213,6 +2351,7 @@ export type UserUncheckedCreateWithoutManagedPickupPointsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -2226,6 +2365,7 @@ export type UserUncheckedCreateWithoutManagedPickupPointsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -2235,9 +2375,11 @@ export type UserUncheckedCreateWithoutManagedPickupPointsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -2279,6 +2421,7 @@ export type UserUpdateWithoutOwnedPickupPointsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2294,6 +2437,7 @@ export type UserUpdateWithoutOwnedPickupPointsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -2303,9 +2447,11 @@ export type UserUpdateWithoutOwnedPickupPointsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -2333,6 +2479,7 @@ export type UserUncheckedUpdateWithoutOwnedPickupPointsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2346,6 +2493,7 @@ export type UserUncheckedUpdateWithoutOwnedPickupPointsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -2355,9 +2503,11 @@ export type UserUncheckedUpdateWithoutOwnedPickupPointsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -2394,6 +2544,7 @@ export type UserUpdateWithoutManagedPickupPointsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2409,6 +2560,7 @@ export type UserUpdateWithoutManagedPickupPointsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -2418,9 +2570,11 @@ export type UserUpdateWithoutManagedPickupPointsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -2448,6 +2602,7 @@ export type UserUncheckedUpdateWithoutManagedPickupPointsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2461,6 +2616,7 @@ export type UserUncheckedUpdateWithoutManagedPickupPointsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -2470,9 +2626,11 @@ export type UserUncheckedUpdateWithoutManagedPickupPointsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -2498,6 +2656,7 @@ export type UserCreateWithoutOwnerGrantedManagerAccessesInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -2513,6 +2672,7 @@ export type UserCreateWithoutOwnerGrantedManagerAccessesInput = {
   managedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutManagerInput
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -2522,9 +2682,11 @@ export type UserCreateWithoutOwnerGrantedManagerAccessesInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -2552,6 +2714,7 @@ export type UserUncheckedCreateWithoutOwnerGrantedManagerAccessesInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -2565,6 +2728,7 @@ export type UserUncheckedCreateWithoutOwnerGrantedManagerAccessesInput = {
   managedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutManagerInput
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -2574,9 +2738,11 @@ export type UserUncheckedCreateWithoutOwnerGrantedManagerAccessesInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -2607,6 +2773,7 @@ export type UserCreateWithoutManagerPickupPointAccessesInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -2622,6 +2789,7 @@ export type UserCreateWithoutManagerPickupPointAccessesInput = {
   managedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -2631,9 +2799,11 @@ export type UserCreateWithoutManagerPickupPointAccessesInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -2661,6 +2831,7 @@ export type UserUncheckedCreateWithoutManagerPickupPointAccessesInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -2674,6 +2845,7 @@ export type UserUncheckedCreateWithoutManagerPickupPointAccessesInput = {
   managedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -2683,9 +2855,11 @@ export type UserUncheckedCreateWithoutManagerPickupPointAccessesInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -2727,6 +2901,7 @@ export type UserUpdateWithoutOwnerGrantedManagerAccessesInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2742,6 +2917,7 @@ export type UserUpdateWithoutOwnerGrantedManagerAccessesInput = {
   managedPickupPoints?: Prisma.PickupPointUpdateManyWithoutManagerNestedInput
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -2751,9 +2927,11 @@ export type UserUpdateWithoutOwnerGrantedManagerAccessesInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -2781,6 +2959,7 @@ export type UserUncheckedUpdateWithoutOwnerGrantedManagerAccessesInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2794,6 +2973,7 @@ export type UserUncheckedUpdateWithoutOwnerGrantedManagerAccessesInput = {
   managedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutManagerNestedInput
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -2803,9 +2983,11 @@ export type UserUncheckedUpdateWithoutOwnerGrantedManagerAccessesInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -2842,6 +3024,7 @@ export type UserUpdateWithoutManagerPickupPointAccessesInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2857,6 +3040,7 @@ export type UserUpdateWithoutManagerPickupPointAccessesInput = {
   managedPickupPoints?: Prisma.PickupPointUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -2866,9 +3050,11 @@ export type UserUpdateWithoutManagerPickupPointAccessesInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -2896,6 +3082,7 @@ export type UserUncheckedUpdateWithoutManagerPickupPointAccessesInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2909,6 +3096,7 @@ export type UserUncheckedUpdateWithoutManagerPickupPointAccessesInput = {
   managedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -2918,9 +3106,11 @@ export type UserUncheckedUpdateWithoutManagerPickupPointAccessesInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -2946,6 +3136,7 @@ export type UserCreateWithoutCreatedShiftPostsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -2961,6 +3152,7 @@ export type UserCreateWithoutCreatedShiftPostsInput = {
   managedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutManagerInput
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -2970,9 +3162,11 @@ export type UserCreateWithoutCreatedShiftPostsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -3000,6 +3194,7 @@ export type UserUncheckedCreateWithoutCreatedShiftPostsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3013,6 +3208,7 @@ export type UserUncheckedCreateWithoutCreatedShiftPostsInput = {
   managedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutManagerInput
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -3022,9 +3218,11 @@ export type UserUncheckedCreateWithoutCreatedShiftPostsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -3066,6 +3264,7 @@ export type UserUpdateWithoutCreatedShiftPostsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3081,6 +3280,7 @@ export type UserUpdateWithoutCreatedShiftPostsInput = {
   managedPickupPoints?: Prisma.PickupPointUpdateManyWithoutManagerNestedInput
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -3090,9 +3290,11 @@ export type UserUpdateWithoutCreatedShiftPostsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -3120,6 +3322,7 @@ export type UserUncheckedUpdateWithoutCreatedShiftPostsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3133,6 +3336,7 @@ export type UserUncheckedUpdateWithoutCreatedShiftPostsInput = {
   managedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutManagerNestedInput
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -3142,9 +3346,251 @@ export type UserUncheckedUpdateWithoutCreatedShiftPostsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
+  conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
+  uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserCreateWithoutCreatedShiftTemplatesInput = {
+  id?: string
+  telegramId: string
+  username?: string | null
+  firstName: string
+  lastName?: string | null
+  age?: number | null
+  photoUrl?: string | null
+  pickupPointCode?: string | null
+  experienceSummary?: string | null
+  phone?: string | null
+  isPhoneVerified?: boolean
+  bio?: string | null
+  gender?: string | null
+  district?: string | null
+  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: boolean
+  ratingAvg?: number
+  ratingCount?: number
+  completedAssignmentsCount?: number
+  balanceRub?: number
+  isActive?: boolean
+  isBanned?: boolean
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  notifyOnNewMessage?: boolean
+  lastActiveAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  region?: Prisma.RegionCreateNestedOneWithoutUsersInput
+  city?: Prisma.CityCreateNestedOneWithoutUsersInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  ownedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutOwnerInput
+  managedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutManagerInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
+  createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
+  workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
+  employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
+  authoredReviews?: Prisma.ReviewCreateNestedManyWithoutAuthorInput
+  receivedReviews?: Prisma.ReviewCreateNestedManyWithoutSubjectInput
+  createdReports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
+  reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
+  conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
+  uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
+}
+
+export type UserUncheckedCreateWithoutCreatedShiftTemplatesInput = {
+  id?: string
+  telegramId: string
+  username?: string | null
+  firstName: string
+  lastName?: string | null
+  age?: number | null
+  photoUrl?: string | null
+  pickupPointCode?: string | null
+  experienceSummary?: string | null
+  phone?: string | null
+  isPhoneVerified?: boolean
+  bio?: string | null
+  gender?: string | null
+  regionId?: string | null
+  cityId?: string | null
+  district?: string | null
+  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: boolean
+  ratingAvg?: number
+  ratingCount?: number
+  completedAssignmentsCount?: number
+  balanceRub?: number
+  isActive?: boolean
+  isBanned?: boolean
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  notifyOnNewMessage?: boolean
+  lastActiveAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  ownedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutOwnerInput
+  managedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutManagerInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
+  createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
+  employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
+  authoredReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAuthorInput
+  receivedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSubjectInput
+  createdReports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
+  conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
+  uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
+}
+
+export type UserCreateOrConnectWithoutCreatedShiftTemplatesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedShiftTemplatesInput, Prisma.UserUncheckedCreateWithoutCreatedShiftTemplatesInput>
+}
+
+export type UserUpsertWithoutCreatedShiftTemplatesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedShiftTemplatesInput, Prisma.UserUncheckedUpdateWithoutCreatedShiftTemplatesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedShiftTemplatesInput, Prisma.UserUncheckedCreateWithoutCreatedShiftTemplatesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedShiftTemplatesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedShiftTemplatesInput, Prisma.UserUncheckedUpdateWithoutCreatedShiftTemplatesInput>
+}
+
+export type UserUpdateWithoutCreatedShiftTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
+  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  region?: Prisma.RegionUpdateOneWithoutUsersNestedInput
+  city?: Prisma.CityUpdateOneWithoutUsersNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  ownedPickupPoints?: Prisma.PickupPointUpdateManyWithoutOwnerNestedInput
+  managedPickupPoints?: Prisma.PickupPointUpdateManyWithoutManagerNestedInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
+  createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
+  workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
+  employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
+  authoredReviews?: Prisma.ReviewUpdateManyWithoutAuthorNestedInput
+  receivedReviews?: Prisma.ReviewUpdateManyWithoutSubjectNestedInput
+  createdReports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
+  reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
+  conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
+  uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedShiftTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
+  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  ownedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutOwnerNestedInput
+  managedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutManagerNestedInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
+  createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
+  employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
+  authoredReviews?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
+  receivedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutSubjectNestedInput
+  createdReports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -3170,6 +3616,7 @@ export type UserCreateWithoutApplicationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3186,6 +3633,7 @@ export type UserCreateWithoutApplicationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
   authoredReviews?: Prisma.ReviewCreateNestedManyWithoutAuthorInput
@@ -3194,9 +3642,11 @@ export type UserCreateWithoutApplicationsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -3224,6 +3674,7 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3238,6 +3689,7 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
   authoredReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAuthorInput
@@ -3246,9 +3698,11 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -3290,6 +3744,7 @@ export type UserUpdateWithoutApplicationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3306,6 +3761,7 @@ export type UserUpdateWithoutApplicationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
   authoredReviews?: Prisma.ReviewUpdateManyWithoutAuthorNestedInput
@@ -3314,9 +3770,11 @@ export type UserUpdateWithoutApplicationsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -3344,6 +3802,7 @@ export type UserUncheckedUpdateWithoutApplicationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3358,6 +3817,7 @@ export type UserUncheckedUpdateWithoutApplicationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
   authoredReviews?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
@@ -3366,9 +3826,11 @@ export type UserUncheckedUpdateWithoutApplicationsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -3394,6 +3856,7 @@ export type UserCreateWithoutWorkerAssignmentsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3410,6 +3873,7 @@ export type UserCreateWithoutWorkerAssignmentsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
   authoredReviews?: Prisma.ReviewCreateNestedManyWithoutAuthorInput
@@ -3418,9 +3882,11 @@ export type UserCreateWithoutWorkerAssignmentsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -3448,6 +3914,7 @@ export type UserUncheckedCreateWithoutWorkerAssignmentsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3462,6 +3929,7 @@ export type UserUncheckedCreateWithoutWorkerAssignmentsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
   authoredReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAuthorInput
@@ -3470,9 +3938,11 @@ export type UserUncheckedCreateWithoutWorkerAssignmentsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -3503,6 +3973,7 @@ export type UserCreateWithoutEmployerAssignmentsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3519,6 +3990,7 @@ export type UserCreateWithoutEmployerAssignmentsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   authoredReviews?: Prisma.ReviewCreateNestedManyWithoutAuthorInput
@@ -3527,9 +3999,11 @@ export type UserCreateWithoutEmployerAssignmentsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -3557,6 +4031,7 @@ export type UserUncheckedCreateWithoutEmployerAssignmentsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3571,6 +4046,7 @@ export type UserUncheckedCreateWithoutEmployerAssignmentsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   authoredReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAuthorInput
@@ -3579,9 +4055,11 @@ export type UserUncheckedCreateWithoutEmployerAssignmentsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -3623,6 +4101,7 @@ export type UserUpdateWithoutWorkerAssignmentsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3639,6 +4118,7 @@ export type UserUpdateWithoutWorkerAssignmentsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
   authoredReviews?: Prisma.ReviewUpdateManyWithoutAuthorNestedInput
@@ -3647,9 +4127,11 @@ export type UserUpdateWithoutWorkerAssignmentsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -3677,6 +4159,7 @@ export type UserUncheckedUpdateWithoutWorkerAssignmentsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3691,6 +4174,7 @@ export type UserUncheckedUpdateWithoutWorkerAssignmentsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
   authoredReviews?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
@@ -3699,9 +4183,11 @@ export type UserUncheckedUpdateWithoutWorkerAssignmentsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -3738,6 +4224,7 @@ export type UserUpdateWithoutEmployerAssignmentsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3754,6 +4241,7 @@ export type UserUpdateWithoutEmployerAssignmentsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   authoredReviews?: Prisma.ReviewUpdateManyWithoutAuthorNestedInput
@@ -3762,9 +4250,11 @@ export type UserUpdateWithoutEmployerAssignmentsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -3792,6 +4282,7 @@ export type UserUncheckedUpdateWithoutEmployerAssignmentsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3806,6 +4297,7 @@ export type UserUncheckedUpdateWithoutEmployerAssignmentsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   authoredReviews?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
@@ -3814,9 +4306,11 @@ export type UserUncheckedUpdateWithoutEmployerAssignmentsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -3842,6 +4336,7 @@ export type UserCreateWithoutAuthoredReviewsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3858,6 +4353,7 @@ export type UserCreateWithoutAuthoredReviewsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -3866,9 +4362,11 @@ export type UserCreateWithoutAuthoredReviewsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -3896,6 +4394,7 @@ export type UserUncheckedCreateWithoutAuthoredReviewsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3910,6 +4409,7 @@ export type UserUncheckedCreateWithoutAuthoredReviewsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -3918,9 +4418,11 @@ export type UserUncheckedCreateWithoutAuthoredReviewsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -3951,6 +4453,7 @@ export type UserCreateWithoutReceivedReviewsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -3967,6 +4470,7 @@ export type UserCreateWithoutReceivedReviewsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -3975,9 +4479,11 @@ export type UserCreateWithoutReceivedReviewsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -4005,6 +4511,7 @@ export type UserUncheckedCreateWithoutReceivedReviewsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -4019,6 +4526,7 @@ export type UserUncheckedCreateWithoutReceivedReviewsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -4027,9 +4535,11 @@ export type UserUncheckedCreateWithoutReceivedReviewsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -4071,6 +4581,7 @@ export type UserUpdateWithoutAuthoredReviewsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4087,6 +4598,7 @@ export type UserUpdateWithoutAuthoredReviewsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -4095,9 +4607,11 @@ export type UserUpdateWithoutAuthoredReviewsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -4125,6 +4639,7 @@ export type UserUncheckedUpdateWithoutAuthoredReviewsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4139,6 +4654,7 @@ export type UserUncheckedUpdateWithoutAuthoredReviewsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -4147,9 +4663,11 @@ export type UserUncheckedUpdateWithoutAuthoredReviewsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -4186,6 +4704,7 @@ export type UserUpdateWithoutReceivedReviewsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4202,6 +4721,7 @@ export type UserUpdateWithoutReceivedReviewsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -4210,9 +4730,11 @@ export type UserUpdateWithoutReceivedReviewsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -4240,6 +4762,7 @@ export type UserUncheckedUpdateWithoutReceivedReviewsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4254,6 +4777,7 @@ export type UserUncheckedUpdateWithoutReceivedReviewsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -4262,9 +4786,11 @@ export type UserUncheckedUpdateWithoutReceivedReviewsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -4290,6 +4816,7 @@ export type UserCreateWithoutCreatedReportsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -4306,6 +4833,7 @@ export type UserCreateWithoutCreatedReportsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -4314,9 +4842,11 @@ export type UserCreateWithoutCreatedReportsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -4344,6 +4874,7 @@ export type UserUncheckedCreateWithoutCreatedReportsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -4358,6 +4889,7 @@ export type UserUncheckedCreateWithoutCreatedReportsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -4366,9 +4898,11 @@ export type UserUncheckedCreateWithoutCreatedReportsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -4399,6 +4933,7 @@ export type UserCreateWithoutModeratedReportsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -4415,6 +4950,7 @@ export type UserCreateWithoutModeratedReportsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -4423,9 +4959,11 @@ export type UserCreateWithoutModeratedReportsInput = {
   createdReports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -4453,6 +4991,7 @@ export type UserUncheckedCreateWithoutModeratedReportsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -4467,6 +5006,7 @@ export type UserUncheckedCreateWithoutModeratedReportsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -4475,9 +5015,11 @@ export type UserUncheckedCreateWithoutModeratedReportsInput = {
   createdReports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -4519,6 +5061,7 @@ export type UserUpdateWithoutCreatedReportsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4535,6 +5078,7 @@ export type UserUpdateWithoutCreatedReportsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -4543,9 +5087,11 @@ export type UserUpdateWithoutCreatedReportsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -4573,6 +5119,7 @@ export type UserUncheckedUpdateWithoutCreatedReportsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4587,6 +5134,7 @@ export type UserUncheckedUpdateWithoutCreatedReportsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -4595,9 +5143,11 @@ export type UserUncheckedUpdateWithoutCreatedReportsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -4634,6 +5184,7 @@ export type UserUpdateWithoutModeratedReportsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4650,6 +5201,7 @@ export type UserUpdateWithoutModeratedReportsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -4658,9 +5210,11 @@ export type UserUpdateWithoutModeratedReportsInput = {
   createdReports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -4688,6 +5242,7 @@ export type UserUncheckedUpdateWithoutModeratedReportsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4702,6 +5257,7 @@ export type UserUncheckedUpdateWithoutModeratedReportsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -4710,9 +5266,11 @@ export type UserUncheckedUpdateWithoutModeratedReportsInput = {
   createdReports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -4738,6 +5296,7 @@ export type UserCreateWithoutVerificationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -4754,6 +5313,7 @@ export type UserCreateWithoutVerificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -4762,9 +5322,11 @@ export type UserCreateWithoutVerificationsInput = {
   createdReports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -4792,6 +5354,7 @@ export type UserUncheckedCreateWithoutVerificationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -4806,6 +5369,7 @@ export type UserUncheckedCreateWithoutVerificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -4814,9 +5378,11 @@ export type UserUncheckedCreateWithoutVerificationsInput = {
   createdReports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -4847,6 +5413,7 @@ export type UserCreateWithoutReviewedVerificationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -4863,6 +5430,7 @@ export type UserCreateWithoutReviewedVerificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -4871,9 +5439,11 @@ export type UserCreateWithoutReviewedVerificationsInput = {
   createdReports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -4901,6 +5471,7 @@ export type UserUncheckedCreateWithoutReviewedVerificationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -4915,6 +5486,7 @@ export type UserUncheckedCreateWithoutReviewedVerificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -4923,9 +5495,11 @@ export type UserUncheckedCreateWithoutReviewedVerificationsInput = {
   createdReports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -4967,6 +5541,7 @@ export type UserUpdateWithoutVerificationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4983,6 +5558,7 @@ export type UserUpdateWithoutVerificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -4991,9 +5567,11 @@ export type UserUpdateWithoutVerificationsInput = {
   createdReports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -5021,6 +5599,7 @@ export type UserUncheckedUpdateWithoutVerificationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5035,6 +5614,7 @@ export type UserUncheckedUpdateWithoutVerificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -5043,9 +5623,11 @@ export type UserUncheckedUpdateWithoutVerificationsInput = {
   createdReports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -5082,6 +5664,7 @@ export type UserUpdateWithoutReviewedVerificationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5098,6 +5681,7 @@ export type UserUpdateWithoutReviewedVerificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -5106,9 +5690,11 @@ export type UserUpdateWithoutReviewedVerificationsInput = {
   createdReports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -5136,6 +5722,7 @@ export type UserUncheckedUpdateWithoutReviewedVerificationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5150,6 +5737,7 @@ export type UserUncheckedUpdateWithoutReviewedVerificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -5158,9 +5746,491 @@ export type UserUncheckedUpdateWithoutReviewedVerificationsInput = {
   createdReports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
+  conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
+  uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserCreateWithoutIdentityVerificationsInput = {
+  id?: string
+  telegramId: string
+  username?: string | null
+  firstName: string
+  lastName?: string | null
+  age?: number | null
+  photoUrl?: string | null
+  pickupPointCode?: string | null
+  experienceSummary?: string | null
+  phone?: string | null
+  isPhoneVerified?: boolean
+  bio?: string | null
+  gender?: string | null
+  district?: string | null
+  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: boolean
+  ratingAvg?: number
+  ratingCount?: number
+  completedAssignmentsCount?: number
+  balanceRub?: number
+  isActive?: boolean
+  isBanned?: boolean
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  notifyOnNewMessage?: boolean
+  lastActiveAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  region?: Prisma.RegionCreateNestedOneWithoutUsersInput
+  city?: Prisma.CityCreateNestedOneWithoutUsersInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  ownedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutOwnerInput
+  managedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutManagerInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
+  createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
+  applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
+  workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
+  employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
+  authoredReviews?: Prisma.ReviewCreateNestedManyWithoutAuthorInput
+  receivedReviews?: Prisma.ReviewCreateNestedManyWithoutSubjectInput
+  createdReports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
+  reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
+  conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
+  uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
+}
+
+export type UserUncheckedCreateWithoutIdentityVerificationsInput = {
+  id?: string
+  telegramId: string
+  username?: string | null
+  firstName: string
+  lastName?: string | null
+  age?: number | null
+  photoUrl?: string | null
+  pickupPointCode?: string | null
+  experienceSummary?: string | null
+  phone?: string | null
+  isPhoneVerified?: boolean
+  bio?: string | null
+  gender?: string | null
+  regionId?: string | null
+  cityId?: string | null
+  district?: string | null
+  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: boolean
+  ratingAvg?: number
+  ratingCount?: number
+  completedAssignmentsCount?: number
+  balanceRub?: number
+  isActive?: boolean
+  isBanned?: boolean
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  notifyOnNewMessage?: boolean
+  lastActiveAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  ownedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutOwnerInput
+  managedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutManagerInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
+  createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
+  employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
+  authoredReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAuthorInput
+  receivedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSubjectInput
+  createdReports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
+  conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
+  uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
+}
+
+export type UserCreateOrConnectWithoutIdentityVerificationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutIdentityVerificationsInput, Prisma.UserUncheckedCreateWithoutIdentityVerificationsInput>
+}
+
+export type UserCreateWithoutReviewedIdentityVerificationsInput = {
+  id?: string
+  telegramId: string
+  username?: string | null
+  firstName: string
+  lastName?: string | null
+  age?: number | null
+  photoUrl?: string | null
+  pickupPointCode?: string | null
+  experienceSummary?: string | null
+  phone?: string | null
+  isPhoneVerified?: boolean
+  bio?: string | null
+  gender?: string | null
+  district?: string | null
+  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: boolean
+  ratingAvg?: number
+  ratingCount?: number
+  completedAssignmentsCount?: number
+  balanceRub?: number
+  isActive?: boolean
+  isBanned?: boolean
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  notifyOnNewMessage?: boolean
+  lastActiveAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  region?: Prisma.RegionCreateNestedOneWithoutUsersInput
+  city?: Prisma.CityCreateNestedOneWithoutUsersInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  ownedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutOwnerInput
+  managedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutManagerInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
+  createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
+  applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
+  workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
+  employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
+  authoredReviews?: Prisma.ReviewCreateNestedManyWithoutAuthorInput
+  receivedReviews?: Prisma.ReviewCreateNestedManyWithoutSubjectInput
+  createdReports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
+  reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
+  conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
+  uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
+}
+
+export type UserUncheckedCreateWithoutReviewedIdentityVerificationsInput = {
+  id?: string
+  telegramId: string
+  username?: string | null
+  firstName: string
+  lastName?: string | null
+  age?: number | null
+  photoUrl?: string | null
+  pickupPointCode?: string | null
+  experienceSummary?: string | null
+  phone?: string | null
+  isPhoneVerified?: boolean
+  bio?: string | null
+  gender?: string | null
+  regionId?: string | null
+  cityId?: string | null
+  district?: string | null
+  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: boolean
+  ratingAvg?: number
+  ratingCount?: number
+  completedAssignmentsCount?: number
+  balanceRub?: number
+  isActive?: boolean
+  isBanned?: boolean
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  notifyOnNewMessage?: boolean
+  lastActiveAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  ownedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutOwnerInput
+  managedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutManagerInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
+  createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
+  employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
+  authoredReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAuthorInput
+  receivedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSubjectInput
+  createdReports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
+  conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
+  uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
+}
+
+export type UserCreateOrConnectWithoutReviewedIdentityVerificationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedIdentityVerificationsInput, Prisma.UserUncheckedCreateWithoutReviewedIdentityVerificationsInput>
+}
+
+export type UserUpsertWithoutIdentityVerificationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutIdentityVerificationsInput, Prisma.UserUncheckedUpdateWithoutIdentityVerificationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutIdentityVerificationsInput, Prisma.UserUncheckedCreateWithoutIdentityVerificationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutIdentityVerificationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutIdentityVerificationsInput, Prisma.UserUncheckedUpdateWithoutIdentityVerificationsInput>
+}
+
+export type UserUpdateWithoutIdentityVerificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
+  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  region?: Prisma.RegionUpdateOneWithoutUsersNestedInput
+  city?: Prisma.CityUpdateOneWithoutUsersNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  ownedPickupPoints?: Prisma.PickupPointUpdateManyWithoutOwnerNestedInput
+  managedPickupPoints?: Prisma.PickupPointUpdateManyWithoutManagerNestedInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
+  createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
+  applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
+  workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
+  employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
+  authoredReviews?: Prisma.ReviewUpdateManyWithoutAuthorNestedInput
+  receivedReviews?: Prisma.ReviewUpdateManyWithoutSubjectNestedInput
+  createdReports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
+  reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
+  conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
+  uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutIdentityVerificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
+  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  ownedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutOwnerNestedInput
+  managedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutManagerNestedInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
+  createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
+  employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
+  authoredReviews?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
+  receivedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutSubjectNestedInput
+  createdReports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
+  conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
+  uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserUpsertWithoutReviewedIdentityVerificationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewedIdentityVerificationsInput, Prisma.UserUncheckedUpdateWithoutReviewedIdentityVerificationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedIdentityVerificationsInput, Prisma.UserUncheckedCreateWithoutReviewedIdentityVerificationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewedIdentityVerificationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewedIdentityVerificationsInput, Prisma.UserUncheckedUpdateWithoutReviewedIdentityVerificationsInput>
+}
+
+export type UserUpdateWithoutReviewedIdentityVerificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
+  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  region?: Prisma.RegionUpdateOneWithoutUsersNestedInput
+  city?: Prisma.CityUpdateOneWithoutUsersNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  ownedPickupPoints?: Prisma.PickupPointUpdateManyWithoutOwnerNestedInput
+  managedPickupPoints?: Prisma.PickupPointUpdateManyWithoutManagerNestedInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
+  createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
+  applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
+  workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
+  employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
+  authoredReviews?: Prisma.ReviewUpdateManyWithoutAuthorNestedInput
+  receivedReviews?: Prisma.ReviewUpdateManyWithoutSubjectNestedInput
+  createdReports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
+  reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
+  conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
+  uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewedIdentityVerificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
+  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  ownedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutOwnerNestedInput
+  managedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutManagerNestedInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
+  createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
+  employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
+  authoredReviews?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
+  receivedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutSubjectNestedInput
+  createdReports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -5186,6 +6256,7 @@ export type UserCreateWithoutNotificationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -5202,6 +6273,7 @@ export type UserCreateWithoutNotificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -5211,8 +6283,10 @@ export type UserCreateWithoutNotificationsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -5240,6 +6314,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -5254,6 +6329,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -5263,8 +6339,10 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -5306,6 +6384,7 @@ export type UserUpdateWithoutNotificationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5322,6 +6401,7 @@ export type UserUpdateWithoutNotificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -5331,8 +6411,10 @@ export type UserUpdateWithoutNotificationsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -5360,6 +6442,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5374,6 +6457,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -5383,232 +6467,10 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
-  conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
-  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
-  uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
-}
-
-export type UserCreateWithoutFavoritesInput = {
-  id?: string
-  telegramId: string
-  username?: string | null
-  firstName: string
-  lastName?: string | null
-  age?: number | null
-  photoUrl?: string | null
-  pickupPointCode?: string | null
-  experienceSummary?: string | null
-  phone?: string | null
-  isPhoneVerified?: boolean
-  bio?: string | null
-  gender?: string | null
-  district?: string | null
-  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
-  isOnboardingCompleted?: boolean
-  ratingAvg?: number
-  ratingCount?: number
-  completedAssignmentsCount?: number
-  isActive?: boolean
-  isBanned?: boolean
-  banReason?: string | null
-  bannedAt?: Date | string | null
-  notifyOnNewMessage?: boolean
-  lastActiveAt?: Date | string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  region?: Prisma.RegionCreateNestedOneWithoutUsersInput
-  city?: Prisma.CityCreateNestedOneWithoutUsersInput
-  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
-  ownedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutOwnerInput
-  managedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutManagerInput
-  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
-  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
-  createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
-  workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
-  employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
-  authoredReviews?: Prisma.ReviewCreateNestedManyWithoutAuthorInput
-  receivedReviews?: Prisma.ReviewCreateNestedManyWithoutSubjectInput
-  createdReports?: Prisma.ReportCreateNestedManyWithoutReporterInput
-  moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
-  verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
-  reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
-  conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
-  sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
-  uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
-}
-
-export type UserUncheckedCreateWithoutFavoritesInput = {
-  id?: string
-  telegramId: string
-  username?: string | null
-  firstName: string
-  lastName?: string | null
-  age?: number | null
-  photoUrl?: string | null
-  pickupPointCode?: string | null
-  experienceSummary?: string | null
-  phone?: string | null
-  isPhoneVerified?: boolean
-  bio?: string | null
-  gender?: string | null
-  regionId?: string | null
-  cityId?: string | null
-  district?: string | null
-  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
-  isOnboardingCompleted?: boolean
-  ratingAvg?: number
-  ratingCount?: number
-  completedAssignmentsCount?: number
-  isActive?: boolean
-  isBanned?: boolean
-  banReason?: string | null
-  bannedAt?: Date | string | null
-  notifyOnNewMessage?: boolean
-  lastActiveAt?: Date | string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
-  ownedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutOwnerInput
-  managedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutManagerInput
-  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
-  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
-  createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
-  workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
-  employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
-  authoredReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAuthorInput
-  receivedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSubjectInput
-  createdReports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
-  moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
-  verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
-  reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
-  conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
-  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
-  uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
-}
-
-export type UserCreateOrConnectWithoutFavoritesInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutFavoritesInput, Prisma.UserUncheckedCreateWithoutFavoritesInput>
-}
-
-export type UserUpsertWithoutFavoritesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutFavoritesInput, Prisma.UserUncheckedUpdateWithoutFavoritesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutFavoritesInput, Prisma.UserUncheckedCreateWithoutFavoritesInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutFavoritesInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutFavoritesInput, Prisma.UserUncheckedUpdateWithoutFavoritesInput>
-}
-
-export type UserUpdateWithoutFavoritesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
-  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
-  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
-  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  region?: Prisma.RegionUpdateOneWithoutUsersNestedInput
-  city?: Prisma.CityUpdateOneWithoutUsersNestedInput
-  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
-  ownedPickupPoints?: Prisma.PickupPointUpdateManyWithoutOwnerNestedInput
-  managedPickupPoints?: Prisma.PickupPointUpdateManyWithoutManagerNestedInput
-  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
-  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
-  createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
-  workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
-  employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
-  authoredReviews?: Prisma.ReviewUpdateManyWithoutAuthorNestedInput
-  receivedReviews?: Prisma.ReviewUpdateManyWithoutSubjectNestedInput
-  createdReports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
-  moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
-  verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
-  reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
-  conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
-  sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
-  uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
-}
-
-export type UserUncheckedUpdateWithoutFavoritesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
-  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
-  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
-  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
-  ownedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutOwnerNestedInput
-  managedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutManagerNestedInput
-  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
-  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
-  createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
-  workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
-  employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
-  authoredReviews?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
-  receivedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutSubjectNestedInput
-  createdReports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
-  moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
-  verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -5634,6 +6496,7 @@ export type UserCreateWithoutAuditLogsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -5650,6 +6513,7 @@ export type UserCreateWithoutAuditLogsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -5659,8 +6523,10 @@ export type UserCreateWithoutAuditLogsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
@@ -5688,6 +6554,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -5702,6 +6569,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -5711,8 +6579,10 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
@@ -5754,6 +6624,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5770,6 +6641,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -5779,8 +6651,10 @@ export type UserUpdateWithoutAuditLogsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -5808,6 +6682,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5822,6 +6697,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -5831,8 +6707,250 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
+  conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
+  uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserCreateWithoutLegalEventsInput = {
+  id?: string
+  telegramId: string
+  username?: string | null
+  firstName: string
+  lastName?: string | null
+  age?: number | null
+  photoUrl?: string | null
+  pickupPointCode?: string | null
+  experienceSummary?: string | null
+  phone?: string | null
+  isPhoneVerified?: boolean
+  bio?: string | null
+  gender?: string | null
+  district?: string | null
+  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: boolean
+  ratingAvg?: number
+  ratingCount?: number
+  completedAssignmentsCount?: number
+  balanceRub?: number
+  isActive?: boolean
+  isBanned?: boolean
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  notifyOnNewMessage?: boolean
+  lastActiveAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  region?: Prisma.RegionCreateNestedOneWithoutUsersInput
+  city?: Prisma.CityCreateNestedOneWithoutUsersInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  ownedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutOwnerInput
+  managedPickupPoints?: Prisma.PickupPointCreateNestedManyWithoutManagerInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
+  createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
+  applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
+  workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
+  employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
+  authoredReviews?: Prisma.ReviewCreateNestedManyWithoutAuthorInput
+  receivedReviews?: Prisma.ReviewCreateNestedManyWithoutSubjectInput
+  createdReports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
+  reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
+  uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
+}
+
+export type UserUncheckedCreateWithoutLegalEventsInput = {
+  id?: string
+  telegramId: string
+  username?: string | null
+  firstName: string
+  lastName?: string | null
+  age?: number | null
+  photoUrl?: string | null
+  pickupPointCode?: string | null
+  experienceSummary?: string | null
+  phone?: string | null
+  isPhoneVerified?: boolean
+  bio?: string | null
+  gender?: string | null
+  regionId?: string | null
+  cityId?: string | null
+  district?: string | null
+  marketplaces?: Prisma.UserCreatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: boolean
+  ratingAvg?: number
+  ratingCount?: number
+  completedAssignmentsCount?: number
+  balanceRub?: number
+  isActive?: boolean
+  isBanned?: boolean
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  notifyOnNewMessage?: boolean
+  lastActiveAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  ownedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutOwnerInput
+  managedPickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutManagerInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
+  createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
+  employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
+  authoredReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutAuthorInput
+  receivedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSubjectInput
+  createdReports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
+  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
+  uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
+}
+
+export type UserCreateOrConnectWithoutLegalEventsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutLegalEventsInput, Prisma.UserUncheckedCreateWithoutLegalEventsInput>
+}
+
+export type UserUpsertWithoutLegalEventsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutLegalEventsInput, Prisma.UserUncheckedUpdateWithoutLegalEventsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutLegalEventsInput, Prisma.UserUncheckedCreateWithoutLegalEventsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutLegalEventsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutLegalEventsInput, Prisma.UserUncheckedUpdateWithoutLegalEventsInput>
+}
+
+export type UserUpdateWithoutLegalEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
+  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  region?: Prisma.RegionUpdateOneWithoutUsersNestedInput
+  city?: Prisma.CityUpdateOneWithoutUsersNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  ownedPickupPoints?: Prisma.PickupPointUpdateManyWithoutOwnerNestedInput
+  managedPickupPoints?: Prisma.PickupPointUpdateManyWithoutManagerNestedInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
+  createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
+  applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
+  workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
+  employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
+  authoredReviews?: Prisma.ReviewUpdateManyWithoutAuthorNestedInput
+  receivedReviews?: Prisma.ReviewUpdateManyWithoutSubjectNestedInput
+  createdReports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
+  reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
+  sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
+  uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutLegalEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupPointCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketplaces?: Prisma.UserUpdatemarketplacesInput | $Enums.MarketplaceCode[]
+  isOnboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
+  ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notifyOnNewMessage?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastActiveAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  ownedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutOwnerNestedInput
+  managedPickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutManagerNestedInput
+  managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
+  ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
+  createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
+  employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
+  authoredReviews?: Prisma.ReviewUncheckedUpdateManyWithoutAuthorNestedInput
+  receivedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutSubjectNestedInput
+  createdReports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -5858,6 +6976,7 @@ export type UserCreateWithoutConversationParticipationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -5874,6 +6993,7 @@ export type UserCreateWithoutConversationParticipationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -5883,9 +7003,11 @@ export type UserCreateWithoutConversationParticipationsInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
 }
@@ -5912,6 +7034,7 @@ export type UserUncheckedCreateWithoutConversationParticipationsInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -5926,6 +7049,7 @@ export type UserUncheckedCreateWithoutConversationParticipationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -5935,9 +7059,11 @@ export type UserUncheckedCreateWithoutConversationParticipationsInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
 }
@@ -5978,6 +7104,7 @@ export type UserUpdateWithoutConversationParticipationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5994,6 +7121,7 @@ export type UserUpdateWithoutConversationParticipationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -6003,9 +7131,11 @@ export type UserUpdateWithoutConversationParticipationsInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
 }
@@ -6032,6 +7162,7 @@ export type UserUncheckedUpdateWithoutConversationParticipationsInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6046,6 +7177,7 @@ export type UserUncheckedUpdateWithoutConversationParticipationsInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -6055,9 +7187,11 @@ export type UserUncheckedUpdateWithoutConversationParticipationsInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
 }
@@ -6082,6 +7216,7 @@ export type UserCreateWithoutSentMessagesInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -6098,6 +7233,7 @@ export type UserCreateWithoutSentMessagesInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -6107,9 +7243,11 @@ export type UserCreateWithoutSentMessagesInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   uploadedMedia?: Prisma.MediaUploadCreateNestedManyWithoutUploaderInput
 }
@@ -6136,6 +7274,7 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -6150,6 +7289,7 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -6159,9 +7299,11 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   uploadedMedia?: Prisma.MediaUploadUncheckedCreateNestedManyWithoutUploaderInput
 }
@@ -6202,6 +7344,7 @@ export type UserUpdateWithoutSentMessagesInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6218,6 +7361,7 @@ export type UserUpdateWithoutSentMessagesInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -6227,9 +7371,11 @@ export type UserUpdateWithoutSentMessagesInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
 }
@@ -6256,6 +7402,7 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6270,6 +7417,7 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -6279,9 +7427,11 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
 }
@@ -6306,6 +7456,7 @@ export type UserCreateWithoutUploadedMediaInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -6322,6 +7473,7 @@ export type UserCreateWithoutUploadedMediaInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentCreateNestedManyWithoutEmployerInput
@@ -6331,9 +7483,11 @@ export type UserCreateWithoutUploadedMediaInput = {
   moderatedReports?: Prisma.ReportCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
 }
@@ -6360,6 +7514,7 @@ export type UserUncheckedCreateWithoutUploadedMediaInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -6374,6 +7529,7 @@ export type UserUncheckedCreateWithoutUploadedMediaInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutManagerInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedCreateNestedManyWithoutOwnerInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCreatedByInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCreatedByInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   workerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutWorkerInput
   employerAssignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutEmployerInput
@@ -6383,9 +7539,11 @@ export type UserUncheckedCreateWithoutUploadedMediaInput = {
   moderatedReports?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
   verifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutUserInput
   reviewedVerifications?: Prisma.VerificationUncheckedCreateNestedManyWithoutReviewedByInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutUserInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedCreateNestedManyWithoutReviewedByInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  legalEvents?: Prisma.UserLegalEventUncheckedCreateNestedManyWithoutUserInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
 }
@@ -6426,6 +7584,7 @@ export type UserUpdateWithoutUploadedMediaInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6442,6 +7601,7 @@ export type UserUpdateWithoutUploadedMediaInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -6451,9 +7611,11 @@ export type UserUpdateWithoutUploadedMediaInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
 }
@@ -6480,6 +7642,7 @@ export type UserUncheckedUpdateWithoutUploadedMediaInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6494,6 +7657,7 @@ export type UserUncheckedUpdateWithoutUploadedMediaInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -6503,9 +7667,11 @@ export type UserUncheckedUpdateWithoutUploadedMediaInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
 }
@@ -6531,6 +7697,7 @@ export type UserCreateManyRegionInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -6561,6 +7728,7 @@ export type UserUpdateWithoutRegionInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6576,6 +7744,7 @@ export type UserUpdateWithoutRegionInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -6585,9 +7754,11 @@ export type UserUpdateWithoutRegionInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -6614,6 +7785,7 @@ export type UserUncheckedUpdateWithoutRegionInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6628,6 +7800,7 @@ export type UserUncheckedUpdateWithoutRegionInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -6637,9 +7810,11 @@ export type UserUncheckedUpdateWithoutRegionInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -6666,6 +7841,7 @@ export type UserUncheckedUpdateManyWithoutRegionInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6697,6 +7873,7 @@ export type UserCreateManyCityInput = {
   ratingAvg?: number
   ratingCount?: number
   completedAssignmentsCount?: number
+  balanceRub?: number
   isActive?: boolean
   isBanned?: boolean
   banReason?: string | null
@@ -6727,6 +7904,7 @@ export type UserUpdateWithoutCityInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6742,6 +7920,7 @@ export type UserUpdateWithoutCityInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUpdateManyWithoutEmployerNestedInput
@@ -6751,9 +7930,11 @@ export type UserUpdateWithoutCityInput = {
   moderatedReports?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUpdateManyWithoutUploaderNestedInput
@@ -6780,6 +7961,7 @@ export type UserUncheckedUpdateWithoutCityInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6794,6 +7976,7 @@ export type UserUncheckedUpdateWithoutCityInput = {
   managerPickupPointAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutManagerNestedInput
   ownerGrantedManagerAccesses?: Prisma.PickupPointManagerAccessUncheckedUpdateManyWithoutOwnerNestedInput
   createdShiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdShiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   workerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutWorkerNestedInput
   employerAssignments?: Prisma.AssignmentUncheckedUpdateManyWithoutEmployerNestedInput
@@ -6803,9 +7986,11 @@ export type UserUncheckedUpdateWithoutCityInput = {
   moderatedReports?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
   verifications?: Prisma.VerificationUncheckedUpdateManyWithoutUserNestedInput
   reviewedVerifications?: Prisma.VerificationUncheckedUpdateManyWithoutReviewedByNestedInput
+  identityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutUserNestedInput
+  reviewedIdentityVerifications?: Prisma.IdentityVerificationUncheckedUpdateManyWithoutReviewedByNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  legalEvents?: Prisma.UserLegalEventUncheckedUpdateManyWithoutUserNestedInput
   conversationParticipations?: Prisma.ConversationParticipantUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   uploadedMedia?: Prisma.MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput
@@ -6832,6 +8017,7 @@ export type UserUncheckedUpdateManyWithoutCityInput = {
   ratingAvg?: Prisma.FloatFieldUpdateOperationsInput | number
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
   completedAssignmentsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceRub?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6854,6 +8040,7 @@ export type UserCountOutputType = {
   managerPickupPointAccesses: number
   ownerGrantedManagerAccesses: number
   createdShiftPosts: number
+  createdShiftTemplates: number
   applications: number
   workerAssignments: number
   employerAssignments: number
@@ -6863,9 +8050,11 @@ export type UserCountOutputType = {
   moderatedReports: number
   verifications: number
   reviewedVerifications: number
+  identityVerifications: number
+  reviewedIdentityVerifications: number
   notifications: number
-  favorites: number
   auditLogs: number
+  legalEvents: number
   conversationParticipations: number
   sentMessages: number
   uploadedMedia: number
@@ -6878,6 +8067,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   managerPickupPointAccesses?: boolean | UserCountOutputTypeCountManagerPickupPointAccessesArgs
   ownerGrantedManagerAccesses?: boolean | UserCountOutputTypeCountOwnerGrantedManagerAccessesArgs
   createdShiftPosts?: boolean | UserCountOutputTypeCountCreatedShiftPostsArgs
+  createdShiftTemplates?: boolean | UserCountOutputTypeCountCreatedShiftTemplatesArgs
   applications?: boolean | UserCountOutputTypeCountApplicationsArgs
   workerAssignments?: boolean | UserCountOutputTypeCountWorkerAssignmentsArgs
   employerAssignments?: boolean | UserCountOutputTypeCountEmployerAssignmentsArgs
@@ -6887,9 +8077,11 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   moderatedReports?: boolean | UserCountOutputTypeCountModeratedReportsArgs
   verifications?: boolean | UserCountOutputTypeCountVerificationsArgs
   reviewedVerifications?: boolean | UserCountOutputTypeCountReviewedVerificationsArgs
+  identityVerifications?: boolean | UserCountOutputTypeCountIdentityVerificationsArgs
+  reviewedIdentityVerifications?: boolean | UserCountOutputTypeCountReviewedIdentityVerificationsArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
-  favorites?: boolean | UserCountOutputTypeCountFavoritesArgs
   auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
+  legalEvents?: boolean | UserCountOutputTypeCountLegalEventsArgs
   conversationParticipations?: boolean | UserCountOutputTypeCountConversationParticipationsArgs
   sentMessages?: boolean | UserCountOutputTypeCountSentMessagesArgs
   uploadedMedia?: boolean | UserCountOutputTypeCountUploadedMediaArgs
@@ -6945,6 +8137,13 @@ export type UserCountOutputTypeCountOwnerGrantedManagerAccessesArgs<ExtArgs exte
  */
 export type UserCountOutputTypeCountCreatedShiftPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ShiftPostWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedShiftTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShiftTemplateWhereInput
 }
 
 /**
@@ -7013,6 +8212,20 @@ export type UserCountOutputTypeCountReviewedVerificationsArgs<ExtArgs extends ru
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountIdentityVerificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.IdentityVerificationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewedIdentityVerificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.IdentityVerificationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.NotificationWhereInput
 }
@@ -7020,15 +8233,15 @@ export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Ty
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountFavoritesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FavoriteWhereInput
+export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AuditLogWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AuditLogWhereInput
+export type UserCountOutputTypeCountLegalEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserLegalEventWhereInput
 }
 
 /**
@@ -7075,6 +8288,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   ratingAvg?: boolean
   ratingCount?: boolean
   completedAssignmentsCount?: boolean
+  balanceRub?: boolean
   isActive?: boolean
   isBanned?: boolean
   banReason?: boolean
@@ -7091,6 +8305,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   managerPickupPointAccesses?: boolean | Prisma.User$managerPickupPointAccessesArgs<ExtArgs>
   ownerGrantedManagerAccesses?: boolean | Prisma.User$ownerGrantedManagerAccessesArgs<ExtArgs>
   createdShiftPosts?: boolean | Prisma.User$createdShiftPostsArgs<ExtArgs>
+  createdShiftTemplates?: boolean | Prisma.User$createdShiftTemplatesArgs<ExtArgs>
   applications?: boolean | Prisma.User$applicationsArgs<ExtArgs>
   workerAssignments?: boolean | Prisma.User$workerAssignmentsArgs<ExtArgs>
   employerAssignments?: boolean | Prisma.User$employerAssignmentsArgs<ExtArgs>
@@ -7100,9 +8315,11 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   moderatedReports?: boolean | Prisma.User$moderatedReportsArgs<ExtArgs>
   verifications?: boolean | Prisma.User$verificationsArgs<ExtArgs>
   reviewedVerifications?: boolean | Prisma.User$reviewedVerificationsArgs<ExtArgs>
+  identityVerifications?: boolean | Prisma.User$identityVerificationsArgs<ExtArgs>
+  reviewedIdentityVerifications?: boolean | Prisma.User$reviewedIdentityVerificationsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
-  favorites?: boolean | Prisma.User$favoritesArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  legalEvents?: boolean | Prisma.User$legalEventsArgs<ExtArgs>
   conversationParticipations?: boolean | Prisma.User$conversationParticipationsArgs<ExtArgs>
   sentMessages?: boolean | Prisma.User$sentMessagesArgs<ExtArgs>
   uploadedMedia?: boolean | Prisma.User$uploadedMediaArgs<ExtArgs>
@@ -7131,6 +8348,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   ratingAvg?: boolean
   ratingCount?: boolean
   completedAssignmentsCount?: boolean
+  balanceRub?: boolean
   isActive?: boolean
   isBanned?: boolean
   banReason?: boolean
@@ -7165,6 +8383,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   ratingAvg?: boolean
   ratingCount?: boolean
   completedAssignmentsCount?: boolean
+  balanceRub?: boolean
   isActive?: boolean
   isBanned?: boolean
   banReason?: boolean
@@ -7199,6 +8418,7 @@ export type UserSelectScalar = {
   ratingAvg?: boolean
   ratingCount?: boolean
   completedAssignmentsCount?: boolean
+  balanceRub?: boolean
   isActive?: boolean
   isBanned?: boolean
   banReason?: boolean
@@ -7209,7 +8429,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "telegramId" | "username" | "firstName" | "lastName" | "age" | "photoUrl" | "pickupPointCode" | "experienceSummary" | "phone" | "isPhoneVerified" | "bio" | "gender" | "regionId" | "cityId" | "district" | "marketplaces" | "isOnboardingCompleted" | "ratingAvg" | "ratingCount" | "completedAssignmentsCount" | "isActive" | "isBanned" | "banReason" | "bannedAt" | "notifyOnNewMessage" | "lastActiveAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "telegramId" | "username" | "firstName" | "lastName" | "age" | "photoUrl" | "pickupPointCode" | "experienceSummary" | "phone" | "isPhoneVerified" | "bio" | "gender" | "regionId" | "cityId" | "district" | "marketplaces" | "isOnboardingCompleted" | "ratingAvg" | "ratingCount" | "completedAssignmentsCount" | "balanceRub" | "isActive" | "isBanned" | "banReason" | "bannedAt" | "notifyOnNewMessage" | "lastActiveAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   region?: boolean | Prisma.User$regionArgs<ExtArgs>
   city?: boolean | Prisma.User$cityArgs<ExtArgs>
@@ -7219,6 +8439,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   managerPickupPointAccesses?: boolean | Prisma.User$managerPickupPointAccessesArgs<ExtArgs>
   ownerGrantedManagerAccesses?: boolean | Prisma.User$ownerGrantedManagerAccessesArgs<ExtArgs>
   createdShiftPosts?: boolean | Prisma.User$createdShiftPostsArgs<ExtArgs>
+  createdShiftTemplates?: boolean | Prisma.User$createdShiftTemplatesArgs<ExtArgs>
   applications?: boolean | Prisma.User$applicationsArgs<ExtArgs>
   workerAssignments?: boolean | Prisma.User$workerAssignmentsArgs<ExtArgs>
   employerAssignments?: boolean | Prisma.User$employerAssignmentsArgs<ExtArgs>
@@ -7228,9 +8449,11 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   moderatedReports?: boolean | Prisma.User$moderatedReportsArgs<ExtArgs>
   verifications?: boolean | Prisma.User$verificationsArgs<ExtArgs>
   reviewedVerifications?: boolean | Prisma.User$reviewedVerificationsArgs<ExtArgs>
+  identityVerifications?: boolean | Prisma.User$identityVerificationsArgs<ExtArgs>
+  reviewedIdentityVerifications?: boolean | Prisma.User$reviewedIdentityVerificationsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
-  favorites?: boolean | Prisma.User$favoritesArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  legalEvents?: boolean | Prisma.User$legalEventsArgs<ExtArgs>
   conversationParticipations?: boolean | Prisma.User$conversationParticipationsArgs<ExtArgs>
   sentMessages?: boolean | Prisma.User$sentMessagesArgs<ExtArgs>
   uploadedMedia?: boolean | Prisma.User$uploadedMediaArgs<ExtArgs>
@@ -7256,6 +8479,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     managerPickupPointAccesses: Prisma.$PickupPointManagerAccessPayload<ExtArgs>[]
     ownerGrantedManagerAccesses: Prisma.$PickupPointManagerAccessPayload<ExtArgs>[]
     createdShiftPosts: Prisma.$ShiftPostPayload<ExtArgs>[]
+    createdShiftTemplates: Prisma.$ShiftTemplatePayload<ExtArgs>[]
     applications: Prisma.$ApplicationPayload<ExtArgs>[]
     workerAssignments: Prisma.$AssignmentPayload<ExtArgs>[]
     employerAssignments: Prisma.$AssignmentPayload<ExtArgs>[]
@@ -7265,9 +8489,11 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     moderatedReports: Prisma.$ReportPayload<ExtArgs>[]
     verifications: Prisma.$VerificationPayload<ExtArgs>[]
     reviewedVerifications: Prisma.$VerificationPayload<ExtArgs>[]
+    identityVerifications: Prisma.$IdentityVerificationPayload<ExtArgs>[]
+    reviewedIdentityVerifications: Prisma.$IdentityVerificationPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
-    favorites: Prisma.$FavoritePayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    legalEvents: Prisma.$UserLegalEventPayload<ExtArgs>[]
     conversationParticipations: Prisma.$ConversationParticipantPayload<ExtArgs>[]
     sentMessages: Prisma.$MessagePayload<ExtArgs>[]
     uploadedMedia: Prisma.$MediaUploadPayload<ExtArgs>[]
@@ -7294,6 +8520,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     ratingAvg: number
     ratingCount: number
     completedAssignmentsCount: number
+    balanceRub: number
     isActive: boolean
     isBanned: boolean
     banReason: string | null
@@ -7704,6 +8931,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   managerPickupPointAccesses<T extends Prisma.User$managerPickupPointAccessesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$managerPickupPointAccessesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PickupPointManagerAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ownerGrantedManagerAccesses<T extends Prisma.User$ownerGrantedManagerAccessesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ownerGrantedManagerAccessesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PickupPointManagerAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdShiftPosts<T extends Prisma.User$createdShiftPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdShiftPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdShiftTemplates<T extends Prisma.User$createdShiftTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdShiftTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   applications<T extends Prisma.User$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workerAssignments<T extends Prisma.User$workerAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workerAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   employerAssignments<T extends Prisma.User$employerAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$employerAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7713,9 +8941,11 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   moderatedReports<T extends Prisma.User$moderatedReportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$moderatedReportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   verifications<T extends Prisma.User$verificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$verificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewedVerifications<T extends Prisma.User$reviewedVerificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedVerificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  identityVerifications<T extends Prisma.User$identityVerificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$identityVerificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IdentityVerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewedIdentityVerifications<T extends Prisma.User$reviewedIdentityVerificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedIdentityVerificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IdentityVerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  favorites<T extends Prisma.User$favoritesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  legalEvents<T extends Prisma.User$legalEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$legalEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserLegalEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversationParticipations<T extends Prisma.User$conversationParticipationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversationParticipationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sentMessages<T extends Prisma.User$sentMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   uploadedMedia<T extends Prisma.User$uploadedMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$uploadedMediaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MediaUploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7769,6 +8999,7 @@ export interface UserFieldRefs {
   readonly ratingAvg: Prisma.FieldRef<"User", 'Float'>
   readonly ratingCount: Prisma.FieldRef<"User", 'Int'>
   readonly completedAssignmentsCount: Prisma.FieldRef<"User", 'Int'>
+  readonly balanceRub: Prisma.FieldRef<"User", 'Int'>
   readonly isActive: Prisma.FieldRef<"User", 'Boolean'>
   readonly isBanned: Prisma.FieldRef<"User", 'Boolean'>
   readonly banReason: Prisma.FieldRef<"User", 'String'>
@@ -8360,6 +9591,30 @@ export type User$createdShiftPostsArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * User.createdShiftTemplates
+ */
+export type User$createdShiftTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShiftTemplate
+   */
+  select?: Prisma.ShiftTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ShiftTemplate
+   */
+  omit?: Prisma.ShiftTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShiftTemplateInclude<ExtArgs> | null
+  where?: Prisma.ShiftTemplateWhereInput
+  orderBy?: Prisma.ShiftTemplateOrderByWithRelationInput | Prisma.ShiftTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.ShiftTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ShiftTemplateScalarFieldEnum | Prisma.ShiftTemplateScalarFieldEnum[]
+}
+
+/**
  * User.applications
  */
 export type User$applicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8576,6 +9831,54 @@ export type User$reviewedVerificationsArgs<ExtArgs extends runtime.Types.Extensi
 }
 
 /**
+ * User.identityVerifications
+ */
+export type User$identityVerificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the IdentityVerification
+   */
+  select?: Prisma.IdentityVerificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the IdentityVerification
+   */
+  omit?: Prisma.IdentityVerificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.IdentityVerificationInclude<ExtArgs> | null
+  where?: Prisma.IdentityVerificationWhereInput
+  orderBy?: Prisma.IdentityVerificationOrderByWithRelationInput | Prisma.IdentityVerificationOrderByWithRelationInput[]
+  cursor?: Prisma.IdentityVerificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.IdentityVerificationScalarFieldEnum | Prisma.IdentityVerificationScalarFieldEnum[]
+}
+
+/**
+ * User.reviewedIdentityVerifications
+ */
+export type User$reviewedIdentityVerificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the IdentityVerification
+   */
+  select?: Prisma.IdentityVerificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the IdentityVerification
+   */
+  omit?: Prisma.IdentityVerificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.IdentityVerificationInclude<ExtArgs> | null
+  where?: Prisma.IdentityVerificationWhereInput
+  orderBy?: Prisma.IdentityVerificationOrderByWithRelationInput | Prisma.IdentityVerificationOrderByWithRelationInput[]
+  cursor?: Prisma.IdentityVerificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.IdentityVerificationScalarFieldEnum | Prisma.IdentityVerificationScalarFieldEnum[]
+}
+
+/**
  * User.notifications
  */
 export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8600,30 +9903,6 @@ export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
- * User.favorites
- */
-export type User$favoritesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Favorite
-   */
-  select?: Prisma.FavoriteSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Favorite
-   */
-  omit?: Prisma.FavoriteOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FavoriteInclude<ExtArgs> | null
-  where?: Prisma.FavoriteWhereInput
-  orderBy?: Prisma.FavoriteOrderByWithRelationInput | Prisma.FavoriteOrderByWithRelationInput[]
-  cursor?: Prisma.FavoriteWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.FavoriteScalarFieldEnum | Prisma.FavoriteScalarFieldEnum[]
-}
-
-/**
  * User.auditLogs
  */
 export type User$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8645,6 +9924,30 @@ export type User$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+}
+
+/**
+ * User.legalEvents
+ */
+export type User$legalEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserLegalEvent
+   */
+  select?: Prisma.UserLegalEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserLegalEvent
+   */
+  omit?: Prisma.UserLegalEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserLegalEventInclude<ExtArgs> | null
+  where?: Prisma.UserLegalEventWhereInput
+  orderBy?: Prisma.UserLegalEventOrderByWithRelationInput | Prisma.UserLegalEventOrderByWithRelationInput[]
+  cursor?: Prisma.UserLegalEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserLegalEventScalarFieldEnum | Prisma.UserLegalEventScalarFieldEnum[]
 }
 
 /**

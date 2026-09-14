@@ -42,6 +42,7 @@ export const APPLICATION_STATUSES = [
   { value: "REJECTED", label: "Отклонен" },
   { value: "WITHDRAWN", label: "Отклик отозван" },
   { value: "CONFIRMED", label: "Подтвержден" },
+  { value: "NO_SHOW", label: "Не вышел на смену" },
   { value: "CANCELLED_BY_WORKER", label: "Отменено исполнителем" },
   { value: "CANCELLED_BY_EMPLOYER", label: "Отменено работодателем" },
 ] as const;

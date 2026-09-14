@@ -12,7 +12,7 @@ export function ProfileEditorPanel() {
       className="rounded-[32px] bg-[#eef3f7] p-4 text-[#101214] shadow-[0_12px_28px_rgba(20,27,33,0.08)]"
       style={{ fontFamily: '"Wix Madefor Display", var(--font-plex-sans), sans-serif' }}
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-3">
         <div className="min-w-0">
           <h2 className="text-[19px] font-semibold tracking-[-0.03em] text-[#101214]">
             Редактирование профиля
@@ -24,7 +24,7 @@ export function ProfileEditorPanel() {
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className="inline-flex h-10 shrink-0 items-center rounded-full bg-[#3387d1] px-5 text-[14px] font-medium text-white"
+          className="inline-flex h-10 w-full items-center justify-center rounded-full bg-[#3387d1] px-5 text-[14px] font-medium text-white"
         >
           {open ? "Скрыть" : "Редактировать"}
         </button>

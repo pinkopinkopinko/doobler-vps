@@ -1,31 +1,32 @@
 import { CreateShiftForm } from "@/components/shifts/create-shift-form";
-import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getSessionPayload } from "@/lib/auth/session";
-import { demoProfile } from "@/lib/demo-data";
 import { canCreateShiftPosts } from "@/lib/profile-completion";
+import { withPlatformPrefix } from "@/lib/routing/platform";
+import { getRequestPlatformPrefix } from "@/lib/routing/platform-server";
 import { getProfileShell } from "@/server/services/profile-service";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewShiftPage() {
   const session = await getSessionPayload();
-  const profile = session ? ((await getProfileShell(session.userId)) ?? demoProfile) : demoProfile;
-  const canCreate = canCreateShiftPosts(profile.roles ?? []);
+  const hrefPrefix = await getRequestPlatformPrefix();
+  const profile = session ? await getProfileShell(session.userId) : null;
+  const canCreate = canCreateShiftPosts(
+    profile?.roles ?? [],
+    profile?.employerVerificationStatus ?? null,
+  );
 
   return (
     <div className="space-y-5">
-      <PageHeader
-        title="Создать объявление"
-        subtitle="Минимум полей, чтобы работодатель мог закрыть смену за 30–60 секунд."
-      />
-
       {canCreate ? (
         <CreateShiftForm />
       ) : (
         <EmptyState
-          title="Создание смен доступно только владельцу или управляющему ПВЗ"
-          description="Сотрудник и подменный работник здесь ищут смены и откликаются на объявления. Для поиска используйте раздел «Смены»."
+          title="Нужна проверка работодателя"
+          description="Создавать смены могут только владельцы или управляющие ПВЗ с подтвержденным документом: договором аренды, скриншотом из приложения управления ПВЗ или другим подтверждением. Загрузите документ в профиле и дождитесь одобрения."
+          actionHref={withPlatformPrefix("/profile", hrefPrefix)}
+          actionLabel="Открыть профиль"
         />
       )}
     </div>

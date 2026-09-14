@@ -1,7 +1,6 @@
-import Link from "next/link";
-
 import { OwnerManagerPanel } from "@/components/profile/owner-manager-panel";
 import { PhoneVerificationPanel } from "@/components/profile/phone-verification-panel";
+import { getBlacklistPvzMatch } from "@/lib/blacklist-pvz";
 import {
   hasEmployerCapabilities,
   isEmployeeRole,
@@ -56,6 +55,7 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
   const roleLabel = getRoleLabel(profile);
   const verificationLabel = getVerificationLabel(profile);
   const profileShortId = profile.id.slice(-8).toUpperCase();
+  const blacklistMatch = getBlacklistPvzMatch(profile.telegramId);
   const experienceLabel = formatExperienceYears(profile.experienceSummary);
   const marketplaceLabel =
     profile.marketplaces.length > 0 ? profile.marketplaces.join(" • ") : "Не указан";
@@ -96,17 +96,25 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
 
       <article className="rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
         <div className="flex gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#dce6f0] text-lg font-semibold text-[#4b5d6f]">
-            {profile.photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={profile.photoUrl}
-                alt={`${profile.firstName} ${profile.lastName ?? ""}`.trim()}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              initials
-            )}
+          <div className="flex w-16 shrink-0 flex-col items-center gap-1.5">
+            <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-[#dce6f0] text-lg font-semibold text-[#4b5d6f]">
+              {profile.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={profile.photoUrl}
+                  alt={`${profile.firstName} ${profile.lastName ?? ""}`.trim()}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                initials
+              )}
+            </div>
+            <div className="w-full text-center">
+              <p className="text-[12px] font-medium leading-tight text-[#7f8791]">Возраст</p>
+              <p className="mt-0.5 text-[17px] font-semibold leading-none tracking-[-0.02em] text-[#101214]">
+                {profile.age != null ? profile.age : "—"}
+              </p>
+            </div>
           </div>
 
           <div className="min-w-0 flex-1">
@@ -129,6 +137,34 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
         </div>
       </article>
 
+      {blacklistMatch ? (
+        <a
+          href={blacklistMatch.postUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="blacklist-warning-card"
+          aria-label="Открыть запись в Чёрном списке"
+        >
+          <span className="blacklist-warning-card__icon" aria-hidden="true">
+            !
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[13px] font-semibold leading-tight text-card-foreground">
+              Есть совпадение с Чёрным списком
+            </span>
+            <span className="mt-1 block text-[11px] font-medium leading-tight text-danger-soft-foreground">
+              Проверьте источник перед договорённостью
+            </span>
+          </span>
+          <span
+            className="justify-self-center text-[18px] leading-none text-danger-soft-foreground"
+            aria-hidden="true"
+          >
+            ›
+          </span>
+        </a>
+      ) : null}
+
       <div className="grid grid-cols-3 gap-3">
         <article className="rounded-[24px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
           <p className="text-[13px] font-medium text-[#a6abb2]">Рейтинг</p>
@@ -150,7 +186,56 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
         </article>
       </div>
 
-      {!isPublic ? <PhoneVerificationPanel isPhoneVerified={profile.isPhoneVerified} /> : null}
+      {isEmployeeRole(profile.roles) && profile.shiftAttendance ? (
+        <article className="rounded-[24px] border border-border bg-card p-4 text-card-foreground shadow-[var(--shadow-card)]">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h3 className="text-[16px] font-semibold">Выход на подтверждённые смены</h3>
+              <p className="mt-1 text-[12px] text-muted-foreground">
+                {profile.shiftAttendance.completedCount} из {profile.shiftAttendance.totalCount} смен
+              </p>
+            </div>
+            <span
+              className={`shrink-0 text-[22px] font-semibold ${
+                profile.shiftAttendance.warning ? "text-danger" : "text-success"
+              }`}
+            >
+              {profile.shiftAttendance.percentage}%
+            </span>
+          </div>
+
+          <div
+            className="mt-3 h-2.5 overflow-hidden rounded-full bg-muted"
+            role="progressbar"
+            aria-label="Процент выходов на подтверждённые смены"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={profile.shiftAttendance.percentage}
+          >
+            <div
+              className={`h-full rounded-full ${
+                profile.shiftAttendance.warning ? "bg-danger" : "bg-success"
+              }`}
+              style={{ width: `${profile.shiftAttendance.percentage}%` }}
+            />
+          </div>
+
+          {profile.shiftAttendance.warning ? (
+            <p className="mt-3 rounded-[16px] bg-danger-soft px-3 py-2.5 text-[13px] leading-5 text-danger-soft-foreground">
+              Сотрудник часто отказывается от подтверждённых смен или не выходит на них.
+              Перед подтверждением убедитесь, что он точно сможет выйти на смену.
+            </p>
+          ) : null}
+        </article>
+      ) : null}
+
+      {!isPublic ? (
+        <PhoneVerificationPanel
+          isPhoneVerified={profile.isPhoneVerified}
+          isOwner={isOwner}
+          employerVerificationStatus={profile.employerVerificationStatus}
+        />
+      ) : null}
 
       {showMarketplacesBlock ? (
         <div>
@@ -210,58 +295,6 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
             </article>
           </div>
 
-          <div>
-            <h3 className="mb-2 text-[19px] font-semibold tracking-[-0.03em]">Быстрые действия</h3>
-            <div className="space-y-3">
-              <article className="flex items-center justify-between gap-3 rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
-                <div className="min-w-0">
-                  <h4 className="text-[17px] font-semibold tracking-[-0.03em]">Создать смену</h4>
-                  <p className="mt-1 text-[14px] font-medium text-[#7f8791]">
-                    Опубликовать срочную замену за 30-60 секунд
-                  </p>
-                </div>
-                <Link
-                  href="/shifts/new"
-                  className="inline-flex h-10 shrink-0 items-center rounded-full bg-[#3387d1] px-5 text-[14px] font-medium text-white"
-                >
-                  Открыть
-                </Link>
-              </article>
-
-              <article className="flex items-center justify-between gap-3 rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
-                <div className="min-w-0">
-                  <h4 className="text-[17px] font-semibold tracking-[-0.03em]">Мои смены</h4>
-                  <p className="mt-1 text-[14px] font-medium text-[#7f8791]">
-                    Кандидаты, подтверждения, закрытие и отзывы
-                  </p>
-                </div>
-                <Link
-                  href="/posts"
-                  className="soft-action-link inline-flex h-10 shrink-0 items-center rounded-full bg-[#e7edf3] px-5 text-[14px] font-medium !text-[#1c232b]"
-                >
-                  Смотреть
-                </Link>
-              </article>
-
-              {managerOnly ? (
-                <article className="flex items-center justify-between gap-3 rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
-                  <div className="min-w-0">
-                    <h4 className="text-[17px] font-semibold tracking-[-0.03em]">Мои отклики</h4>
-                    <p className="mt-1 text-[14px] font-medium text-[#7f8791]">
-                      Управляющий тоже может откликаться на смены как сотрудник
-                    </p>
-                  </div>
-                  <Link
-                    href="/applications"
-                    className="soft-action-link inline-flex h-10 shrink-0 items-center rounded-full bg-[#e7edf3] px-5 text-[14px] font-medium !text-[#1c232b]"
-                  >
-                    Смотреть
-                  </Link>
-                </article>
-              ) : null}
-            </div>
-          </div>
-
           {isOwner ? <OwnerManagerPanel /> : null}
         </>
       ) : null}
@@ -272,9 +305,6 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
             <h3 className="mb-2 text-[19px] font-semibold tracking-[-0.03em]">Рабочий профиль</h3>
             <article className="rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
               <div className="space-y-1.5 text-[14px] font-medium text-[#7f8791]">
-                <p>
-                  Возраст: <span className="text-[#101214]">{profile.age ?? "Не указан"}</span>
-                </p>
                 <p>
                   Опыт работы:{" "}
                   <span className="text-[#101214]">{experienceLabel ?? "Не указан"}</span>
@@ -287,46 +317,6 @@ export function ProfileSummary({ profile, viewMode = "self" }: ProfileSummaryPro
               </div>
             </article>
           </div>
-
-          {/* Быстрые действия — только для своего профиля; в публичном просмотре скрываем. */}
-          {!isPublic && !canManageShifts ? (
-            <div>
-              <h3 className="mb-2 text-[19px] font-semibold tracking-[-0.03em]">
-                Быстрые действия
-              </h3>
-              <div className="space-y-3">
-                <article className="flex items-center justify-between gap-3 rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
-                  <div className="min-w-0">
-                    <h4 className="text-[17px] font-semibold tracking-[-0.03em]">Найти смену</h4>
-                    <p className="mt-1 text-[14px] font-medium text-[#7f8791]">
-                      Смотреть новые заявки по городу и откликаться
-                    </p>
-                  </div>
-                  <Link
-                    href="/shifts"
-                    className="inline-flex h-10 shrink-0 items-center rounded-full bg-[#3387d1] px-5 text-[14px] font-medium text-white"
-                  >
-                    Открыть
-                  </Link>
-                </article>
-
-                <article className="flex items-center justify-between gap-3 rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
-                  <div className="min-w-0">
-                    <h4 className="text-[17px] font-semibold tracking-[-0.03em]">Мои отклики</h4>
-                    <p className="mt-1 text-[14px] font-medium text-[#7f8791]">
-                      Следить за подтверждениями и завершёнными сменами
-                    </p>
-                  </div>
-                  <Link
-                    href="/applications"
-                    className="soft-action-link inline-flex h-10 shrink-0 items-center rounded-full bg-[#e7edf3] px-5 text-[14px] font-medium !text-[#1c232b]"
-                  >
-                    Смотреть
-                  </Link>
-                </article>
-              </div>
-            </div>
-          ) : null}
         </>
       ) : null}
     </section>

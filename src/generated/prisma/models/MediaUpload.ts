@@ -258,6 +258,7 @@ export type MediaUploadWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"MediaUpload"> | Date | string
   uploader?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   attachments?: Prisma.MessageAttachmentListRelationFilter
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoListRelationFilter
 }
 
 export type MediaUploadOrderByWithRelationInput = {
@@ -272,6 +273,7 @@ export type MediaUploadOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   uploader?: Prisma.UserOrderByWithRelationInput
   attachments?: Prisma.MessageAttachmentOrderByRelationAggregateInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoOrderByRelationAggregateInput
 }
 
 export type MediaUploadWhereUniqueInput = Prisma.AtLeast<{
@@ -289,6 +291,7 @@ export type MediaUploadWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"MediaUpload"> | Date | string
   uploader?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   attachments?: Prisma.MessageAttachmentListRelationFilter
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoListRelationFilter
 }, "id" | "storageKey">
 
 export type MediaUploadOrderByWithAggregationInput = {
@@ -334,6 +337,7 @@ export type MediaUploadCreateInput = {
   createdAt?: Date | string
   uploader: Prisma.UserCreateNestedOneWithoutUploadedMediaInput
   attachments?: Prisma.MessageAttachmentCreateNestedManyWithoutMediaInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUploadUncheckedCreateInput = {
@@ -347,6 +351,7 @@ export type MediaUploadUncheckedCreateInput = {
   originalName?: string | null
   createdAt?: Date | string
   attachments?: Prisma.MessageAttachmentUncheckedCreateNestedManyWithoutMediaInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUploadUpdateInput = {
@@ -360,6 +365,7 @@ export type MediaUploadUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   uploader?: Prisma.UserUpdateOneRequiredWithoutUploadedMediaNestedInput
   attachments?: Prisma.MessageAttachmentUpdateManyWithoutMediaNestedInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUploadUncheckedUpdateInput = {
@@ -373,6 +379,7 @@ export type MediaUploadUncheckedUpdateInput = {
   originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attachments?: Prisma.MessageAttachmentUncheckedUpdateManyWithoutMediaNestedInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUploadCreateManyInput = {
@@ -515,6 +522,20 @@ export type MediaUploadUncheckedUpdateManyWithoutUploaderNestedInput = {
   deleteMany?: Prisma.MediaUploadScalarWhereInput | Prisma.MediaUploadScalarWhereInput[]
 }
 
+export type MediaUploadCreateNestedOneWithoutIdentityVerificationPhotosInput = {
+  create?: Prisma.XOR<Prisma.MediaUploadCreateWithoutIdentityVerificationPhotosInput, Prisma.MediaUploadUncheckedCreateWithoutIdentityVerificationPhotosInput>
+  connectOrCreate?: Prisma.MediaUploadCreateOrConnectWithoutIdentityVerificationPhotosInput
+  connect?: Prisma.MediaUploadWhereUniqueInput
+}
+
+export type MediaUploadUpdateOneRequiredWithoutIdentityVerificationPhotosNestedInput = {
+  create?: Prisma.XOR<Prisma.MediaUploadCreateWithoutIdentityVerificationPhotosInput, Prisma.MediaUploadUncheckedCreateWithoutIdentityVerificationPhotosInput>
+  connectOrCreate?: Prisma.MediaUploadCreateOrConnectWithoutIdentityVerificationPhotosInput
+  upsert?: Prisma.MediaUploadUpsertWithoutIdentityVerificationPhotosInput
+  connect?: Prisma.MediaUploadWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MediaUploadUpdateToOneWithWhereWithoutIdentityVerificationPhotosInput, Prisma.MediaUploadUpdateWithoutIdentityVerificationPhotosInput>, Prisma.MediaUploadUncheckedUpdateWithoutIdentityVerificationPhotosInput>
+}
+
 export type MediaUploadCreateNestedOneWithoutAttachmentsInput = {
   create?: Prisma.XOR<Prisma.MediaUploadCreateWithoutAttachmentsInput, Prisma.MediaUploadUncheckedCreateWithoutAttachmentsInput>
   connectOrCreate?: Prisma.MediaUploadCreateOrConnectWithoutAttachmentsInput
@@ -539,6 +560,7 @@ export type MediaUploadCreateWithoutUploaderInput = {
   originalName?: string | null
   createdAt?: Date | string
   attachments?: Prisma.MessageAttachmentCreateNestedManyWithoutMediaInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUploadUncheckedCreateWithoutUploaderInput = {
@@ -551,6 +573,7 @@ export type MediaUploadUncheckedCreateWithoutUploaderInput = {
   originalName?: string | null
   createdAt?: Date | string
   attachments?: Prisma.MessageAttachmentUncheckedCreateNestedManyWithoutMediaInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUploadCreateOrConnectWithoutUploaderInput = {
@@ -594,6 +617,74 @@ export type MediaUploadScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"MediaUpload"> | Date | string
 }
 
+export type MediaUploadCreateWithoutIdentityVerificationPhotosInput = {
+  id?: string
+  storageKey: string
+  mimeType: string
+  byteSize: number
+  width?: number | null
+  height?: number | null
+  originalName?: string | null
+  createdAt?: Date | string
+  uploader: Prisma.UserCreateNestedOneWithoutUploadedMediaInput
+  attachments?: Prisma.MessageAttachmentCreateNestedManyWithoutMediaInput
+}
+
+export type MediaUploadUncheckedCreateWithoutIdentityVerificationPhotosInput = {
+  id?: string
+  uploaderUserId: string
+  storageKey: string
+  mimeType: string
+  byteSize: number
+  width?: number | null
+  height?: number | null
+  originalName?: string | null
+  createdAt?: Date | string
+  attachments?: Prisma.MessageAttachmentUncheckedCreateNestedManyWithoutMediaInput
+}
+
+export type MediaUploadCreateOrConnectWithoutIdentityVerificationPhotosInput = {
+  where: Prisma.MediaUploadWhereUniqueInput
+  create: Prisma.XOR<Prisma.MediaUploadCreateWithoutIdentityVerificationPhotosInput, Prisma.MediaUploadUncheckedCreateWithoutIdentityVerificationPhotosInput>
+}
+
+export type MediaUploadUpsertWithoutIdentityVerificationPhotosInput = {
+  update: Prisma.XOR<Prisma.MediaUploadUpdateWithoutIdentityVerificationPhotosInput, Prisma.MediaUploadUncheckedUpdateWithoutIdentityVerificationPhotosInput>
+  create: Prisma.XOR<Prisma.MediaUploadCreateWithoutIdentityVerificationPhotosInput, Prisma.MediaUploadUncheckedCreateWithoutIdentityVerificationPhotosInput>
+  where?: Prisma.MediaUploadWhereInput
+}
+
+export type MediaUploadUpdateToOneWithWhereWithoutIdentityVerificationPhotosInput = {
+  where?: Prisma.MediaUploadWhereInput
+  data: Prisma.XOR<Prisma.MediaUploadUpdateWithoutIdentityVerificationPhotosInput, Prisma.MediaUploadUncheckedUpdateWithoutIdentityVerificationPhotosInput>
+}
+
+export type MediaUploadUpdateWithoutIdentityVerificationPhotosInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
+  byteSize?: Prisma.IntFieldUpdateOperationsInput | number
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploader?: Prisma.UserUpdateOneRequiredWithoutUploadedMediaNestedInput
+  attachments?: Prisma.MessageAttachmentUpdateManyWithoutMediaNestedInput
+}
+
+export type MediaUploadUncheckedUpdateWithoutIdentityVerificationPhotosInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  uploaderUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
+  byteSize?: Prisma.IntFieldUpdateOperationsInput | number
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachments?: Prisma.MessageAttachmentUncheckedUpdateManyWithoutMediaNestedInput
+}
+
 export type MediaUploadCreateWithoutAttachmentsInput = {
   id?: string
   storageKey: string
@@ -604,6 +695,7 @@ export type MediaUploadCreateWithoutAttachmentsInput = {
   originalName?: string | null
   createdAt?: Date | string
   uploader: Prisma.UserCreateNestedOneWithoutUploadedMediaInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUploadUncheckedCreateWithoutAttachmentsInput = {
@@ -616,6 +708,7 @@ export type MediaUploadUncheckedCreateWithoutAttachmentsInput = {
   height?: number | null
   originalName?: string | null
   createdAt?: Date | string
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUploadCreateOrConnectWithoutAttachmentsInput = {
@@ -644,6 +737,7 @@ export type MediaUploadUpdateWithoutAttachmentsInput = {
   originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   uploader?: Prisma.UserUpdateOneRequiredWithoutUploadedMediaNestedInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUploadUncheckedUpdateWithoutAttachmentsInput = {
@@ -656,6 +750,7 @@ export type MediaUploadUncheckedUpdateWithoutAttachmentsInput = {
   height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUploadCreateManyUploaderInput = {
@@ -679,6 +774,7 @@ export type MediaUploadUpdateWithoutUploaderInput = {
   originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attachments?: Prisma.MessageAttachmentUpdateManyWithoutMediaNestedInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUploadUncheckedUpdateWithoutUploaderInput = {
@@ -691,6 +787,7 @@ export type MediaUploadUncheckedUpdateWithoutUploaderInput = {
   originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attachments?: Prisma.MessageAttachmentUncheckedUpdateManyWithoutMediaNestedInput
+  identityVerificationPhotos?: Prisma.IdentityVerificationPhotoUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUploadUncheckedUpdateManyWithoutUploaderInput = {
@@ -711,10 +808,12 @@ export type MediaUploadUncheckedUpdateManyWithoutUploaderInput = {
 
 export type MediaUploadCountOutputType = {
   attachments: number
+  identityVerificationPhotos: number
 }
 
 export type MediaUploadCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attachments?: boolean | MediaUploadCountOutputTypeCountAttachmentsArgs
+  identityVerificationPhotos?: boolean | MediaUploadCountOutputTypeCountIdentityVerificationPhotosArgs
 }
 
 /**
@@ -734,6 +833,13 @@ export type MediaUploadCountOutputTypeCountAttachmentsArgs<ExtArgs extends runti
   where?: Prisma.MessageAttachmentWhereInput
 }
 
+/**
+ * MediaUploadCountOutputType without action
+ */
+export type MediaUploadCountOutputTypeCountIdentityVerificationPhotosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.IdentityVerificationPhotoWhereInput
+}
+
 
 export type MediaUploadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -747,6 +853,7 @@ export type MediaUploadSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   createdAt?: boolean
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   attachments?: boolean | Prisma.MediaUpload$attachmentsArgs<ExtArgs>
+  identityVerificationPhotos?: boolean | Prisma.MediaUpload$identityVerificationPhotosArgs<ExtArgs>
   _count?: boolean | Prisma.MediaUploadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mediaUpload"]>
 
@@ -792,6 +899,7 @@ export type MediaUploadOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type MediaUploadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   attachments?: boolean | Prisma.MediaUpload$attachmentsArgs<ExtArgs>
+  identityVerificationPhotos?: boolean | Prisma.MediaUpload$identityVerificationPhotosArgs<ExtArgs>
   _count?: boolean | Prisma.MediaUploadCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MediaUploadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -806,6 +914,7 @@ export type $MediaUploadPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     uploader: Prisma.$UserPayload<ExtArgs>
     attachments: Prisma.$MessageAttachmentPayload<ExtArgs>[]
+    identityVerificationPhotos: Prisma.$IdentityVerificationPhotoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1213,6 +1322,7 @@ export interface Prisma__MediaUploadClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   uploader<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   attachments<T extends Prisma.MediaUpload$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaUpload$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  identityVerificationPhotos<T extends Prisma.MediaUpload$identityVerificationPhotosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaUpload$identityVerificationPhotosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IdentityVerificationPhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1673,6 +1783,30 @@ export type MediaUpload$attachmentsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.MessageAttachmentScalarFieldEnum | Prisma.MessageAttachmentScalarFieldEnum[]
+}
+
+/**
+ * MediaUpload.identityVerificationPhotos
+ */
+export type MediaUpload$identityVerificationPhotosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the IdentityVerificationPhoto
+   */
+  select?: Prisma.IdentityVerificationPhotoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the IdentityVerificationPhoto
+   */
+  omit?: Prisma.IdentityVerificationPhotoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.IdentityVerificationPhotoInclude<ExtArgs> | null
+  where?: Prisma.IdentityVerificationPhotoWhereInput
+  orderBy?: Prisma.IdentityVerificationPhotoOrderByWithRelationInput | Prisma.IdentityVerificationPhotoOrderByWithRelationInput[]
+  cursor?: Prisma.IdentityVerificationPhotoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.IdentityVerificationPhotoScalarFieldEnum | Prisma.IdentityVerificationPhotoScalarFieldEnum[]
 }
 
 /**

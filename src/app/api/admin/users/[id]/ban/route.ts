@@ -1,4 +1,5 @@
 import { fail, ok } from "@/lib/api";
+import { requireTrustedMutationRequest } from "@/lib/auth/mutation-guard";
 import { requireAdminAccess } from "@/lib/auth/require-admin-access";
 import { banSchema, banUser } from "@/server/services/admin-service";
 
@@ -12,6 +13,11 @@ export async function POST(request: Request, { params }: RouteParams) {
       guard.status,
     );
   }
+
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: guard.user.telegramId,
+  });
+  if (untrusted) return untrusted;
 
   const { id } = await params;
   const body = (await request.json().catch(() => ({}))) as unknown;

@@ -477,6 +477,23 @@ export type EnumVerificationTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumVerificationTypeFilter<$PrismaModel>
 }
 
+export type EnumIdentityVerificationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.IdentityVerificationStatus | Prisma.EnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.IdentityVerificationStatus[] | Prisma.ListEnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IdentityVerificationStatus[] | Prisma.ListEnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIdentityVerificationStatusFilter<$PrismaModel> | $Enums.IdentityVerificationStatus
+}
+
+export type EnumIdentityVerificationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IdentityVerificationStatus | Prisma.EnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.IdentityVerificationStatus[] | Prisma.ListEnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IdentityVerificationStatus[] | Prisma.ListEnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIdentityVerificationStatusWithAggregatesFilter<$PrismaModel> | $Enums.IdentityVerificationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIdentityVerificationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIdentityVerificationStatusFilter<$PrismaModel>
+}
+
 export type EnumNotificationChannelFilter<$PrismaModel = never> = {
   equals?: $Enums.NotificationChannel | Prisma.EnumNotificationChannelFieldRefInput<$PrismaModel>
   in?: $Enums.NotificationChannel[] | Prisma.ListEnumNotificationChannelFieldRefInput<$PrismaModel>
@@ -1025,6 +1042,23 @@ export type NestedEnumVerificationTypeWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumVerificationTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumVerificationTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumIdentityVerificationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.IdentityVerificationStatus | Prisma.EnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.IdentityVerificationStatus[] | Prisma.ListEnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IdentityVerificationStatus[] | Prisma.ListEnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIdentityVerificationStatusFilter<$PrismaModel> | $Enums.IdentityVerificationStatus
+}
+
+export type NestedEnumIdentityVerificationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IdentityVerificationStatus | Prisma.EnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.IdentityVerificationStatus[] | Prisma.ListEnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IdentityVerificationStatus[] | Prisma.ListEnumIdentityVerificationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIdentityVerificationStatusWithAggregatesFilter<$PrismaModel> | $Enums.IdentityVerificationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIdentityVerificationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIdentityVerificationStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumNotificationChannelFilter<$PrismaModel = never> = {

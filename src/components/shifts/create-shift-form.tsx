@@ -2,7 +2,7 @@
 
 import type { FormEvent } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { LoaderCircle, MapPin } from "lucide-react";
+import { LoaderCircle, MapPin, Save, Trash2 } from "lucide-react";
 
 import { fetchWithTelegramAuth } from "@/lib/auth/client";
 import { getCachedResource } from "@/lib/client/reference-cache";
@@ -73,6 +73,34 @@ type AddressVerifyPayload = {
   error?: string;
 };
 
+type ShiftTemplateOption = {
+  id: string;
+  name: string;
+  pickupPointId: string | null;
+  title: string;
+  type: string;
+  marketplaceId: string;
+  regionId: string;
+  cityId: string;
+  district: string;
+  address: string;
+  addressSuggestionUri: string | null;
+  landmark: string | null;
+  description: string;
+  startTime: string | null;
+  endTime: string | null;
+  paymentAmountRub: number;
+  paymentType: string;
+  experienceLevelRequired: string;
+  isUrgent: boolean;
+};
+
+type ShiftTemplatePayload = {
+  template?: ShiftTemplateOption;
+  templates?: ShiftTemplateOption[];
+  error?: string;
+};
+
 type ShiftFormState = {
   pickupPointId: string;
   title: string;
@@ -118,6 +146,9 @@ const initialForm: ShiftFormState = {
 const fieldClassName =
   "min-w-0 w-full rounded-[22px] border border-[#e1e6eb] bg-[#f8fbfd] px-4 py-3.5 text-[15px] text-[#101214] outline-none transition placeholder:text-[#a6abb2] focus:border-[#3387d1] focus:bg-white";
 
+const templateFieldClassName =
+  "min-w-0 w-full rounded-[18px] border border-border bg-muted px-3 py-3 text-[14px] text-foreground outline-none transition placeholder:text-muted-foreground focus:border-accent";
+
 function resetAddressFields(current: ShiftFormState) {
   return {
     ...current,
@@ -141,11 +172,39 @@ function applyPickupPointToForm(current: ShiftFormState, pickupPoint: PickupPoin
   };
 }
 
+function applyTemplateToForm(current: ShiftFormState, template: ShiftTemplateOption) {
+  return {
+    ...current,
+    pickupPointId: template.pickupPointId ?? "",
+    title: template.title,
+    type: template.type,
+    marketplaceId: template.marketplaceId,
+    regionId: template.regionId,
+    cityId: template.cityId,
+    district: template.district,
+    address: template.address,
+    addressSuggestionUri: template.addressSuggestionUri ?? "",
+    landmark: template.landmark ?? "",
+    description: template.description,
+    startAt: template.startTime ?? "",
+    endAt: template.endTime ?? "",
+    paymentAmountRub: String(template.paymentAmountRub),
+    paymentType: template.paymentType,
+    experienceLevelRequired: template.experienceLevelRequired,
+    isUrgent: template.isUrgent,
+  };
+}
+
+function getScheduledTime(shiftDate: string, time: string) {
+  return shiftDate && time ? `${shiftDate}T${time}` : null;
+}
+
 export function CreateShiftForm() {
   const todayDate = getTodayDateValue();
   const didLoadReferencesRef = useRef(false);
+  const preserveTemplateAddressRegionRef = useRef<string | null>(null);
+  const newShiftFormRef = useRef<ShiftFormState>(initialForm);
   const [form, setForm] = useState<ShiftFormState>(initialForm);
-  const [regions, setRegions] = useState<RegionOption[]>([]);
   const [cities, setCities] = useState<CityOption[]>([]);
   const [marketplaces, setMarketplaces] = useState<MarketplaceOption[]>([]);
   const [pickupPoints, setPickupPoints] = useState<PickupPointOption[]>([]);
@@ -157,10 +216,17 @@ export function CreateShiftForm() {
   const [addressLoading, setAddressLoading] = useState(false);
   const [addressError, setAddressError] = useState<string | null>(null);
   const [verifyingAddress, setVerifyingAddress] = useState(false);
+  const [templates, setTemplates] = useState<ShiftTemplateOption[]>([]);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
+  const [appliedTemplateId, setAppliedTemplateId] = useState("");
+  const [templateName, setTemplateName] = useState("");
+  const [templatePending, setTemplatePending] = useState(false);
+  const [templateMessage, setTemplateMessage] = useState<string | null>(null);
 
   const managerMode = isManagerRole(roles);
   const selectedPickupPoint =
     pickupPoints.find((pickupPoint) => pickupPoint.id === form.pickupPointId) ?? null;
+  const appliedTemplate = templates.find((template) => template.id === appliedTemplateId) ?? null;
 
   useEffect(() => {
     if (didLoadReferencesRef.current) {
@@ -177,7 +243,7 @@ export function CreateShiftForm() {
           getCachedResource(
             "refs:regions",
             async () => {
-              const response = await fetch("/api/regions", { cache: "force-cache" });
+              const response = await fetchWithTelegramAuth("/api/regions", { cache: "force-cache" });
               return ((await response.json().catch(() => null)) as { regions?: RegionOption[] } | null) ?? {};
             },
             60 * 60_000,
@@ -185,7 +251,9 @@ export function CreateShiftForm() {
           getCachedResource(
             "refs:marketplaces",
             async () => {
-              const response = await fetch("/api/marketplaces", { cache: "force-cache" });
+              const response = await fetchWithTelegramAuth("/api/marketplaces", {
+                cache: "force-cache",
+              });
               return (
                 ((await response.json().catch(() => null)) as {
                   marketplaces?: MarketplaceOption[];
@@ -212,8 +280,18 @@ export function CreateShiftForm() {
         const nextRoles = profilePayload?.profile?.roles ?? [];
         const preferredRegionId = profilePayload?.profile?.regionId ?? nextRegions[0]?.id ?? "";
         const firstPickupPoint = nextPickupPoints[0] ?? null;
+        const newShiftState = {
+          ...initialForm,
+          regionId: preferredRegionId,
+          cityId: profilePayload?.profile?.cityId ?? "",
+          marketplaceId: nextMarketplaces[0]?.id ?? "",
+        };
 
-        setRegions(nextRegions);
+        newShiftFormRef.current =
+          firstPickupPoint && nextRoles.includes("MANAGER")
+            ? applyPickupPointToForm(newShiftState, firstPickupPoint)
+            : newShiftState;
+
         setMarketplaces(nextMarketplaces);
         setPickupPoints(nextPickupPoints);
         setRoles(nextRoles);
@@ -242,6 +320,33 @@ export function CreateShiftForm() {
   }, []);
 
   useEffect(() => {
+    async function loadTemplates() {
+      setTemplatesLoading(true);
+
+      try {
+        const response = await fetchWithTelegramAuth("/api/shift-templates", {
+          cache: "no-store",
+        });
+        const payload = (await response.json().catch(() => null)) as ShiftTemplatePayload | null;
+
+        if (!response.ok) {
+          setTemplateMessage(payload?.error ?? "Не удалось загрузить шаблоны.");
+          return;
+        }
+
+        const nextTemplates = payload?.templates ?? [];
+        setTemplates(nextTemplates);
+      } catch {
+        setTemplateMessage("Не удалось загрузить шаблоны.");
+      } finally {
+        setTemplatesLoading(false);
+      }
+    }
+
+    void loadTemplates();
+  }, []);
+
+  useEffect(() => {
     async function loadCities() {
       if (!form.regionId) {
         setCities([]);
@@ -252,7 +357,7 @@ export function CreateShiftForm() {
         const payload = await getCachedResource(
           `refs:cities:${form.regionId}`,
           async () => {
-            const response = await fetch(`/api/cities?regionId=${form.regionId}`, {
+            const response = await fetchWithTelegramAuth(`/api/cities?regionId=${form.regionId}`, {
               cache: "force-cache",
             });
             return ((await response.json().catch(() => null)) as { cities?: CityOption[] } | null) ?? {};
@@ -263,6 +368,11 @@ export function CreateShiftForm() {
 
         setCities(nextCities);
         setForm((current) => {
+          if (preserveTemplateAddressRegionRef.current === current.regionId) {
+            preserveTemplateAddressRegionRef.current = null;
+            return current;
+          }
+
           const nextCityId =
             nextCities.find((city) => city.id === current.cityId)?.id ?? nextCities[0]?.id ?? "";
 
@@ -356,7 +466,18 @@ export function CreateShiftForm() {
     return Boolean(form.regionId && form.cityId && form.marketplaceId && form.addressSuggestionUri);
   }, [form, managerMode]);
 
+  function detachEditedTemplate() {
+    if (!appliedTemplateId) {
+      return;
+    }
+
+    setAppliedTemplateId("");
+    setTemplateName("");
+    setTemplateMessage(null);
+  }
+
   async function handleSelectSuggestion(suggestion: AddressSuggestionOption) {
+    detachEditedTemplate();
     setVerifyingAddress(true);
     setAddressLoading(false);
     setAddressError(null);
@@ -392,6 +513,128 @@ export function CreateShiftForm() {
       setAddressError("Не удалось подтвердить адрес.");
     } finally {
       setVerifyingAddress(false);
+    }
+  }
+
+  function resetToNewShift() {
+    preserveTemplateAddressRegionRef.current = null;
+    setAppliedTemplateId("");
+    setTemplateName("");
+    setForm({ ...newShiftFormRef.current });
+    setAddressError(null);
+    setAddressSuggestions([]);
+    setMessage(null);
+  }
+
+  function handleSelectTemplate(templateId: string) {
+    setTemplateMessage(null);
+
+    if (!templateId) {
+      resetToNewShift();
+      return;
+    }
+
+    const template = templates.find((item) => item.id === templateId);
+    if (!template) {
+      return;
+    }
+
+    setAppliedTemplateId(template.id);
+    preserveTemplateAddressRegionRef.current =
+      form.regionId !== template.regionId ? template.regionId : null;
+    setForm((current) => applyTemplateToForm(current, template));
+    setTemplateName(template.name);
+    setAddressError(null);
+    setAddressSuggestions([]);
+    setTemplateMessage(`Шаблон «${template.name}» применён.`);
+  }
+
+  async function handleSaveTemplate() {
+    if (!templateName.trim()) {
+      setTemplateMessage("Введите название шаблона.");
+      return;
+    }
+
+    setTemplatePending(true);
+    setTemplateMessage(null);
+
+    try {
+      const response = await fetchWithTelegramAuth("/api/shift-templates", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: templateName.trim(),
+          pickupPointId: form.pickupPointId || null,
+          title: form.title,
+          type: form.type,
+          marketplaceId: form.marketplaceId,
+          regionId: form.regionId,
+          cityId: form.cityId,
+          district: form.district,
+          address: form.address,
+          addressSuggestionUri: form.addressSuggestionUri || null,
+          landmark: form.landmark || null,
+          description: form.description.trim(),
+          startAt: form.startAt || null,
+          endAt: form.endAt || null,
+          paymentAmountRub: form.paymentAmountRub,
+          paymentType: form.paymentType,
+          experienceLevelRequired: form.experienceLevelRequired,
+          isUrgent: form.isUrgent,
+        }),
+      });
+      const payload = (await response.json().catch(() => null)) as ShiftTemplatePayload | null;
+
+      if (!response.ok || !payload?.template) {
+        setTemplateMessage(payload?.error ?? "Не удалось сохранить шаблон.");
+        return;
+      }
+
+      setTemplates((current) => [
+        payload.template as ShiftTemplateOption,
+        ...current.filter((item) => item.id !== payload.template?.id),
+      ]);
+      setAppliedTemplateId(payload.template.id);
+      setTemplateName(payload.template.name);
+      setTemplateMessage("Шаблон сохранён. Дата смены в него не входит.");
+    } catch {
+      setTemplateMessage("Не удалось сохранить шаблон.");
+    } finally {
+      setTemplatePending(false);
+    }
+  }
+
+  async function handleDeleteTemplate() {
+    const template = templates.find((item) => item.id === appliedTemplateId);
+
+    if (!template || !window.confirm(`Удалить шаблон «${template.name}»?`)) {
+      return;
+    }
+
+    setTemplatePending(true);
+    setTemplateMessage(null);
+
+    try {
+      const response = await fetchWithTelegramAuth(`/api/shift-templates/${template.id}`, {
+        method: "DELETE",
+      });
+      const payload = (await response.json().catch(() => null)) as ShiftTemplatePayload | null;
+
+      if (!response.ok) {
+        setTemplateMessage(payload?.error ?? "Не удалось удалить шаблон.");
+        return;
+      }
+
+      const nextTemplates = templates.filter((item) => item.id !== template.id);
+      setTemplates(nextTemplates);
+      resetToNewShift();
+      setTemplateMessage("Шаблон удалён.");
+    } catch {
+      setTemplateMessage("Не удалось удалить шаблон.");
+    } finally {
+      setTemplatePending(false);
     }
   }
 
@@ -431,6 +674,8 @@ export function CreateShiftForm() {
         },
         body: JSON.stringify({
           ...form,
+          startAt: getScheduledTime(form.shiftDate, form.startAt),
+          endAt: getScheduledTime(form.shiftDate, form.endAt),
           paymentAmountRub: form.paymentAmountRub,
           description: form.description.trim(),
         }),
@@ -452,6 +697,10 @@ export function CreateShiftForm() {
           marketplaceId: current.marketplaceId,
           pickupPointId: current.pickupPointId,
         };
+
+        if (appliedTemplate) {
+          return applyTemplateToForm(nextState, appliedTemplate);
+        }
 
         return managerMode && selectedPickupPoint
           ? applyPickupPointToForm(nextState, selectedPickupPoint)
@@ -485,36 +734,19 @@ export function CreateShiftForm() {
       ) : null}
 
       <div className="grid gap-4">
-        {pickupPoints.length > 0 ? (
-          <label className="grid min-w-0 gap-2 text-[14px] font-medium text-[#101214]">
-            <span>{managerMode ? "Доступный ПВЗ" : "ПВЗ для смены"}</span>
+        {!templatesLoading && templates.length > 0 ? (
+          <label className="grid min-w-0 gap-2 text-[14px] font-medium text-foreground">
+            <span>Шаблон смены</span>
             <select
-              value={form.pickupPointId}
-              onChange={(event) => {
-                const pickupPoint = pickupPoints.find((item) => item.id === event.target.value);
-
-                if (!pickupPoint) {
-                  setForm((current) => ({
-                    ...current,
-                    pickupPointId: "",
-                    district: "",
-                    address: "",
-                    addressSuggestionUri: "",
-                    landmark: "",
-                  }));
-                  return;
-                }
-
-                setAddressError(null);
-                setAddressSuggestions([]);
-                setForm((current) => applyPickupPointToForm(current, pickupPoint));
-              }}
+              value={appliedTemplateId}
+              onChange={(event) => handleSelectTemplate(event.target.value)}
               className={fieldClassName}
+              disabled={templatePending}
             >
-              {!managerMode ? <option value="">Без привязки к ПВЗ</option> : null}
-              {pickupPoints.map((pickupPoint) => (
-                <option key={pickupPoint.id} value={pickupPoint.id}>
-                  {pickupPoint.title} · {pickupPoint.city.name} · {pickupPoint.marketplace.name}
+              <option value="">Новая смена без шаблона</option>
+              {templates.map((template) => (
+                <option key={template.id} value={template.id}>
+                  {template.name}
                 </option>
               ))}
             </select>
@@ -526,7 +758,10 @@ export function CreateShiftForm() {
           <input
             required
             value={form.title}
-            onChange={(event) => setForm({ ...form, title: event.target.value })}
+            onChange={(event) => {
+              detachEditedTemplate();
+              setForm({ ...form, title: event.target.value });
+            }}
             className={fieldClassName}
             placeholder="Например: срочно нужен сотрудник на вечер"
           />
@@ -537,13 +772,14 @@ export function CreateShiftForm() {
             <span>Тип объявления</span>
             <select
               value={form.type}
-              onChange={(event) =>
+              onChange={(event) => {
+                detachEditedTemplate();
                 setForm({
                   ...form,
                   type: event.target.value,
                   isUrgent: event.target.value === "URGENT_REPLACEMENT",
-                })
-              }
+                });
+              }}
               className={fieldClassName}
             >
               {SHIFT_POST_TYPES.map((item) => (
@@ -558,7 +794,10 @@ export function CreateShiftForm() {
             <span>Маркетплейс</span>
             <select
               value={form.marketplaceId}
-              onChange={(event) => setForm({ ...form, marketplaceId: event.target.value })}
+              onChange={(event) => {
+                detachEditedTemplate();
+                setForm({ ...form, marketplaceId: event.target.value });
+              }}
               className={fieldClassName}
               disabled={Boolean(selectedPickupPoint)}
             >
@@ -571,64 +810,34 @@ export function CreateShiftForm() {
           </label>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 min-[440px]:grid-cols-2">
-          <label className="grid min-w-0 gap-2 text-[14px] font-medium text-[#101214]">
-            <span>Регион</span>
-            <select
-              value={form.regionId}
-              onChange={(event) => {
-                if (managerMode) {
-                  return;
-                }
+        <label className="grid min-w-0 gap-2 text-[14px] font-medium text-[#101214]">
+          <span>Город</span>
+          <select
+            value={form.cityId}
+            onChange={(event) => {
+              if (managerMode) {
+                return;
+              }
 
-                setAddressError(null);
-                setAddressSuggestions([]);
-                setForm((current) => ({
-                  ...resetAddressFields(current),
-                  regionId: event.target.value,
-                  cityId: "",
-                  pickupPointId: "",
-                }));
-              }}
-              className={fieldClassName}
-              disabled={managerMode || Boolean(selectedPickupPoint)}
-            >
-              {regions.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="grid min-w-0 gap-2 text-[14px] font-medium text-[#101214]">
-            <span>Город</span>
-            <select
-              value={form.cityId}
-              onChange={(event) => {
-                if (managerMode) {
-                  return;
-                }
-
-                setAddressError(null);
-                setAddressSuggestions([]);
-                setForm((current) => ({
-                  ...resetAddressFields(current),
-                  cityId: event.target.value,
-                  pickupPointId: "",
-                }));
-              }}
-              className={fieldClassName}
-              disabled={managerMode || Boolean(selectedPickupPoint)}
-            >
-              {cities.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+              detachEditedTemplate();
+              setAddressError(null);
+              setAddressSuggestions([]);
+              setForm((current) => ({
+                ...resetAddressFields(current),
+                cityId: event.target.value,
+                pickupPointId: "",
+              }));
+            }}
+            className={fieldClassName}
+            disabled={managerMode || Boolean(selectedPickupPoint)}
+          >
+            {cities.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+        </label>
 
         <label className="grid gap-2 text-[14px] font-medium text-[#101214]">
           <span>Район</span>
@@ -652,6 +861,7 @@ export function CreateShiftForm() {
               value={form.address}
               readOnly={managerMode || Boolean(selectedPickupPoint)}
               onChange={(event) => {
+                detachEditedTemplate();
                 setAddressError(null);
                 setAddressSuggestions([]);
                 setForm((current) => ({
@@ -733,7 +943,7 @@ export function CreateShiftForm() {
               min={todayDate}
               value={form.shiftDate}
               onChange={(event) => setForm({ ...form, shiftDate: event.target.value })}
-              className={fieldClassName}
+              className={`${fieldClassName} native-date-time-field`}
             />
           </label>
 
@@ -745,7 +955,10 @@ export function CreateShiftForm() {
               min={1}
               inputMode="numeric"
               value={form.paymentAmountRub}
-              onChange={(event) => setForm({ ...form, paymentAmountRub: event.target.value })}
+              onChange={(event) => {
+                detachEditedTemplate();
+                setForm({ ...form, paymentAmountRub: event.target.value });
+              }}
               className={fieldClassName}
               placeholder="4500"
             />
@@ -755,24 +968,30 @@ export function CreateShiftForm() {
           </label>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 min-[440px]:grid-cols-2">
+        <div className="grid grid-cols-2 gap-3">
           <label className="grid min-w-0 gap-2 text-[14px] font-medium text-[#101214]">
             <span>Начало смены</span>
             <input
-              type="datetime-local"
+              type="time"
               value={form.startAt}
-              onChange={(event) => setForm({ ...form, startAt: event.target.value })}
-              className={fieldClassName}
+              onChange={(event) => {
+                detachEditedTemplate();
+                setForm({ ...form, startAt: event.target.value });
+              }}
+              className={`${fieldClassName} native-date-time-field`}
             />
           </label>
 
           <label className="grid min-w-0 gap-2 text-[14px] font-medium text-[#101214]">
             <span>Конец смены</span>
             <input
-              type="datetime-local"
+              type="time"
               value={form.endAt}
-              onChange={(event) => setForm({ ...form, endAt: event.target.value })}
-              className={fieldClassName}
+              onChange={(event) => {
+                detachEditedTemplate();
+                setForm({ ...form, endAt: event.target.value });
+              }}
+              className={`${fieldClassName} native-date-time-field`}
             />
           </label>
         </div>
@@ -782,7 +1001,10 @@ export function CreateShiftForm() {
           <input
             value={form.landmark}
             readOnly={managerMode || Boolean(selectedPickupPoint)}
-            onChange={(event) => setForm({ ...form, landmark: event.target.value })}
+            onChange={(event) => {
+              detachEditedTemplate();
+              setForm({ ...form, landmark: event.target.value });
+            }}
             className={fieldClassName}
             placeholder="Например: рядом с метро, ТЦ, ЖК"
           />
@@ -792,7 +1014,10 @@ export function CreateShiftForm() {
           <span>Опыт</span>
           <select
             value={form.experienceLevelRequired}
-            onChange={(event) => setForm({ ...form, experienceLevelRequired: event.target.value })}
+            onChange={(event) => {
+              detachEditedTemplate();
+              setForm({ ...form, experienceLevelRequired: event.target.value });
+            }}
             className={fieldClassName}
           >
             {EXPERIENCE_LEVELS.map((item) => (
@@ -808,7 +1033,10 @@ export function CreateShiftForm() {
           <textarea
             rows={4}
             value={form.description}
-            onChange={(event) => setForm({ ...form, description: event.target.value })}
+            onChange={(event) => {
+              detachEditedTemplate();
+              setForm({ ...form, description: event.target.value });
+            }}
             className={fieldClassName}
             placeholder="Необязательно. Можно указать важные детали по смене."
           />
@@ -828,8 +1056,54 @@ export function CreateShiftForm() {
         className="flex w-full items-center justify-center gap-2 rounded-[24px] bg-[#3387d1] px-5 py-4 text-[14px] font-semibold text-white disabled:opacity-60"
       >
         {submitting ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
-        Опубликовать объявление
+        Опубликовать смену
       </button>
+
+      {appliedTemplate ? (
+        <button
+          type="button"
+          onClick={() => void handleDeleteTemplate()}
+          disabled={templatePending}
+          className="flex w-full items-center justify-center gap-2 rounded-[22px] border border-border bg-danger-soft px-5 py-3.5 text-[14px] font-semibold text-danger-soft-foreground disabled:opacity-60"
+        >
+          {templatePending ? (
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+          ) : (
+            <Trash2 className="h-4 w-4" />
+          )}
+          Удалить шаблон «{appliedTemplate.name}»
+        </button>
+      ) : (
+        <div className="space-y-2">
+          <input
+            value={templateName}
+            onChange={(event) => setTemplateName(event.target.value)}
+            className={templateFieldClassName}
+            placeholder="Название шаблона"
+            maxLength={60}
+          />
+          <button
+            type="button"
+            onClick={() => void handleSaveTemplate()}
+            disabled={templatePending}
+            className="flex w-full items-center justify-center gap-2 rounded-[22px] border border-border bg-muted px-5 py-3.5 text-[14px] font-semibold text-foreground disabled:opacity-60"
+          >
+            {templatePending ? (
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
+            Сохранить смену как шаблон
+          </button>
+          <p className="text-[12px] leading-5 text-muted-foreground">
+            Дата смены в шаблон не сохраняется.
+          </p>
+        </div>
+      )}
+
+      {templateMessage ? (
+        <p className="text-[13px] leading-5 text-muted-foreground">{templateMessage}</p>
+      ) : null}
 
       {message ? <p className="text-[14px] text-[#7f8791]">{message}</p> : null}
     </form>

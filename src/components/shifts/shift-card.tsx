@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { StatusBadge } from "@/components/ui/status-badge";
+import { withPlatformPrefix } from "@/lib/routing/platform";
 import type { ShiftCard as ShiftCardType } from "@/lib/types";
 import {
   formatDate,
@@ -13,15 +14,16 @@ import {
 
 type ShiftCardProps = {
   shift: ShiftCardType;
+  hrefPrefix?: string;
 };
 
-export function ShiftCard({ shift }: ShiftCardProps) {
+export function ShiftCard({ shift, hrefPrefix = "" }: ShiftCardProps) {
   const timeRange = formatShiftTimeRange(shift.startAt, shift.endAt);
   const location = formatShiftLocation(shift.cityName, shift.district, shift.address);
 
   return (
     <Link
-      href={`/shifts/${shift.id}`}
+      href={withPlatformPrefix(`/shifts/${shift.id}`, hrefPrefix)}
       className="block rounded-[28px] bg-white p-4 shadow-[0_12px_28px_rgba(20,27,33,0.08)]"
     >
       <div className="mb-3 flex items-start justify-between gap-3">

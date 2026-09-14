@@ -7,6 +7,7 @@ import {
   ClipboardList,
   Flag,
   Gauge,
+  IdCard,
   ScrollText,
   ShieldCheck,
   Users,
@@ -26,6 +27,7 @@ type AdminUser = {
 const NAV = [
   { href: "/admin", label: "Дашборд", icon: Gauge, exact: true },
   { href: "/admin/users", label: "Пользователи", icon: Users },
+  { href: "/admin/verifications", label: "Верификации", icon: IdCard },
   { href: "/admin/reports", label: "Жалобы", icon: Flag },
   { href: "/admin/shifts", label: "Смены", icon: ClipboardList },
   { href: "/admin/audit", label: "Audit log", icon: ScrollText },
@@ -78,10 +80,10 @@ export function AdminShell({
           </div>
           <div className="flex items-center gap-2">
             <Link
-              href="/home"
+              href="/shifts"
               className="rounded-xl border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
             >
-              Вернуться в Mini App
+              Вернуться в приложение
             </Link>
             <AdminLogoutButton />
           </div>

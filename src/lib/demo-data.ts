@@ -1,5 +1,5 @@
 import type { ApplicationCard, ProfileView, ShiftCard, UserSummary } from "@/lib/types";
-import { RUSSIAN_MILLION_CITIES } from "@/lib/russian-million-cities";
+import { RUSSIAN_CITIES } from "@/lib/russian-cities";
 import { getDateInputValue } from "@/lib/utils";
 
 function buildFutureDate(daysFromToday: number) {
@@ -19,14 +19,14 @@ const tomorrow = buildFutureDate(1);
 const dayAfterTomorrow = buildFutureDate(2);
 const inThreeDays = buildFutureDate(3);
 
-export const demoRegions = RUSSIAN_MILLION_CITIES.map((item) => ({
+export const demoRegions = RUSSIAN_CITIES.map((item) => ({
   id: item.regionId,
   name: item.regionName,
 })).filter(
   (region, index, list) => list.findIndex((item) => item.id === region.id) === index,
 );
 
-export const demoCities = RUSSIAN_MILLION_CITIES.map((item) => ({
+export const demoCities = RUSSIAN_CITIES.map((item) => ({
   id: item.cityId,
   regionId: item.regionId,
   name: item.cityName,
@@ -58,6 +58,7 @@ export const demoUsers: UserSummary[] = [
     ratingCount: 16,
     completedAssignmentsCount: 34,
     verificationStatus: "APPROVED",
+    employerVerificationStatus: "APPROVED",
     isPhoneVerified: false,
   },
   {
@@ -78,6 +79,7 @@ export const demoUsers: UserSummary[] = [
     ratingCount: 21,
     completedAssignmentsCount: 27,
     verificationStatus: "APPROVED",
+    employerVerificationStatus: null,
     isPhoneVerified: false,
   },
   {
@@ -98,6 +100,7 @@ export const demoUsers: UserSummary[] = [
     ratingCount: 8,
     completedAssignmentsCount: 11,
     verificationStatus: "PENDING",
+    employerVerificationStatus: null,
     isPhoneVerified: false,
   },
 ];
@@ -126,7 +129,6 @@ export const demoShiftPosts: ShiftCard[] = [
       "Нужна подмена на один день. Важен опыт выдачи посылок и работы с возвратами.",
     createdByName: "Анна Левина",
     applicationsCount: 4,
-    favorite: true,
   },
   {
     id: "shift_2",
@@ -150,7 +152,6 @@ export const demoShiftPosts: ShiftCard[] = [
     description: "Ищем опытного сотрудника на дневную смену с уверенным знанием приёмки.",
     createdByName: "Олег Морозов",
     applicationsCount: 2,
-    favorite: false,
   },
   {
     id: "shift_3",
@@ -175,7 +176,6 @@ export const demoShiftPosts: ShiftCard[] = [
       "Нужна замена на один день для ПВЗ с опытом работы на выдаче и возвратах.",
     createdByName: "Сеть ПВЗ Казань",
     applicationsCount: 5,
-    favorite: false,
   },
 ];
 
@@ -231,8 +231,16 @@ export const demoApplications: ApplicationCard[] = [
 
 export const demoProfile: ProfileView = {
   ...demoUsers[1],
+  balanceRub: 0,
   bio: "Работаю с Ozon и WB, умею принимать возвраты и закрывать кассу.",
   phone: null,
+  shiftAttendance: {
+    percentage: 90,
+    completedCount: 27,
+    failedCount: 3,
+    totalCount: 30,
+    warning: false,
+  },
   badges: ["Проверенный профиль", "27 завершённых смен", "Высокий рейтинг"],
   recentReviews: [
     {

@@ -11,7 +11,7 @@ import {
   ShiftPostType,
   VerificationStatus,
 } from "../src/generated/prisma/client";
-import { RUSSIAN_MILLION_CITIES } from "../src/lib/russian-million-cities";
+import { RUSSIAN_CITIES } from "../src/lib/russian-cities";
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg(
@@ -24,7 +24,7 @@ async function upsertRegionsAndCities() {
   const regions = new Map<string, { id: string; name: string }>();
   const cities = new Map<string, { id: string; name: string; regionId: string }>();
 
-  for (const item of RUSSIAN_MILLION_CITIES) {
+  for (const item of RUSSIAN_CITIES) {
     const region = await prisma.region.upsert({
       where: { slug: item.regionSlug },
       update: {

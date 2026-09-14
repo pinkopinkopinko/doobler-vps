@@ -7,6 +7,12 @@ import { getSessionPayload } from "@/lib/auth/session";
 // managers, shift-posts, moderation), telegramId/firstName/lastName/username
 // (только require-moderator), isBanned (для будущих гард-проверок). Полный
 // профиль с verifications/city/etc. читаем уже через профильные сервисы.
+//
+// Замечание: была попытка сначала спросить `getCurrentUserRecord()` ради
+// шеринга кэша с (app)/layout — оказалось бесполезно, потому что
+// фактические активные вызовы `getCurrentUser` все из `/api/*` роутов,
+// где layout не запускается, и wide-select из `accessUserSelect` тянул
+// бы за собой verifications/identityVerifications/city без пользы.
 const currentUserSelect = {
   id: true,
   telegramId: true,

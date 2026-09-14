@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { getCurrentUserRecord } from "@/lib/auth/app-access";
 import { getConversationForUser } from "@/server/services/chat-service";
 import { ChatConversation } from "@/components/chat/chat-conversation";
 
@@ -10,15 +10,17 @@ type Props = { params: Promise<{ id: string }> };
 
 export default async function ChatDetailPage({ params }: Props) {
   const { id } = await params;
-  const current = await getCurrentUser();
+  // Используем тот же cached fetch, что и (app)/layout.tsx → getAppAccessState,
+  // чтобы не делать второй SELECT на User при каждом заходе в чат.
+  const record = await getCurrentUserRecord();
 
-  if (!current) {
+  if (!record) {
     notFound();
   }
 
   const conversation = await getConversationForUser({
     conversationId: id,
-    currentUserId: current.id,
+    currentUserId: record.user.id,
   }).catch(() => null);
 
   if (!conversation) {
@@ -28,8 +30,9 @@ export default async function ChatDetailPage({ params }: Props) {
   return (
     <ChatConversation
       conversationId={conversation.id}
-      currentUserId={current.id}
+      currentUserId={record.user.id}
       peer={conversation.peer}
+      activeShift={conversation.activeShift}
     />
   );
 }

@@ -6,7 +6,6 @@ import {
   BriefcaseBusiness,
   CircleUserRound,
   FileText,
-  House,
   MessageCircle,
   PlusSquare,
   Search,
@@ -18,10 +17,14 @@ import {
   canCreateShiftPosts,
   isEmployeeRole,
 } from "@/lib/profile-completion";
+import {
+  getPlatformPrefixFromPathname,
+  stripPlatformPrefix,
+  withPlatformPrefix,
+} from "@/lib/routing/platform";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { href: "/home", label: "Главная", icon: House, roles: "ALL" as const },
   { href: "/shifts", label: "Смены", icon: Search, roles: "ALL" as const },
   { href: "/shifts/new", label: "Создать", icon: PlusSquare, roles: "OWNER_ONLY" as const },
   { href: "/posts", label: "Мои смены", icon: BriefcaseBusiness, roles: "OWNER_ONLY" as const },
@@ -32,12 +35,14 @@ const items = [
 
 export function BottomNav() {
   const pathname = usePathname();
-  const { roles } = useAppSession();
-  const unread = useUnreadChats(!pathname.startsWith("/chats"));
+  const platformPrefix = getPlatformPrefixFromPathname(pathname);
+  const logicalPathname = stripPlatformPrefix(pathname);
+  const { roles, employerVerificationStatus } = useAppSession();
+  const unread = useUnreadChats(!logicalPathname.startsWith("/chats"));
 
   const visibleItems = items.filter((item) => {
     if (item.roles === "OWNER_ONLY") {
-      return canCreateShiftPosts(roles);
+      return canCreateShiftPosts(roles, employerVerificationStatus);
     }
 
     if (item.roles === "EMPLOYEE_ONLY") {
@@ -50,26 +55,25 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-1/2 z-40 w-[calc(100vw-20px)] max-w-[430px] -translate-x-1/2 px-1 pb-[calc(10px+env(safe-area-inset-bottom,0px))]">
       <div
-        className="grid h-[var(--nav-height)] rounded-[26px] border border-[rgba(16,18,20,0.06)] bg-[#ffffff] p-1.5 shadow-[0_12px_28px_rgba(20,27,33,0.1)]"
+        className="grid h-[var(--nav-height)] gap-2 rounded-[26px] border border-[rgba(16,18,20,0.06)] bg-[#ffffff] p-2 shadow-[0_12px_28px_rgba(20,27,33,0.1)]"
         style={{ gridTemplateColumns: `repeat(${visibleItems.length}, minmax(0, 1fr))` }}
       >
         {visibleItems.map((item) => {
           const active =
-            item.href === "/home"
-              ? pathname === "/home"
-              : item.href === "/shifts"
-                ? pathname === "/shifts" ||
-                  (pathname.startsWith("/shifts/") && pathname !== "/shifts/new")
-                : item.href === "/posts"
-                  ? pathname === "/posts" || pathname.startsWith("/posts/")
-                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
+            item.href === "/shifts"
+              ? logicalPathname === "/shifts" ||
+                (logicalPathname.startsWith("/shifts/") && logicalPathname !== "/shifts/new")
+              : item.href === "/posts"
+                ? logicalPathname === "/posts" || logicalPathname.startsWith("/posts/")
+                : logicalPathname === item.href ||
+                  logicalPathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
           const badge = item.href === "/chats" && unread > 0 ? unread : 0;
 
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={withPlatformPrefix(item.href, platformPrefix)}
               className={cn(
                 "relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-[20px] px-1 text-[10px] font-medium transition",
                 active ? "bg-[#3387d1]" : "hover:bg-[#f2f5f8]",

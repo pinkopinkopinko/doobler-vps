@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { AlertCircle, CheckCircle2, LoaderCircle } from "lucide-react";
 
+import { fetchWithTelegramAuth } from "@/lib/auth/client";
+
 type ConfirmApplicationButtonProps = {
   applicationId: string;
 };
@@ -17,7 +19,7 @@ export function ConfirmApplicationButton({ applicationId }: ConfirmApplicationBu
     setError(null);
 
     try {
-      const response = await fetch(`/api/applications/${applicationId}/confirm`, {
+      const response = await fetchWithTelegramAuth(`/api/applications/${applicationId}/confirm`, {
         method: "POST",
       });
 

@@ -1,7 +1,5 @@
 import crypto from "node:crypto";
 
-import { demoUsers } from "@/lib/demo-data";
-
 type TelegramUser = {
   id: number;
   first_name: string;
@@ -103,14 +101,23 @@ export function parseTelegramInitData(initData: string) {
 }
 
 export function getDevelopmentTelegramUser() {
-  const telegramId = process.env.NEXT_PUBLIC_DEV_TELEGRAM_ID ?? demoUsers[0].telegramId;
-  const demoUser = demoUsers.find((item) => item.telegramId === telegramId) ?? demoUsers[0];
+  const telegramId = process.env.NEXT_PUBLIC_DEV_TELEGRAM_ID?.trim();
+
+  if (!telegramId) {
+    return null;
+  }
+
+  const numericTelegramId = Number(telegramId);
+
+  if (!Number.isSafeInteger(numericTelegramId) || numericTelegramId <= 0) {
+    return null;
+  }
 
   return {
-    id: Number(demoUser.telegramId),
-    first_name: demoUser.firstName,
-    last_name: demoUser.lastName ?? undefined,
-    username: demoUser.username ?? undefined,
+    id: numericTelegramId,
+    first_name: "Dev",
+    last_name: "User",
+    username: "dev_user",
     photo_url: undefined,
   } satisfies TelegramUser;
 }

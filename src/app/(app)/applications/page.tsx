@@ -2,14 +2,15 @@ import { ApplicationCard } from "@/components/applications/application-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getSessionPayload } from "@/lib/auth/session";
-import { demoApplications } from "@/lib/demo-data";
+import { getRequestPlatformPrefix } from "@/lib/routing/platform-server";
 import { listMyApplications } from "@/server/services/application-service";
 
 export const dynamic = "force-dynamic";
 
 export default async function ApplicationsPage() {
   const session = await getSessionPayload();
-  const applications = session ? await listMyApplications(session.userId) : demoApplications;
+  const hrefPrefix = await getRequestPlatformPrefix();
+  const applications = session ? await listMyApplications(session.userId) : [];
 
   return (
     <div className="space-y-5">
@@ -20,7 +21,7 @@ export default async function ApplicationsPage() {
       <div className="space-y-4">
         {applications.length ? (
           applications.map((application) => (
-            <ApplicationCard key={application.id} application={application} />
+            <ApplicationCard key={application.id} application={application} hrefPrefix={hrefPrefix} />
           ))
         ) : (
           <EmptyState

@@ -1,5 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import {
+  TELEGRAM_PLATFORM_PREFIX,
+  stripPlatformPrefix,
+} from "@/lib/routing/platform";
+
 /**
  * Hard guard for /admin pages and /api/admin endpoints.
  *
@@ -20,6 +25,32 @@ const ADMIN_LOGIN_PATH = "/admin-login";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (
+    pathname === TELEGRAM_PLATFORM_PREFIX ||
+    pathname.startsWith(`${TELEGRAM_PLATFORM_PREFIX}/`)
+  ) {
+    const strippedPathname = stripPlatformPrefix(pathname);
+
+    if (strippedPathname.startsWith("/admin") || strippedPathname.startsWith("/api/admin")) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = strippedPathname;
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    const rewriteUrl = request.nextUrl.clone();
+    rewriteUrl.pathname = strippedPathname === "/" ? "/shifts" : strippedPathname;
+
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-doobler-platform", "telegram");
+    requestHeaders.set("x-doobler-platform-prefix", TELEGRAM_PLATFORM_PREFIX);
+
+    return NextResponse.rewrite(rewriteUrl, {
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
 
   // Don't trap the login pages/endpoints themselves.
   if (
@@ -57,5 +88,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/telegram", "/telegram/:path*", "/admin/:path*", "/api/admin/:path*"],
 };

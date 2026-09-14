@@ -60,14 +60,17 @@ export const ModelName = {
   PickupPoint: 'PickupPoint',
   PickupPointManagerAccess: 'PickupPointManagerAccess',
   ShiftPost: 'ShiftPost',
+  ShiftTemplate: 'ShiftTemplate',
   Application: 'Application',
   Assignment: 'Assignment',
   Review: 'Review',
   Report: 'Report',
   Verification: 'Verification',
+  IdentityVerification: 'IdentityVerification',
+  IdentityVerificationPhoto: 'IdentityVerificationPhoto',
   Notification: 'Notification',
-  Favorite: 'Favorite',
   AuditLog: 'AuditLog',
+  UserLegalEvent: 'UserLegalEvent',
   Conversation: 'Conversation',
   ConversationParticipant: 'ConversationParticipant',
   Message: 'Message',
@@ -114,6 +117,7 @@ export const UserScalarFieldEnum = {
   ratingAvg: 'ratingAvg',
   ratingCount: 'ratingCount',
   completedAssignmentsCount: 'completedAssignmentsCount',
+  balanceRub: 'balanceRub',
   isActive: 'isActive',
   isBanned: 'isBanned',
   banReason: 'banReason',
@@ -234,6 +238,8 @@ export const ShiftPostScalarFieldEnum = {
   status: 'status',
   district: 'district',
   address: 'address',
+  lat: 'lat',
+  lng: 'lng',
   landmark: 'landmark',
   description: 'description',
   shiftDate: 'shiftDate',
@@ -253,6 +259,34 @@ export const ShiftPostScalarFieldEnum = {
 } as const
 
 export type ShiftPostScalarFieldEnum = (typeof ShiftPostScalarFieldEnum)[keyof typeof ShiftPostScalarFieldEnum]
+
+
+export const ShiftTemplateScalarFieldEnum = {
+  id: 'id',
+  createdByUserId: 'createdByUserId',
+  name: 'name',
+  pickupPointId: 'pickupPointId',
+  regionId: 'regionId',
+  cityId: 'cityId',
+  marketplaceId: 'marketplaceId',
+  title: 'title',
+  type: 'type',
+  district: 'district',
+  address: 'address',
+  addressSuggestionUri: 'addressSuggestionUri',
+  landmark: 'landmark',
+  description: 'description',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  paymentAmountRub: 'paymentAmountRub',
+  paymentType: 'paymentType',
+  experienceLevelRequired: 'experienceLevelRequired',
+  isUrgent: 'isUrgent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShiftTemplateScalarFieldEnum = (typeof ShiftTemplateScalarFieldEnum)[keyof typeof ShiftTemplateScalarFieldEnum]
 
 
 export const ApplicationScalarFieldEnum = {
@@ -337,6 +371,30 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const IdentityVerificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  reviewedByUserId: 'reviewedByUserId',
+  status: 'status',
+  adminNote: 'adminNote',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type IdentityVerificationScalarFieldEnum = (typeof IdentityVerificationScalarFieldEnum)[keyof typeof IdentityVerificationScalarFieldEnum]
+
+
+export const IdentityVerificationPhotoScalarFieldEnum = {
+  id: 'id',
+  verificationId: 'verificationId',
+  mediaId: 'mediaId',
+  createdAt: 'createdAt'
+} as const
+
+export type IdentityVerificationPhotoScalarFieldEnum = (typeof IdentityVerificationPhotoScalarFieldEnum)[keyof typeof IdentityVerificationPhotoScalarFieldEnum]
+
+
 export const NotificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -353,16 +411,6 @@ export const NotificationScalarFieldEnum = {
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
-export const FavoriteScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  shiftPostId: 'shiftPostId',
-  createdAt: 'createdAt'
-} as const
-
-export type FavoriteScalarFieldEnum = (typeof FavoriteScalarFieldEnum)[keyof typeof FavoriteScalarFieldEnum]
-
-
 export const AuditLogScalarFieldEnum = {
   id: 'id',
   actorUserId: 'actorUserId',
@@ -374,6 +422,21 @@ export const AuditLogScalarFieldEnum = {
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const UserLegalEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  purpose: 'purpose',
+  action: 'action',
+  documentVersion: 'documentVersion',
+  textSnapshot: 'textSnapshot',
+  source: 'source',
+  metaJson: 'metaJson',
+  createdAt: 'createdAt'
+} as const
+
+export type UserLegalEventScalarFieldEnum = (typeof UserLegalEventScalarFieldEnum)[keyof typeof UserLegalEventScalarFieldEnum]
 
 
 export const ConversationScalarFieldEnum = {

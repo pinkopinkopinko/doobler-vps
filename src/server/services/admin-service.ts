@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { invalidateCachedUserRecord } from "@/lib/cache/user-record-cache";
 import { compactProfilePhotoUrl } from "@/lib/profile-photo";
 import { prisma } from "@/lib/prisma";
 import type { AppRole, ReportStatus, ShiftPostStatus } from "@/lib/types";
@@ -333,6 +334,10 @@ export async function banUser(params: {
       },
     });
 
+    // Сбрасываем кеш, чтобы banned-screen в (app)/layout сработал на
+    // ближайшей же навигации, а не через TTL.
+    await invalidateCachedUserRecord(params.targetUserId);
+
     return user;
   });
 }
@@ -369,6 +374,8 @@ export async function unbanUser(params: {
         metaJson: params.note ? { note: params.note } : undefined,
       },
     });
+
+    await invalidateCachedUserRecord(params.targetUserId);
 
     return user;
   });
@@ -430,6 +437,8 @@ export async function setUserRole(params: {
         roles: { select: { role: true } },
       },
     });
+
+    await invalidateCachedUserRecord(params.targetUserId);
 
     return {
       id: updated?.id ?? params.targetUserId,

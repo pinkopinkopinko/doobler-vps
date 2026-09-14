@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.8.0
- * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
+ * Prisma Client JS version: 7.7.0
+ * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.8.0",
-  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
+  client: "7.7.0",
+  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
 }
 
 /**
@@ -393,14 +393,17 @@ export const ModelName = {
   PickupPoint: 'PickupPoint',
   PickupPointManagerAccess: 'PickupPointManagerAccess',
   ShiftPost: 'ShiftPost',
+  ShiftTemplate: 'ShiftTemplate',
   Application: 'Application',
   Assignment: 'Assignment',
   Review: 'Review',
   Report: 'Report',
   Verification: 'Verification',
+  IdentityVerification: 'IdentityVerification',
+  IdentityVerificationPhoto: 'IdentityVerificationPhoto',
   Notification: 'Notification',
-  Favorite: 'Favorite',
   AuditLog: 'AuditLog',
+  UserLegalEvent: 'UserLegalEvent',
   Conversation: 'Conversation',
   ConversationParticipant: 'ConversationParticipant',
   Message: 'Message',
@@ -422,7 +425,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "botLoginToken" | "userRole" | "region" | "city" | "marketplace" | "pickupPoint" | "pickupPointManagerAccess" | "shiftPost" | "application" | "assignment" | "review" | "report" | "verification" | "notification" | "favorite" | "auditLog" | "conversation" | "conversationParticipant" | "message" | "messageAttachment" | "rateLimitAttempt" | "mediaUpload"
+    modelProps: "user" | "botLoginToken" | "userRole" | "region" | "city" | "marketplace" | "pickupPoint" | "pickupPointManagerAccess" | "shiftPost" | "shiftTemplate" | "application" | "assignment" | "review" | "report" | "verification" | "identityVerification" | "identityVerificationPhoto" | "notification" | "auditLog" | "userLegalEvent" | "conversation" | "conversationParticipant" | "message" | "messageAttachment" | "rateLimitAttempt" | "mediaUpload"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1092,6 +1095,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ShiftTemplate: {
+      payload: Prisma.$ShiftTemplatePayload<ExtArgs>
+      fields: Prisma.ShiftTemplateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShiftTemplateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShiftTemplateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload>
+        }
+        findFirst: {
+          args: Prisma.ShiftTemplateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShiftTemplateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload>
+        }
+        findMany: {
+          args: Prisma.ShiftTemplateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload>[]
+        }
+        create: {
+          args: Prisma.ShiftTemplateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload>
+        }
+        createMany: {
+          args: Prisma.ShiftTemplateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShiftTemplateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload>[]
+        }
+        delete: {
+          args: Prisma.ShiftTemplateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload>
+        }
+        update: {
+          args: Prisma.ShiftTemplateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload>
+        }
+        deleteMany: {
+          args: Prisma.ShiftTemplateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShiftTemplateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShiftTemplateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload>[]
+        }
+        upsert: {
+          args: Prisma.ShiftTemplateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftTemplatePayload>
+        }
+        aggregate: {
+          args: Prisma.ShiftTemplateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShiftTemplate>
+        }
+        groupBy: {
+          args: Prisma.ShiftTemplateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShiftTemplateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShiftTemplateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShiftTemplateCountAggregateOutputType> | number
+        }
+      }
+    }
     Application: {
       payload: Prisma.$ApplicationPayload<ExtArgs>
       fields: Prisma.ApplicationFieldRefs
@@ -1462,6 +1539,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    IdentityVerification: {
+      payload: Prisma.$IdentityVerificationPayload<ExtArgs>
+      fields: Prisma.IdentityVerificationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IdentityVerificationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IdentityVerificationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload>
+        }
+        findFirst: {
+          args: Prisma.IdentityVerificationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IdentityVerificationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload>
+        }
+        findMany: {
+          args: Prisma.IdentityVerificationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload>[]
+        }
+        create: {
+          args: Prisma.IdentityVerificationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload>
+        }
+        createMany: {
+          args: Prisma.IdentityVerificationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IdentityVerificationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload>[]
+        }
+        delete: {
+          args: Prisma.IdentityVerificationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload>
+        }
+        update: {
+          args: Prisma.IdentityVerificationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload>
+        }
+        deleteMany: {
+          args: Prisma.IdentityVerificationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IdentityVerificationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IdentityVerificationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload>[]
+        }
+        upsert: {
+          args: Prisma.IdentityVerificationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPayload>
+        }
+        aggregate: {
+          args: Prisma.IdentityVerificationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIdentityVerification>
+        }
+        groupBy: {
+          args: Prisma.IdentityVerificationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IdentityVerificationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IdentityVerificationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IdentityVerificationCountAggregateOutputType> | number
+        }
+      }
+    }
+    IdentityVerificationPhoto: {
+      payload: Prisma.$IdentityVerificationPhotoPayload<ExtArgs>
+      fields: Prisma.IdentityVerificationPhotoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IdentityVerificationPhotoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IdentityVerificationPhotoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload>
+        }
+        findFirst: {
+          args: Prisma.IdentityVerificationPhotoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IdentityVerificationPhotoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload>
+        }
+        findMany: {
+          args: Prisma.IdentityVerificationPhotoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload>[]
+        }
+        create: {
+          args: Prisma.IdentityVerificationPhotoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload>
+        }
+        createMany: {
+          args: Prisma.IdentityVerificationPhotoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IdentityVerificationPhotoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload>[]
+        }
+        delete: {
+          args: Prisma.IdentityVerificationPhotoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload>
+        }
+        update: {
+          args: Prisma.IdentityVerificationPhotoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload>
+        }
+        deleteMany: {
+          args: Prisma.IdentityVerificationPhotoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IdentityVerificationPhotoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IdentityVerificationPhotoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload>[]
+        }
+        upsert: {
+          args: Prisma.IdentityVerificationPhotoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdentityVerificationPhotoPayload>
+        }
+        aggregate: {
+          args: Prisma.IdentityVerificationPhotoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIdentityVerificationPhoto>
+        }
+        groupBy: {
+          args: Prisma.IdentityVerificationPhotoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IdentityVerificationPhotoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IdentityVerificationPhotoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IdentityVerificationPhotoCountAggregateOutputType> | number
+        }
+      }
+    }
     Notification: {
       payload: Prisma.$NotificationPayload<ExtArgs>
       fields: Prisma.NotificationFieldRefs
@@ -1536,80 +1761,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Favorite: {
-      payload: Prisma.$FavoritePayload<ExtArgs>
-      fields: Prisma.FavoriteFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.FavoriteFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.FavoriteFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
-        }
-        findFirst: {
-          args: Prisma.FavoriteFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.FavoriteFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
-        }
-        findMany: {
-          args: Prisma.FavoriteFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>[]
-        }
-        create: {
-          args: Prisma.FavoriteCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
-        }
-        createMany: {
-          args: Prisma.FavoriteCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.FavoriteCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>[]
-        }
-        delete: {
-          args: Prisma.FavoriteDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
-        }
-        update: {
-          args: Prisma.FavoriteUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
-        }
-        deleteMany: {
-          args: Prisma.FavoriteDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.FavoriteUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.FavoriteUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>[]
-        }
-        upsert: {
-          args: Prisma.FavoriteUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritePayload>
-        }
-        aggregate: {
-          args: Prisma.FavoriteAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateFavorite>
-        }
-        groupBy: {
-          args: Prisma.FavoriteGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.FavoriteGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.FavoriteCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.FavoriteCountAggregateOutputType> | number
-        }
-      }
-    }
     AuditLog: {
       payload: Prisma.$AuditLogPayload<ExtArgs>
       fields: Prisma.AuditLogFieldRefs
@@ -1681,6 +1832,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AuditLogCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AuditLogCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserLegalEvent: {
+      payload: Prisma.$UserLegalEventPayload<ExtArgs>
+      fields: Prisma.UserLegalEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserLegalEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserLegalEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload>
+        }
+        findFirst: {
+          args: Prisma.UserLegalEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserLegalEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload>
+        }
+        findMany: {
+          args: Prisma.UserLegalEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload>[]
+        }
+        create: {
+          args: Prisma.UserLegalEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload>
+        }
+        createMany: {
+          args: Prisma.UserLegalEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserLegalEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload>[]
+        }
+        delete: {
+          args: Prisma.UserLegalEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload>
+        }
+        update: {
+          args: Prisma.UserLegalEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserLegalEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserLegalEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserLegalEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserLegalEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserLegalEventPayload>
+        }
+        aggregate: {
+          args: Prisma.UserLegalEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserLegalEvent>
+        }
+        groupBy: {
+          args: Prisma.UserLegalEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserLegalEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserLegalEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserLegalEventCountAggregateOutputType> | number
         }
       }
     }
@@ -2189,6 +2414,7 @@ export const UserScalarFieldEnum = {
   ratingAvg: 'ratingAvg',
   ratingCount: 'ratingCount',
   completedAssignmentsCount: 'completedAssignmentsCount',
+  balanceRub: 'balanceRub',
   isActive: 'isActive',
   isBanned: 'isBanned',
   banReason: 'banReason',
@@ -2309,6 +2535,8 @@ export const ShiftPostScalarFieldEnum = {
   status: 'status',
   district: 'district',
   address: 'address',
+  lat: 'lat',
+  lng: 'lng',
   landmark: 'landmark',
   description: 'description',
   shiftDate: 'shiftDate',
@@ -2328,6 +2556,34 @@ export const ShiftPostScalarFieldEnum = {
 } as const
 
 export type ShiftPostScalarFieldEnum = (typeof ShiftPostScalarFieldEnum)[keyof typeof ShiftPostScalarFieldEnum]
+
+
+export const ShiftTemplateScalarFieldEnum = {
+  id: 'id',
+  createdByUserId: 'createdByUserId',
+  name: 'name',
+  pickupPointId: 'pickupPointId',
+  regionId: 'regionId',
+  cityId: 'cityId',
+  marketplaceId: 'marketplaceId',
+  title: 'title',
+  type: 'type',
+  district: 'district',
+  address: 'address',
+  addressSuggestionUri: 'addressSuggestionUri',
+  landmark: 'landmark',
+  description: 'description',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  paymentAmountRub: 'paymentAmountRub',
+  paymentType: 'paymentType',
+  experienceLevelRequired: 'experienceLevelRequired',
+  isUrgent: 'isUrgent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShiftTemplateScalarFieldEnum = (typeof ShiftTemplateScalarFieldEnum)[keyof typeof ShiftTemplateScalarFieldEnum]
 
 
 export const ApplicationScalarFieldEnum = {
@@ -2412,6 +2668,30 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const IdentityVerificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  reviewedByUserId: 'reviewedByUserId',
+  status: 'status',
+  adminNote: 'adminNote',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type IdentityVerificationScalarFieldEnum = (typeof IdentityVerificationScalarFieldEnum)[keyof typeof IdentityVerificationScalarFieldEnum]
+
+
+export const IdentityVerificationPhotoScalarFieldEnum = {
+  id: 'id',
+  verificationId: 'verificationId',
+  mediaId: 'mediaId',
+  createdAt: 'createdAt'
+} as const
+
+export type IdentityVerificationPhotoScalarFieldEnum = (typeof IdentityVerificationPhotoScalarFieldEnum)[keyof typeof IdentityVerificationPhotoScalarFieldEnum]
+
+
 export const NotificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -2428,16 +2708,6 @@ export const NotificationScalarFieldEnum = {
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
-export const FavoriteScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  shiftPostId: 'shiftPostId',
-  createdAt: 'createdAt'
-} as const
-
-export type FavoriteScalarFieldEnum = (typeof FavoriteScalarFieldEnum)[keyof typeof FavoriteScalarFieldEnum]
-
-
 export const AuditLogScalarFieldEnum = {
   id: 'id',
   actorUserId: 'actorUserId',
@@ -2449,6 +2719,21 @@ export const AuditLogScalarFieldEnum = {
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const UserLegalEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  purpose: 'purpose',
+  action: 'action',
+  documentVersion: 'documentVersion',
+  textSnapshot: 'textSnapshot',
+  source: 'source',
+  metaJson: 'metaJson',
+  createdAt: 'createdAt'
+} as const
+
+export type UserLegalEventScalarFieldEnum = (typeof UserLegalEventScalarFieldEnum)[keyof typeof UserLegalEventScalarFieldEnum]
 
 
 export const ConversationScalarFieldEnum = {
@@ -2830,6 +3115,20 @@ export type ListEnumVerificationTypeFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'IdentityVerificationStatus'
+ */
+export type EnumIdentityVerificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IdentityVerificationStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'IdentityVerificationStatus[]'
+ */
+export type ListEnumIdentityVerificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IdentityVerificationStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'NotificationChannel'
  */
 export type EnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationChannel'>
@@ -2963,21 +3262,6 @@ export type PrismaClientOptions = ({
    * ```
    */
   comments?: runtime.SqlCommenterPlugin[]
-  /**
-   * Optional maximum size for the query plan cache. If not provided, a default size will be used.
-   * A value of `0` can be used to disable the cache entirely. A higher cache size can improve
-   * performance for applications that execute a large number of unique queries, while a smaller
-   * cache size can reduce memory usage.
-   * 
-   * @example
-   * ```
-   * const prisma = new PrismaClient({
-   *   adapter,
-   *   queryPlanCacheMaxSize: 100,
-   * })
-   * ```
-   */
-  queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
@@ -2989,14 +3273,17 @@ export type GlobalOmitConfig = {
   pickupPoint?: Prisma.PickupPointOmit
   pickupPointManagerAccess?: Prisma.PickupPointManagerAccessOmit
   shiftPost?: Prisma.ShiftPostOmit
+  shiftTemplate?: Prisma.ShiftTemplateOmit
   application?: Prisma.ApplicationOmit
   assignment?: Prisma.AssignmentOmit
   review?: Prisma.ReviewOmit
   report?: Prisma.ReportOmit
   verification?: Prisma.VerificationOmit
+  identityVerification?: Prisma.IdentityVerificationOmit
+  identityVerificationPhoto?: Prisma.IdentityVerificationPhotoOmit
   notification?: Prisma.NotificationOmit
-  favorite?: Prisma.FavoriteOmit
   auditLog?: Prisma.AuditLogOmit
+  userLegalEvent?: Prisma.UserLegalEventOmit
   conversation?: Prisma.ConversationOmit
   conversationParticipant?: Prisma.ConversationParticipantOmit
   message?: Prisma.MessageOmit

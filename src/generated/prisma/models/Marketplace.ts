@@ -192,6 +192,7 @@ export type MarketplaceWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Marketplace"> | Date | string
   pickupPoints?: Prisma.PickupPointListRelationFilter
   shiftPosts?: Prisma.ShiftPostListRelationFilter
+  shiftTemplates?: Prisma.ShiftTemplateListRelationFilter
 }
 
 export type MarketplaceOrderByWithRelationInput = {
@@ -203,6 +204,7 @@ export type MarketplaceOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   pickupPoints?: Prisma.PickupPointOrderByRelationAggregateInput
   shiftPosts?: Prisma.ShiftPostOrderByRelationAggregateInput
+  shiftTemplates?: Prisma.ShiftTemplateOrderByRelationAggregateInput
 }
 
 export type MarketplaceWhereUniqueInput = Prisma.AtLeast<{
@@ -217,6 +219,7 @@ export type MarketplaceWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Marketplace"> | Date | string
   pickupPoints?: Prisma.PickupPointListRelationFilter
   shiftPosts?: Prisma.ShiftPostListRelationFilter
+  shiftTemplates?: Prisma.ShiftTemplateListRelationFilter
 }, "id" | "code">
 
 export type MarketplaceOrderByWithAggregationInput = {
@@ -252,6 +255,7 @@ export type MarketplaceCreateInput = {
   updatedAt?: Date | string
   pickupPoints?: Prisma.PickupPointCreateNestedManyWithoutMarketplaceInput
   shiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutMarketplaceInput
+  shiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutMarketplaceInput
 }
 
 export type MarketplaceUncheckedCreateInput = {
@@ -263,6 +267,7 @@ export type MarketplaceUncheckedCreateInput = {
   updatedAt?: Date | string
   pickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutMarketplaceInput
   shiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutMarketplaceInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutMarketplaceInput
 }
 
 export type MarketplaceUpdateInput = {
@@ -274,6 +279,7 @@ export type MarketplaceUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pickupPoints?: Prisma.PickupPointUpdateManyWithoutMarketplaceNestedInput
   shiftPosts?: Prisma.ShiftPostUpdateManyWithoutMarketplaceNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutMarketplaceNestedInput
 }
 
 export type MarketplaceUncheckedUpdateInput = {
@@ -285,6 +291,7 @@ export type MarketplaceUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutMarketplaceNestedInput
   shiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutMarketplaceNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutMarketplaceNestedInput
 }
 
 export type MarketplaceCreateManyInput = {
@@ -378,6 +385,20 @@ export type MarketplaceUpdateOneRequiredWithoutShiftPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MarketplaceUpdateToOneWithWhereWithoutShiftPostsInput, Prisma.MarketplaceUpdateWithoutShiftPostsInput>, Prisma.MarketplaceUncheckedUpdateWithoutShiftPostsInput>
 }
 
+export type MarketplaceCreateNestedOneWithoutShiftTemplatesInput = {
+  create?: Prisma.XOR<Prisma.MarketplaceCreateWithoutShiftTemplatesInput, Prisma.MarketplaceUncheckedCreateWithoutShiftTemplatesInput>
+  connectOrCreate?: Prisma.MarketplaceCreateOrConnectWithoutShiftTemplatesInput
+  connect?: Prisma.MarketplaceWhereUniqueInput
+}
+
+export type MarketplaceUpdateOneRequiredWithoutShiftTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.MarketplaceCreateWithoutShiftTemplatesInput, Prisma.MarketplaceUncheckedCreateWithoutShiftTemplatesInput>
+  connectOrCreate?: Prisma.MarketplaceCreateOrConnectWithoutShiftTemplatesInput
+  upsert?: Prisma.MarketplaceUpsertWithoutShiftTemplatesInput
+  connect?: Prisma.MarketplaceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MarketplaceUpdateToOneWithWhereWithoutShiftTemplatesInput, Prisma.MarketplaceUpdateWithoutShiftTemplatesInput>, Prisma.MarketplaceUncheckedUpdateWithoutShiftTemplatesInput>
+}
+
 export type MarketplaceCreateWithoutPickupPointsInput = {
   id?: string
   code: $Enums.MarketplaceCode
@@ -386,6 +407,7 @@ export type MarketplaceCreateWithoutPickupPointsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   shiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutMarketplaceInput
+  shiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutMarketplaceInput
 }
 
 export type MarketplaceUncheckedCreateWithoutPickupPointsInput = {
@@ -396,6 +418,7 @@ export type MarketplaceUncheckedCreateWithoutPickupPointsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   shiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutMarketplaceInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutMarketplaceInput
 }
 
 export type MarketplaceCreateOrConnectWithoutPickupPointsInput = {
@@ -422,6 +445,7 @@ export type MarketplaceUpdateWithoutPickupPointsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shiftPosts?: Prisma.ShiftPostUpdateManyWithoutMarketplaceNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutMarketplaceNestedInput
 }
 
 export type MarketplaceUncheckedUpdateWithoutPickupPointsInput = {
@@ -432,6 +456,7 @@ export type MarketplaceUncheckedUpdateWithoutPickupPointsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutMarketplaceNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutMarketplaceNestedInput
 }
 
 export type MarketplaceCreateWithoutShiftPostsInput = {
@@ -442,6 +467,7 @@ export type MarketplaceCreateWithoutShiftPostsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   pickupPoints?: Prisma.PickupPointCreateNestedManyWithoutMarketplaceInput
+  shiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutMarketplaceInput
 }
 
 export type MarketplaceUncheckedCreateWithoutShiftPostsInput = {
@@ -452,6 +478,7 @@ export type MarketplaceUncheckedCreateWithoutShiftPostsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   pickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutMarketplaceInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutMarketplaceInput
 }
 
 export type MarketplaceCreateOrConnectWithoutShiftPostsInput = {
@@ -478,6 +505,7 @@ export type MarketplaceUpdateWithoutShiftPostsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pickupPoints?: Prisma.PickupPointUpdateManyWithoutMarketplaceNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutMarketplaceNestedInput
 }
 
 export type MarketplaceUncheckedUpdateWithoutShiftPostsInput = {
@@ -488,6 +516,67 @@ export type MarketplaceUncheckedUpdateWithoutShiftPostsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutMarketplaceNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutMarketplaceNestedInput
+}
+
+export type MarketplaceCreateWithoutShiftTemplatesInput = {
+  id?: string
+  code: $Enums.MarketplaceCode
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  pickupPoints?: Prisma.PickupPointCreateNestedManyWithoutMarketplaceInput
+  shiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutMarketplaceInput
+}
+
+export type MarketplaceUncheckedCreateWithoutShiftTemplatesInput = {
+  id?: string
+  code: $Enums.MarketplaceCode
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  pickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutMarketplaceInput
+  shiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutMarketplaceInput
+}
+
+export type MarketplaceCreateOrConnectWithoutShiftTemplatesInput = {
+  where: Prisma.MarketplaceWhereUniqueInput
+  create: Prisma.XOR<Prisma.MarketplaceCreateWithoutShiftTemplatesInput, Prisma.MarketplaceUncheckedCreateWithoutShiftTemplatesInput>
+}
+
+export type MarketplaceUpsertWithoutShiftTemplatesInput = {
+  update: Prisma.XOR<Prisma.MarketplaceUpdateWithoutShiftTemplatesInput, Prisma.MarketplaceUncheckedUpdateWithoutShiftTemplatesInput>
+  create: Prisma.XOR<Prisma.MarketplaceCreateWithoutShiftTemplatesInput, Prisma.MarketplaceUncheckedCreateWithoutShiftTemplatesInput>
+  where?: Prisma.MarketplaceWhereInput
+}
+
+export type MarketplaceUpdateToOneWithWhereWithoutShiftTemplatesInput = {
+  where?: Prisma.MarketplaceWhereInput
+  data: Prisma.XOR<Prisma.MarketplaceUpdateWithoutShiftTemplatesInput, Prisma.MarketplaceUncheckedUpdateWithoutShiftTemplatesInput>
+}
+
+export type MarketplaceUpdateWithoutShiftTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.EnumMarketplaceCodeFieldUpdateOperationsInput | $Enums.MarketplaceCode
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pickupPoints?: Prisma.PickupPointUpdateManyWithoutMarketplaceNestedInput
+  shiftPosts?: Prisma.ShiftPostUpdateManyWithoutMarketplaceNestedInput
+}
+
+export type MarketplaceUncheckedUpdateWithoutShiftTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.EnumMarketplaceCodeFieldUpdateOperationsInput | $Enums.MarketplaceCode
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutMarketplaceNestedInput
+  shiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutMarketplaceNestedInput
 }
 
 
@@ -498,11 +587,13 @@ export type MarketplaceUncheckedUpdateWithoutShiftPostsInput = {
 export type MarketplaceCountOutputType = {
   pickupPoints: number
   shiftPosts: number
+  shiftTemplates: number
 }
 
 export type MarketplaceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pickupPoints?: boolean | MarketplaceCountOutputTypeCountPickupPointsArgs
   shiftPosts?: boolean | MarketplaceCountOutputTypeCountShiftPostsArgs
+  shiftTemplates?: boolean | MarketplaceCountOutputTypeCountShiftTemplatesArgs
 }
 
 /**
@@ -529,6 +620,13 @@ export type MarketplaceCountOutputTypeCountShiftPostsArgs<ExtArgs extends runtim
   where?: Prisma.ShiftPostWhereInput
 }
 
+/**
+ * MarketplaceCountOutputType without action
+ */
+export type MarketplaceCountOutputTypeCountShiftTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShiftTemplateWhereInput
+}
+
 
 export type MarketplaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -539,6 +637,7 @@ export type MarketplaceSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   updatedAt?: boolean
   pickupPoints?: boolean | Prisma.Marketplace$pickupPointsArgs<ExtArgs>
   shiftPosts?: boolean | Prisma.Marketplace$shiftPostsArgs<ExtArgs>
+  shiftTemplates?: boolean | Prisma.Marketplace$shiftTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.MarketplaceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["marketplace"]>
 
@@ -573,6 +672,7 @@ export type MarketplaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type MarketplaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pickupPoints?: boolean | Prisma.Marketplace$pickupPointsArgs<ExtArgs>
   shiftPosts?: boolean | Prisma.Marketplace$shiftPostsArgs<ExtArgs>
+  shiftTemplates?: boolean | Prisma.Marketplace$shiftTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.MarketplaceCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MarketplaceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -583,6 +683,7 @@ export type $MarketplacePayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     pickupPoints: Prisma.$PickupPointPayload<ExtArgs>[]
     shiftPosts: Prisma.$ShiftPostPayload<ExtArgs>[]
+    shiftTemplates: Prisma.$ShiftTemplatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -987,6 +1088,7 @@ export interface Prisma__MarketplaceClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   pickupPoints<T extends Prisma.Marketplace$pickupPointsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Marketplace$pickupPointsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PickupPointPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   shiftPosts<T extends Prisma.Marketplace$shiftPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Marketplace$shiftPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  shiftTemplates<T extends Prisma.Marketplace$shiftTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Marketplace$shiftTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1460,6 +1562,30 @@ export type Marketplace$shiftPostsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.ShiftPostScalarFieldEnum | Prisma.ShiftPostScalarFieldEnum[]
+}
+
+/**
+ * Marketplace.shiftTemplates
+ */
+export type Marketplace$shiftTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShiftTemplate
+   */
+  select?: Prisma.ShiftTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ShiftTemplate
+   */
+  omit?: Prisma.ShiftTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShiftTemplateInclude<ExtArgs> | null
+  where?: Prisma.ShiftTemplateWhereInput
+  orderBy?: Prisma.ShiftTemplateOrderByWithRelationInput | Prisma.ShiftTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.ShiftTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ShiftTemplateScalarFieldEnum | Prisma.ShiftTemplateScalarFieldEnum[]
 }
 
 /**

@@ -75,12 +75,21 @@ export async function POST(request: Request) {
     fromId: payload.message?.from?.id ?? null,
   });
 
-  const result = await handleTelegramUpdate(payload).catch((error) => ({
-    handled: false,
-    error: error instanceof Error ? error.message : "Unknown Telegram error",
-  }));
+  void handleTelegramUpdate(payload)
+    .then((result) => {
+      console.info("[bot-debug] webhook:handled", {
+        updateId: payload.update_id,
+        result,
+      });
+    })
+    .catch((error) => {
+      console.error("[bot-debug] webhook:handler-failed", {
+        updateId: payload.update_id,
+        error: error instanceof Error ? error.message : "Unknown Telegram error",
+      });
+    });
 
-  return ok({ received: true, result });
+  return ok({ received: true, queued: true });
 }
 
 export async function GET() {

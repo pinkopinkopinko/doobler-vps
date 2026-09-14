@@ -1,12 +1,14 @@
 import { fail, ok } from "@/lib/api";
-import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { getSessionPayload } from "@/lib/auth/session";
 import { getConversationForUser } from "@/server/services/chat-service";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
+// `getConversationForUser` уже валидирует, что userId — участник чата
+// (см. NOT_A_PARTICIPANT ниже), отдельный SELECT по User тут не нужен.
 export async function GET(_request: Request, { params }: RouteParams) {
-  const current = await getCurrentUser();
-  if (!current) {
+  const session = await getSessionPayload();
+  if (!session) {
     return fail("Нужен вход через Telegram.", 401);
   }
 
@@ -15,7 +17,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
   try {
     const conversation = await getConversationForUser({
       conversationId: id,
-      currentUserId: current.id,
+      currentUserId: session.userId,
     });
     return ok({ conversation });
   } catch (error) {

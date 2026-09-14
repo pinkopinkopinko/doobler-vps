@@ -17,8 +17,9 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getSessionPayload } from "@/lib/auth/session";
-import { demoProfile } from "@/lib/demo-data";
 import { canCreateShiftPosts, hasEmployerCapabilities } from "@/lib/profile-completion";
+import { withPlatformPrefix } from "@/lib/routing/platform";
+import { getRequestPlatformPrefix } from "@/lib/routing/platform-server";
 import {
   getUpcomingAssignmentForWorker,
   type UpcomingAssignmentSummary,
@@ -56,19 +57,50 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const session = await getSessionPayload();
-  const profile = session ? ((await getProfileShell(session.userId)) ?? demoProfile) : demoProfile;
+  const hrefPrefix = await getRequestPlatformPrefix();
+  const profile = session ? await getProfileShell(session.userId) : null;
+
+  if (!profile) {
+    return (
+      <div className="space-y-5">
+        <div className="mb-1 flex items-center justify-between gap-3">
+          <div className="inline-flex min-w-0 items-center gap-2 rounded-full bg-white py-2 pl-2 pr-3.5 shadow-[0_12px_28px_rgba(20,27,33,0.08)]">
+            <BrandMark size={24} opacity={1} />
+            <span className="text-[13px] font-semibold tracking-[-0.02em] text-[#101214]">
+              Дублер
+            </span>
+          </div>
+          <ThemeToggle />
+        </div>
+        <PageHeader
+          title="Подмена для ПВЗ"
+          subtitle="Профиль ещё не загрузился. Откройте приложение через свежее сообщение бота или обновите страницу."
+        />
+        <EmptyState
+          title="Профиль не найден"
+          description="Мы не подставляем демо-профиль вместо вашего аккаунта, чтобы в приложении не появлялись чужие имя и фамилия."
+          actionHref={withPlatformPrefix("/profile", hrefPrefix)}
+          actionLabel="Открыть профиль"
+        />
+      </div>
+    );
+  }
+
   const roles = profile.roles ?? [];
   const isEmployer = hasEmployerCapabilities(roles);
 
-  const urgentPosts = await listShiftPosts({
+  // Два независимых запроса — крутим параллельно, чтобы главная грузилась
+  // за время одного roundtrip к БД, а не двух.
+  const [urgentPosts, upcomingAssignment] = await Promise.all([
+    listShiftPosts({
       cityId: profile.cityId ?? null,
       urgentOnly: true,
       limit: 2,
-    });
-
-  const upcomingAssignment = session && !isEmployer
-    ? await getUpcomingAssignmentForWorker(session.userId)
-    : null;
+    }),
+    session && !isEmployer
+      ? getUpcomingAssignmentForWorker(session.userId)
+      : Promise.resolve(null),
+  ]);
 
   const primaryStatus = isEmployer ? "Управляет сменами" : "Готов к сменам";
 
@@ -127,7 +159,7 @@ export default async function HomePage() {
       ];
 
   const sectionTitle = isEmployer ? "Срочные смены в вашем городе" : "Срочные смены рядом";
-  const canCreatePosts = canCreateShiftPosts(roles);
+  const canCreatePosts = canCreateShiftPosts(roles, profile.employerVerificationStatus);
 
   return (
     <div className="relative">
@@ -181,7 +213,11 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">
             {heroCards.map((card) => (
-              <Link key={card.href} href={card.href} className={card.className}>
+              <Link
+                key={card.href}
+                href={withPlatformPrefix(card.href, hrefPrefix)}
+                className={card.className}
+              >
                 <p
                   className={`text-[16px] font-semibold tracking-[-0.03em] ${card.titleClassName}`}
                 >
@@ -216,7 +252,7 @@ export default async function HomePage() {
               return (
                 <Link
                   key={item.title}
-                  href={item.href}
+                  href={withPlatformPrefix(item.href, hrefPrefix)}
                   className="flex items-center justify-between rounded-[22px] bg-[#f8fbfd] px-4 py-4"
                 >
                   <div className="flex min-w-0 items-center gap-3">
@@ -254,13 +290,13 @@ export default async function HomePage() {
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
-                  href={`/shifts/${upcomingAssignment.shiftPost.id}`}
+                  href={withPlatformPrefix(`/shifts/${upcomingAssignment.shiftPost.id}`, hrefPrefix)}
                   className="inline-flex items-center rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-[#1c4f8a]"
                 >
                   Открыть смену
                 </Link>
                 <Link
-                  href={`/profiles/${upcomingAssignment.employer.id}`}
+                  href={withPlatformPrefix(`/profiles/${upcomingAssignment.employer.id}`, hrefPrefix)}
                   className="inline-flex items-center rounded-full border border-white/40 bg-white/10 px-4 py-2 text-[13px] font-semibold text-white"
                 >
                   Профиль работодателя
@@ -274,13 +310,18 @@ export default async function HomePage() {
       <section>
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="text-[22px] font-semibold tracking-[-0.04em] text-[#101214]">{sectionTitle}</h2>
-          <Link href="/shifts" className="shrink-0 text-[14px] text-[#7f8791]">
+          <Link
+            href={withPlatformPrefix("/shifts", hrefPrefix)}
+            className="shrink-0 text-[14px] text-[#7f8791]"
+          >
             Смотреть все
           </Link>
         </div>
         <div className="space-y-4">
           {urgentPosts.length ? (
-            urgentPosts.map((shift) => <ShiftCard key={shift.id} shift={shift} />)
+            urgentPosts.map((shift) => (
+              <ShiftCard key={shift.id} shift={shift} hrefPrefix={hrefPrefix} />
+            ))
           ) : (
             <EmptyState
               title={isEmployer ? "Срочных смен пока нет" : "Рядом пока нет срочных смен"}
@@ -289,7 +330,7 @@ export default async function HomePage() {
                   ? "Когда появится срочная потребность в замене, она сразу отобразится здесь. Пока можно открыть все объявления или создать новую смену."
                   : "Сейчас в вашей зоне нет срочных заявок. Откройте полную ленту смен — там могут быть обычные дневные смены и вакансии."
               }
-              actionHref={isEmployer ? "/shifts/new" : "/shifts"}
+              actionHref={withPlatformPrefix(isEmployer ? "/shifts/new" : "/shifts", hrefPrefix)}
               actionLabel={isEmployer ? "Создать смену" : "Открыть все смены"}
             />
           )}

@@ -27,11 +27,15 @@ export type AggregateShiftPost = {
 }
 
 export type ShiftPostAvgAggregateOutputType = {
+  lat: runtime.Decimal | null
+  lng: runtime.Decimal | null
   paymentAmountRub: number | null
   workersNeeded: number | null
 }
 
 export type ShiftPostSumAggregateOutputType = {
+  lat: runtime.Decimal | null
+  lng: runtime.Decimal | null
   paymentAmountRub: number | null
   workersNeeded: number | null
 }
@@ -48,6 +52,8 @@ export type ShiftPostMinAggregateOutputType = {
   status: $Enums.ShiftPostStatus | null
   district: string | null
   address: string | null
+  lat: runtime.Decimal | null
+  lng: runtime.Decimal | null
   landmark: string | null
   description: string | null
   shiftDate: Date | null
@@ -78,6 +84,8 @@ export type ShiftPostMaxAggregateOutputType = {
   status: $Enums.ShiftPostStatus | null
   district: string | null
   address: string | null
+  lat: runtime.Decimal | null
+  lng: runtime.Decimal | null
   landmark: string | null
   description: string | null
   shiftDate: Date | null
@@ -108,6 +116,8 @@ export type ShiftPostCountAggregateOutputType = {
   status: number
   district: number
   address: number
+  lat: number
+  lng: number
   landmark: number
   description: number
   shiftDate: number
@@ -129,11 +139,15 @@ export type ShiftPostCountAggregateOutputType = {
 
 
 export type ShiftPostAvgAggregateInputType = {
+  lat?: true
+  lng?: true
   paymentAmountRub?: true
   workersNeeded?: true
 }
 
 export type ShiftPostSumAggregateInputType = {
+  lat?: true
+  lng?: true
   paymentAmountRub?: true
   workersNeeded?: true
 }
@@ -150,6 +164,8 @@ export type ShiftPostMinAggregateInputType = {
   status?: true
   district?: true
   address?: true
+  lat?: true
+  lng?: true
   landmark?: true
   description?: true
   shiftDate?: true
@@ -180,6 +196,8 @@ export type ShiftPostMaxAggregateInputType = {
   status?: true
   district?: true
   address?: true
+  lat?: true
+  lng?: true
   landmark?: true
   description?: true
   shiftDate?: true
@@ -210,6 +228,8 @@ export type ShiftPostCountAggregateInputType = {
   status?: true
   district?: true
   address?: true
+  lat?: true
+  lng?: true
   landmark?: true
   description?: true
   shiftDate?: true
@@ -327,6 +347,8 @@ export type ShiftPostGroupByOutputType = {
   status: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat: runtime.Decimal | null
+  lng: runtime.Decimal | null
   landmark: string | null
   description: string
   shiftDate: Date
@@ -380,6 +402,8 @@ export type ShiftPostWhereInput = {
   status?: Prisma.EnumShiftPostStatusFilter<"ShiftPost"> | $Enums.ShiftPostStatus
   district?: Prisma.StringFilter<"ShiftPost"> | string
   address?: Prisma.StringFilter<"ShiftPost"> | string
+  lat?: Prisma.DecimalNullableFilter<"ShiftPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.DecimalNullableFilter<"ShiftPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.StringNullableFilter<"ShiftPost"> | string | null
   description?: Prisma.StringFilter<"ShiftPost"> | string
   shiftDate?: Prisma.DateTimeFilter<"ShiftPost"> | Date | string
@@ -402,8 +426,7 @@ export type ShiftPostWhereInput = {
   city?: Prisma.XOR<Prisma.CityScalarRelationFilter, Prisma.CityWhereInput>
   marketplace?: Prisma.XOR<Prisma.MarketplaceScalarRelationFilter, Prisma.MarketplaceWhereInput>
   applications?: Prisma.ApplicationListRelationFilter
-  assignment?: Prisma.XOR<Prisma.AssignmentNullableScalarRelationFilter, Prisma.AssignmentWhereInput> | null
-  favorites?: Prisma.FavoriteListRelationFilter
+  assignments?: Prisma.AssignmentListRelationFilter
 }
 
 export type ShiftPostOrderByWithRelationInput = {
@@ -418,6 +441,8 @@ export type ShiftPostOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   district?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  lat?: Prisma.SortOrderInput | Prisma.SortOrder
+  lng?: Prisma.SortOrderInput | Prisma.SortOrder
   landmark?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrder
   shiftDate?: Prisma.SortOrder
@@ -440,8 +465,7 @@ export type ShiftPostOrderByWithRelationInput = {
   city?: Prisma.CityOrderByWithRelationInput
   marketplace?: Prisma.MarketplaceOrderByWithRelationInput
   applications?: Prisma.ApplicationOrderByRelationAggregateInput
-  assignment?: Prisma.AssignmentOrderByWithRelationInput
-  favorites?: Prisma.FavoriteOrderByRelationAggregateInput
+  assignments?: Prisma.AssignmentOrderByRelationAggregateInput
 }
 
 export type ShiftPostWhereUniqueInput = Prisma.AtLeast<{
@@ -459,6 +483,8 @@ export type ShiftPostWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumShiftPostStatusFilter<"ShiftPost"> | $Enums.ShiftPostStatus
   district?: Prisma.StringFilter<"ShiftPost"> | string
   address?: Prisma.StringFilter<"ShiftPost"> | string
+  lat?: Prisma.DecimalNullableFilter<"ShiftPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.DecimalNullableFilter<"ShiftPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.StringNullableFilter<"ShiftPost"> | string | null
   description?: Prisma.StringFilter<"ShiftPost"> | string
   shiftDate?: Prisma.DateTimeFilter<"ShiftPost"> | Date | string
@@ -481,8 +507,7 @@ export type ShiftPostWhereUniqueInput = Prisma.AtLeast<{
   city?: Prisma.XOR<Prisma.CityScalarRelationFilter, Prisma.CityWhereInput>
   marketplace?: Prisma.XOR<Prisma.MarketplaceScalarRelationFilter, Prisma.MarketplaceWhereInput>
   applications?: Prisma.ApplicationListRelationFilter
-  assignment?: Prisma.XOR<Prisma.AssignmentNullableScalarRelationFilter, Prisma.AssignmentWhereInput> | null
-  favorites?: Prisma.FavoriteListRelationFilter
+  assignments?: Prisma.AssignmentListRelationFilter
 }, "id">
 
 export type ShiftPostOrderByWithAggregationInput = {
@@ -497,6 +522,8 @@ export type ShiftPostOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   district?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  lat?: Prisma.SortOrderInput | Prisma.SortOrder
+  lng?: Prisma.SortOrderInput | Prisma.SortOrder
   landmark?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrder
   shiftDate?: Prisma.SortOrder
@@ -535,6 +562,8 @@ export type ShiftPostScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumShiftPostStatusWithAggregatesFilter<"ShiftPost"> | $Enums.ShiftPostStatus
   district?: Prisma.StringWithAggregatesFilter<"ShiftPost"> | string
   address?: Prisma.StringWithAggregatesFilter<"ShiftPost"> | string
+  lat?: Prisma.DecimalNullableWithAggregatesFilter<"ShiftPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.DecimalNullableWithAggregatesFilter<"ShiftPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.StringNullableWithAggregatesFilter<"ShiftPost"> | string | null
   description?: Prisma.StringWithAggregatesFilter<"ShiftPost"> | string
   shiftDate?: Prisma.DateTimeWithAggregatesFilter<"ShiftPost"> | Date | string
@@ -560,6 +589,8 @@ export type ShiftPostCreateInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -582,8 +613,7 @@ export type ShiftPostCreateInput = {
   city: Prisma.CityCreateNestedOneWithoutShiftPostsInput
   marketplace: Prisma.MarketplaceCreateNestedOneWithoutShiftPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostUncheckedCreateInput = {
@@ -598,6 +628,8 @@ export type ShiftPostUncheckedCreateInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -615,8 +647,7 @@ export type ShiftPostUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentUncheckedCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostUpdateInput = {
@@ -626,6 +657,8 @@ export type ShiftPostUpdateInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -648,8 +681,7 @@ export type ShiftPostUpdateInput = {
   city?: Prisma.CityUpdateOneRequiredWithoutShiftPostsNestedInput
   marketplace?: Prisma.MarketplaceUpdateOneRequiredWithoutShiftPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateInput = {
@@ -664,6 +696,8 @@ export type ShiftPostUncheckedUpdateInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -681,8 +715,7 @@ export type ShiftPostUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUncheckedUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostCreateManyInput = {
@@ -697,6 +730,8 @@ export type ShiftPostCreateManyInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -722,6 +757,8 @@ export type ShiftPostUpdateManyMutationInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -752,6 +789,8 @@ export type ShiftPostUncheckedUpdateManyInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -792,6 +831,8 @@ export type ShiftPostCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   district?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
   landmark?: Prisma.SortOrder
   description?: Prisma.SortOrder
   shiftDate?: Prisma.SortOrder
@@ -811,6 +852,8 @@ export type ShiftPostCountOrderByAggregateInput = {
 }
 
 export type ShiftPostAvgOrderByAggregateInput = {
+  lat?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
   paymentAmountRub?: Prisma.SortOrder
   workersNeeded?: Prisma.SortOrder
 }
@@ -827,6 +870,8 @@ export type ShiftPostMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   district?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
   landmark?: Prisma.SortOrder
   description?: Prisma.SortOrder
   shiftDate?: Prisma.SortOrder
@@ -857,6 +902,8 @@ export type ShiftPostMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   district?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
   landmark?: Prisma.SortOrder
   description?: Prisma.SortOrder
   shiftDate?: Prisma.SortOrder
@@ -876,6 +923,8 @@ export type ShiftPostMinOrderByAggregateInput = {
 }
 
 export type ShiftPostSumOrderByAggregateInput = {
+  lat?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
   paymentAmountRub?: Prisma.SortOrder
   workersNeeded?: Prisma.SortOrder
 }
@@ -1125,32 +1174,18 @@ export type ShiftPostUpdateOneRequiredWithoutApplicationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ShiftPostUpdateToOneWithWhereWithoutApplicationsInput, Prisma.ShiftPostUpdateWithoutApplicationsInput>, Prisma.ShiftPostUncheckedUpdateWithoutApplicationsInput>
 }
 
-export type ShiftPostCreateNestedOneWithoutAssignmentInput = {
-  create?: Prisma.XOR<Prisma.ShiftPostCreateWithoutAssignmentInput, Prisma.ShiftPostUncheckedCreateWithoutAssignmentInput>
-  connectOrCreate?: Prisma.ShiftPostCreateOrConnectWithoutAssignmentInput
+export type ShiftPostCreateNestedOneWithoutAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.ShiftPostCreateWithoutAssignmentsInput, Prisma.ShiftPostUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.ShiftPostCreateOrConnectWithoutAssignmentsInput
   connect?: Prisma.ShiftPostWhereUniqueInput
 }
 
-export type ShiftPostUpdateOneRequiredWithoutAssignmentNestedInput = {
-  create?: Prisma.XOR<Prisma.ShiftPostCreateWithoutAssignmentInput, Prisma.ShiftPostUncheckedCreateWithoutAssignmentInput>
-  connectOrCreate?: Prisma.ShiftPostCreateOrConnectWithoutAssignmentInput
-  upsert?: Prisma.ShiftPostUpsertWithoutAssignmentInput
+export type ShiftPostUpdateOneRequiredWithoutAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ShiftPostCreateWithoutAssignmentsInput, Prisma.ShiftPostUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.ShiftPostCreateOrConnectWithoutAssignmentsInput
+  upsert?: Prisma.ShiftPostUpsertWithoutAssignmentsInput
   connect?: Prisma.ShiftPostWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ShiftPostUpdateToOneWithWhereWithoutAssignmentInput, Prisma.ShiftPostUpdateWithoutAssignmentInput>, Prisma.ShiftPostUncheckedUpdateWithoutAssignmentInput>
-}
-
-export type ShiftPostCreateNestedOneWithoutFavoritesInput = {
-  create?: Prisma.XOR<Prisma.ShiftPostCreateWithoutFavoritesInput, Prisma.ShiftPostUncheckedCreateWithoutFavoritesInput>
-  connectOrCreate?: Prisma.ShiftPostCreateOrConnectWithoutFavoritesInput
-  connect?: Prisma.ShiftPostWhereUniqueInput
-}
-
-export type ShiftPostUpdateOneRequiredWithoutFavoritesNestedInput = {
-  create?: Prisma.XOR<Prisma.ShiftPostCreateWithoutFavoritesInput, Prisma.ShiftPostUncheckedCreateWithoutFavoritesInput>
-  connectOrCreate?: Prisma.ShiftPostCreateOrConnectWithoutFavoritesInput
-  upsert?: Prisma.ShiftPostUpsertWithoutFavoritesInput
-  connect?: Prisma.ShiftPostWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ShiftPostUpdateToOneWithWhereWithoutFavoritesInput, Prisma.ShiftPostUpdateWithoutFavoritesInput>, Prisma.ShiftPostUncheckedUpdateWithoutFavoritesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ShiftPostUpdateToOneWithWhereWithoutAssignmentsInput, Prisma.ShiftPostUpdateWithoutAssignmentsInput>, Prisma.ShiftPostUncheckedUpdateWithoutAssignmentsInput>
 }
 
 export type ShiftPostCreateWithoutCreatedByInput = {
@@ -1160,6 +1195,8 @@ export type ShiftPostCreateWithoutCreatedByInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1181,8 +1218,7 @@ export type ShiftPostCreateWithoutCreatedByInput = {
   city: Prisma.CityCreateNestedOneWithoutShiftPostsInput
   marketplace: Prisma.MarketplaceCreateNestedOneWithoutShiftPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostUncheckedCreateWithoutCreatedByInput = {
@@ -1196,6 +1232,8 @@ export type ShiftPostUncheckedCreateWithoutCreatedByInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1213,8 +1251,7 @@ export type ShiftPostUncheckedCreateWithoutCreatedByInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentUncheckedCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostCreateOrConnectWithoutCreatedByInput = {
@@ -1258,6 +1295,8 @@ export type ShiftPostScalarWhereInput = {
   status?: Prisma.EnumShiftPostStatusFilter<"ShiftPost"> | $Enums.ShiftPostStatus
   district?: Prisma.StringFilter<"ShiftPost"> | string
   address?: Prisma.StringFilter<"ShiftPost"> | string
+  lat?: Prisma.DecimalNullableFilter<"ShiftPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.DecimalNullableFilter<"ShiftPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.StringNullableFilter<"ShiftPost"> | string | null
   description?: Prisma.StringFilter<"ShiftPost"> | string
   shiftDate?: Prisma.DateTimeFilter<"ShiftPost"> | Date | string
@@ -1283,6 +1322,8 @@ export type ShiftPostCreateWithoutRegionInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1304,8 +1345,7 @@ export type ShiftPostCreateWithoutRegionInput = {
   city: Prisma.CityCreateNestedOneWithoutShiftPostsInput
   marketplace: Prisma.MarketplaceCreateNestedOneWithoutShiftPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostUncheckedCreateWithoutRegionInput = {
@@ -1319,6 +1359,8 @@ export type ShiftPostUncheckedCreateWithoutRegionInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1336,8 +1378,7 @@ export type ShiftPostUncheckedCreateWithoutRegionInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentUncheckedCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostCreateOrConnectWithoutRegionInput = {
@@ -1373,6 +1414,8 @@ export type ShiftPostCreateWithoutCityInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1394,8 +1437,7 @@ export type ShiftPostCreateWithoutCityInput = {
   region: Prisma.RegionCreateNestedOneWithoutShiftPostsInput
   marketplace: Prisma.MarketplaceCreateNestedOneWithoutShiftPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostUncheckedCreateWithoutCityInput = {
@@ -1409,6 +1451,8 @@ export type ShiftPostUncheckedCreateWithoutCityInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1426,8 +1470,7 @@ export type ShiftPostUncheckedCreateWithoutCityInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentUncheckedCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostCreateOrConnectWithoutCityInput = {
@@ -1463,6 +1506,8 @@ export type ShiftPostCreateWithoutMarketplaceInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1484,8 +1529,7 @@ export type ShiftPostCreateWithoutMarketplaceInput = {
   region: Prisma.RegionCreateNestedOneWithoutShiftPostsInput
   city: Prisma.CityCreateNestedOneWithoutShiftPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostUncheckedCreateWithoutMarketplaceInput = {
@@ -1499,6 +1543,8 @@ export type ShiftPostUncheckedCreateWithoutMarketplaceInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1516,8 +1562,7 @@ export type ShiftPostUncheckedCreateWithoutMarketplaceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentUncheckedCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostCreateOrConnectWithoutMarketplaceInput = {
@@ -1553,6 +1598,8 @@ export type ShiftPostCreateWithoutPickupPointInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1574,8 +1621,7 @@ export type ShiftPostCreateWithoutPickupPointInput = {
   city: Prisma.CityCreateNestedOneWithoutShiftPostsInput
   marketplace: Prisma.MarketplaceCreateNestedOneWithoutShiftPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostUncheckedCreateWithoutPickupPointInput = {
@@ -1589,6 +1635,8 @@ export type ShiftPostUncheckedCreateWithoutPickupPointInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1606,8 +1654,7 @@ export type ShiftPostUncheckedCreateWithoutPickupPointInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentUncheckedCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostCreateOrConnectWithoutPickupPointInput = {
@@ -1643,6 +1690,8 @@ export type ShiftPostCreateWithoutApplicationsInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1664,8 +1713,7 @@ export type ShiftPostCreateWithoutApplicationsInput = {
   region: Prisma.RegionCreateNestedOneWithoutShiftPostsInput
   city: Prisma.CityCreateNestedOneWithoutShiftPostsInput
   marketplace: Prisma.MarketplaceCreateNestedOneWithoutShiftPostsInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostUncheckedCreateWithoutApplicationsInput = {
@@ -1680,6 +1728,8 @@ export type ShiftPostUncheckedCreateWithoutApplicationsInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1696,8 +1746,7 @@ export type ShiftPostUncheckedCreateWithoutApplicationsInput = {
   closedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  assignment?: Prisma.AssignmentUncheckedCreateNestedOneWithoutShiftPostInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutShiftPostInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutShiftPostInput
 }
 
 export type ShiftPostCreateOrConnectWithoutApplicationsInput = {
@@ -1723,6 +1772,8 @@ export type ShiftPostUpdateWithoutApplicationsInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1744,8 +1795,7 @@ export type ShiftPostUpdateWithoutApplicationsInput = {
   region?: Prisma.RegionUpdateOneRequiredWithoutShiftPostsNestedInput
   city?: Prisma.CityUpdateOneRequiredWithoutShiftPostsNestedInput
   marketplace?: Prisma.MarketplaceUpdateOneRequiredWithoutShiftPostsNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateWithoutApplicationsInput = {
@@ -1760,6 +1810,8 @@ export type ShiftPostUncheckedUpdateWithoutApplicationsInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1776,17 +1828,18 @@ export type ShiftPostUncheckedUpdateWithoutApplicationsInput = {
   closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignment?: Prisma.AssignmentUncheckedUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutShiftPostNestedInput
 }
 
-export type ShiftPostCreateWithoutAssignmentInput = {
+export type ShiftPostCreateWithoutAssignmentsInput = {
   id?: string
   title: string
   type: $Enums.ShiftPostType
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1809,10 +1862,9 @@ export type ShiftPostCreateWithoutAssignmentInput = {
   city: Prisma.CityCreateNestedOneWithoutShiftPostsInput
   marketplace: Prisma.MarketplaceCreateNestedOneWithoutShiftPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutShiftPostInput
-  favorites?: Prisma.FavoriteCreateNestedManyWithoutShiftPostInput
 }
 
-export type ShiftPostUncheckedCreateWithoutAssignmentInput = {
+export type ShiftPostUncheckedCreateWithoutAssignmentsInput = {
   id?: string
   createdByUserId: string
   pickupPointId?: string | null
@@ -1824,6 +1876,8 @@ export type ShiftPostUncheckedCreateWithoutAssignmentInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -1841,32 +1895,33 @@ export type ShiftPostUncheckedCreateWithoutAssignmentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutShiftPostInput
-  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutShiftPostInput
 }
 
-export type ShiftPostCreateOrConnectWithoutAssignmentInput = {
+export type ShiftPostCreateOrConnectWithoutAssignmentsInput = {
   where: Prisma.ShiftPostWhereUniqueInput
-  create: Prisma.XOR<Prisma.ShiftPostCreateWithoutAssignmentInput, Prisma.ShiftPostUncheckedCreateWithoutAssignmentInput>
+  create: Prisma.XOR<Prisma.ShiftPostCreateWithoutAssignmentsInput, Prisma.ShiftPostUncheckedCreateWithoutAssignmentsInput>
 }
 
-export type ShiftPostUpsertWithoutAssignmentInput = {
-  update: Prisma.XOR<Prisma.ShiftPostUpdateWithoutAssignmentInput, Prisma.ShiftPostUncheckedUpdateWithoutAssignmentInput>
-  create: Prisma.XOR<Prisma.ShiftPostCreateWithoutAssignmentInput, Prisma.ShiftPostUncheckedCreateWithoutAssignmentInput>
+export type ShiftPostUpsertWithoutAssignmentsInput = {
+  update: Prisma.XOR<Prisma.ShiftPostUpdateWithoutAssignmentsInput, Prisma.ShiftPostUncheckedUpdateWithoutAssignmentsInput>
+  create: Prisma.XOR<Prisma.ShiftPostCreateWithoutAssignmentsInput, Prisma.ShiftPostUncheckedCreateWithoutAssignmentsInput>
   where?: Prisma.ShiftPostWhereInput
 }
 
-export type ShiftPostUpdateToOneWithWhereWithoutAssignmentInput = {
+export type ShiftPostUpdateToOneWithWhereWithoutAssignmentsInput = {
   where?: Prisma.ShiftPostWhereInput
-  data: Prisma.XOR<Prisma.ShiftPostUpdateWithoutAssignmentInput, Prisma.ShiftPostUncheckedUpdateWithoutAssignmentInput>
+  data: Prisma.XOR<Prisma.ShiftPostUpdateWithoutAssignmentsInput, Prisma.ShiftPostUncheckedUpdateWithoutAssignmentsInput>
 }
 
-export type ShiftPostUpdateWithoutAssignmentInput = {
+export type ShiftPostUpdateWithoutAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumShiftPostTypeFieldUpdateOperationsInput | $Enums.ShiftPostType
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1889,10 +1944,9 @@ export type ShiftPostUpdateWithoutAssignmentInput = {
   city?: Prisma.CityUpdateOneRequiredWithoutShiftPostsNestedInput
   marketplace?: Prisma.MarketplaceUpdateOneRequiredWithoutShiftPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutShiftPostNestedInput
 }
 
-export type ShiftPostUncheckedUpdateWithoutAssignmentInput = {
+export type ShiftPostUncheckedUpdateWithoutAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdByUserId?: Prisma.StringFieldUpdateOperationsInput | string
   pickupPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1904,6 +1958,8 @@ export type ShiftPostUncheckedUpdateWithoutAssignmentInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1921,151 +1977,6 @@ export type ShiftPostUncheckedUpdateWithoutAssignmentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutShiftPostNestedInput
-}
-
-export type ShiftPostCreateWithoutFavoritesInput = {
-  id?: string
-  title: string
-  type: $Enums.ShiftPostType
-  status?: $Enums.ShiftPostStatus
-  district: string
-  address: string
-  landmark?: string | null
-  description: string
-  shiftDate: Date | string
-  startAt?: Date | string | null
-  endAt?: Date | string | null
-  paymentAmountRub: number
-  paymentType?: $Enums.PaymentType
-  experienceLevelRequired?: $Enums.ExperienceLevel
-  workersNeeded?: number
-  isUrgent?: boolean
-  promotedUntil?: Date | string | null
-  publishedAt?: Date | string
-  expiresAt?: Date | string | null
-  closedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutCreatedShiftPostsInput
-  pickupPoint?: Prisma.PickupPointCreateNestedOneWithoutShiftPostsInput
-  region: Prisma.RegionCreateNestedOneWithoutShiftPostsInput
-  city: Prisma.CityCreateNestedOneWithoutShiftPostsInput
-  marketplace: Prisma.MarketplaceCreateNestedOneWithoutShiftPostsInput
-  applications?: Prisma.ApplicationCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentCreateNestedOneWithoutShiftPostInput
-}
-
-export type ShiftPostUncheckedCreateWithoutFavoritesInput = {
-  id?: string
-  createdByUserId: string
-  pickupPointId?: string | null
-  regionId: string
-  cityId: string
-  marketplaceId: string
-  title: string
-  type: $Enums.ShiftPostType
-  status?: $Enums.ShiftPostStatus
-  district: string
-  address: string
-  landmark?: string | null
-  description: string
-  shiftDate: Date | string
-  startAt?: Date | string | null
-  endAt?: Date | string | null
-  paymentAmountRub: number
-  paymentType?: $Enums.PaymentType
-  experienceLevelRequired?: $Enums.ExperienceLevel
-  workersNeeded?: number
-  isUrgent?: boolean
-  promotedUntil?: Date | string | null
-  publishedAt?: Date | string
-  expiresAt?: Date | string | null
-  closedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutShiftPostInput
-  assignment?: Prisma.AssignmentUncheckedCreateNestedOneWithoutShiftPostInput
-}
-
-export type ShiftPostCreateOrConnectWithoutFavoritesInput = {
-  where: Prisma.ShiftPostWhereUniqueInput
-  create: Prisma.XOR<Prisma.ShiftPostCreateWithoutFavoritesInput, Prisma.ShiftPostUncheckedCreateWithoutFavoritesInput>
-}
-
-export type ShiftPostUpsertWithoutFavoritesInput = {
-  update: Prisma.XOR<Prisma.ShiftPostUpdateWithoutFavoritesInput, Prisma.ShiftPostUncheckedUpdateWithoutFavoritesInput>
-  create: Prisma.XOR<Prisma.ShiftPostCreateWithoutFavoritesInput, Prisma.ShiftPostUncheckedCreateWithoutFavoritesInput>
-  where?: Prisma.ShiftPostWhereInput
-}
-
-export type ShiftPostUpdateToOneWithWhereWithoutFavoritesInput = {
-  where?: Prisma.ShiftPostWhereInput
-  data: Prisma.XOR<Prisma.ShiftPostUpdateWithoutFavoritesInput, Prisma.ShiftPostUncheckedUpdateWithoutFavoritesInput>
-}
-
-export type ShiftPostUpdateWithoutFavoritesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShiftPostTypeFieldUpdateOperationsInput | $Enums.ShiftPostType
-  status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
-  district?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
-  landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  startAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  paymentAmountRub?: Prisma.IntFieldUpdateOperationsInput | number
-  paymentType?: Prisma.EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-  experienceLevelRequired?: Prisma.EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
-  workersNeeded?: Prisma.IntFieldUpdateOperationsInput | number
-  isUrgent?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  promotedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedShiftPostsNestedInput
-  pickupPoint?: Prisma.PickupPointUpdateOneWithoutShiftPostsNestedInput
-  region?: Prisma.RegionUpdateOneRequiredWithoutShiftPostsNestedInput
-  city?: Prisma.CityUpdateOneRequiredWithoutShiftPostsNestedInput
-  marketplace?: Prisma.MarketplaceUpdateOneRequiredWithoutShiftPostsNestedInput
-  applications?: Prisma.ApplicationUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutShiftPostNestedInput
-}
-
-export type ShiftPostUncheckedUpdateWithoutFavoritesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  createdByUserId?: Prisma.StringFieldUpdateOperationsInput | string
-  pickupPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  regionId?: Prisma.StringFieldUpdateOperationsInput | string
-  cityId?: Prisma.StringFieldUpdateOperationsInput | string
-  marketplaceId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShiftPostTypeFieldUpdateOperationsInput | $Enums.ShiftPostType
-  status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
-  district?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
-  landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  startAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  paymentAmountRub?: Prisma.IntFieldUpdateOperationsInput | number
-  paymentType?: Prisma.EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-  experienceLevelRequired?: Prisma.EnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel
-  workersNeeded?: Prisma.IntFieldUpdateOperationsInput | number
-  isUrgent?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  promotedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUncheckedUpdateOneWithoutShiftPostNestedInput
 }
 
 export type ShiftPostCreateManyCreatedByInput = {
@@ -2079,6 +1990,8 @@ export type ShiftPostCreateManyCreatedByInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -2104,6 +2017,8 @@ export type ShiftPostUpdateWithoutCreatedByInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2125,8 +2040,7 @@ export type ShiftPostUpdateWithoutCreatedByInput = {
   city?: Prisma.CityUpdateOneRequiredWithoutShiftPostsNestedInput
   marketplace?: Prisma.MarketplaceUpdateOneRequiredWithoutShiftPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateWithoutCreatedByInput = {
@@ -2140,6 +2054,8 @@ export type ShiftPostUncheckedUpdateWithoutCreatedByInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2157,8 +2073,7 @@ export type ShiftPostUncheckedUpdateWithoutCreatedByInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUncheckedUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateManyWithoutCreatedByInput = {
@@ -2172,6 +2087,8 @@ export type ShiftPostUncheckedUpdateManyWithoutCreatedByInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2201,6 +2118,8 @@ export type ShiftPostCreateManyRegionInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -2226,6 +2145,8 @@ export type ShiftPostUpdateWithoutRegionInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2247,8 +2168,7 @@ export type ShiftPostUpdateWithoutRegionInput = {
   city?: Prisma.CityUpdateOneRequiredWithoutShiftPostsNestedInput
   marketplace?: Prisma.MarketplaceUpdateOneRequiredWithoutShiftPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateWithoutRegionInput = {
@@ -2262,6 +2182,8 @@ export type ShiftPostUncheckedUpdateWithoutRegionInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2279,8 +2201,7 @@ export type ShiftPostUncheckedUpdateWithoutRegionInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUncheckedUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateManyWithoutRegionInput = {
@@ -2294,6 +2215,8 @@ export type ShiftPostUncheckedUpdateManyWithoutRegionInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2323,6 +2246,8 @@ export type ShiftPostCreateManyCityInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -2348,6 +2273,8 @@ export type ShiftPostUpdateWithoutCityInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2369,8 +2296,7 @@ export type ShiftPostUpdateWithoutCityInput = {
   region?: Prisma.RegionUpdateOneRequiredWithoutShiftPostsNestedInput
   marketplace?: Prisma.MarketplaceUpdateOneRequiredWithoutShiftPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateWithoutCityInput = {
@@ -2384,6 +2310,8 @@ export type ShiftPostUncheckedUpdateWithoutCityInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2401,8 +2329,7 @@ export type ShiftPostUncheckedUpdateWithoutCityInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUncheckedUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateManyWithoutCityInput = {
@@ -2416,6 +2343,8 @@ export type ShiftPostUncheckedUpdateManyWithoutCityInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2445,6 +2374,8 @@ export type ShiftPostCreateManyMarketplaceInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -2470,6 +2401,8 @@ export type ShiftPostUpdateWithoutMarketplaceInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2491,8 +2424,7 @@ export type ShiftPostUpdateWithoutMarketplaceInput = {
   region?: Prisma.RegionUpdateOneRequiredWithoutShiftPostsNestedInput
   city?: Prisma.CityUpdateOneRequiredWithoutShiftPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateWithoutMarketplaceInput = {
@@ -2506,6 +2438,8 @@ export type ShiftPostUncheckedUpdateWithoutMarketplaceInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2523,8 +2457,7 @@ export type ShiftPostUncheckedUpdateWithoutMarketplaceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUncheckedUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateManyWithoutMarketplaceInput = {
@@ -2538,6 +2471,8 @@ export type ShiftPostUncheckedUpdateManyWithoutMarketplaceInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2567,6 +2502,8 @@ export type ShiftPostCreateManyPickupPointInput = {
   status?: $Enums.ShiftPostStatus
   district: string
   address: string
+  lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: string | null
   description: string
   shiftDate: Date | string
@@ -2592,6 +2529,8 @@ export type ShiftPostUpdateWithoutPickupPointInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2613,8 +2552,7 @@ export type ShiftPostUpdateWithoutPickupPointInput = {
   city?: Prisma.CityUpdateOneRequiredWithoutShiftPostsNestedInput
   marketplace?: Prisma.MarketplaceUpdateOneRequiredWithoutShiftPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateWithoutPickupPointInput = {
@@ -2628,6 +2566,8 @@ export type ShiftPostUncheckedUpdateWithoutPickupPointInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2645,8 +2585,7 @@ export type ShiftPostUncheckedUpdateWithoutPickupPointInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutShiftPostNestedInput
-  assignment?: Prisma.AssignmentUncheckedUpdateOneWithoutShiftPostNestedInput
-  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutShiftPostNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutShiftPostNestedInput
 }
 
 export type ShiftPostUncheckedUpdateManyWithoutPickupPointInput = {
@@ -2660,6 +2599,8 @@ export type ShiftPostUncheckedUpdateManyWithoutPickupPointInput = {
   status?: Prisma.EnumShiftPostStatusFieldUpdateOperationsInput | $Enums.ShiftPostStatus
   district?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   landmark?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   shiftDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2685,12 +2626,12 @@ export type ShiftPostUncheckedUpdateManyWithoutPickupPointInput = {
 
 export type ShiftPostCountOutputType = {
   applications: number
-  favorites: number
+  assignments: number
 }
 
 export type ShiftPostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   applications?: boolean | ShiftPostCountOutputTypeCountApplicationsArgs
-  favorites?: boolean | ShiftPostCountOutputTypeCountFavoritesArgs
+  assignments?: boolean | ShiftPostCountOutputTypeCountAssignmentsArgs
 }
 
 /**
@@ -2713,8 +2654,8 @@ export type ShiftPostCountOutputTypeCountApplicationsArgs<ExtArgs extends runtim
 /**
  * ShiftPostCountOutputType without action
  */
-export type ShiftPostCountOutputTypeCountFavoritesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FavoriteWhereInput
+export type ShiftPostCountOutputTypeCountAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssignmentWhereInput
 }
 
 
@@ -2730,6 +2671,8 @@ export type ShiftPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   status?: boolean
   district?: boolean
   address?: boolean
+  lat?: boolean
+  lng?: boolean
   landmark?: boolean
   description?: boolean
   shiftDate?: boolean
@@ -2752,8 +2695,7 @@ export type ShiftPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   city?: boolean | Prisma.CityDefaultArgs<ExtArgs>
   marketplace?: boolean | Prisma.MarketplaceDefaultArgs<ExtArgs>
   applications?: boolean | Prisma.ShiftPost$applicationsArgs<ExtArgs>
-  assignment?: boolean | Prisma.ShiftPost$assignmentArgs<ExtArgs>
-  favorites?: boolean | Prisma.ShiftPost$favoritesArgs<ExtArgs>
+  assignments?: boolean | Prisma.ShiftPost$assignmentsArgs<ExtArgs>
   _count?: boolean | Prisma.ShiftPostCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shiftPost"]>
 
@@ -2769,6 +2711,8 @@ export type ShiftPostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   status?: boolean
   district?: boolean
   address?: boolean
+  lat?: boolean
+  lng?: boolean
   landmark?: boolean
   description?: boolean
   shiftDate?: boolean
@@ -2804,6 +2748,8 @@ export type ShiftPostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   status?: boolean
   district?: boolean
   address?: boolean
+  lat?: boolean
+  lng?: boolean
   landmark?: boolean
   description?: boolean
   shiftDate?: boolean
@@ -2839,6 +2785,8 @@ export type ShiftPostSelectScalar = {
   status?: boolean
   district?: boolean
   address?: boolean
+  lat?: boolean
+  lng?: boolean
   landmark?: boolean
   description?: boolean
   shiftDate?: boolean
@@ -2857,7 +2805,7 @@ export type ShiftPostSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ShiftPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdByUserId" | "pickupPointId" | "regionId" | "cityId" | "marketplaceId" | "title" | "type" | "status" | "district" | "address" | "landmark" | "description" | "shiftDate" | "startAt" | "endAt" | "paymentAmountRub" | "paymentType" | "experienceLevelRequired" | "workersNeeded" | "isUrgent" | "promotedUntil" | "publishedAt" | "expiresAt" | "closedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["shiftPost"]>
+export type ShiftPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdByUserId" | "pickupPointId" | "regionId" | "cityId" | "marketplaceId" | "title" | "type" | "status" | "district" | "address" | "lat" | "lng" | "landmark" | "description" | "shiftDate" | "startAt" | "endAt" | "paymentAmountRub" | "paymentType" | "experienceLevelRequired" | "workersNeeded" | "isUrgent" | "promotedUntil" | "publishedAt" | "expiresAt" | "closedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["shiftPost"]>
 export type ShiftPostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   pickupPoint?: boolean | Prisma.ShiftPost$pickupPointArgs<ExtArgs>
@@ -2865,8 +2813,7 @@ export type ShiftPostInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   city?: boolean | Prisma.CityDefaultArgs<ExtArgs>
   marketplace?: boolean | Prisma.MarketplaceDefaultArgs<ExtArgs>
   applications?: boolean | Prisma.ShiftPost$applicationsArgs<ExtArgs>
-  assignment?: boolean | Prisma.ShiftPost$assignmentArgs<ExtArgs>
-  favorites?: boolean | Prisma.ShiftPost$favoritesArgs<ExtArgs>
+  assignments?: boolean | Prisma.ShiftPost$assignmentsArgs<ExtArgs>
   _count?: boolean | Prisma.ShiftPostCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ShiftPostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2893,8 +2840,7 @@ export type $ShiftPostPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     city: Prisma.$CityPayload<ExtArgs>
     marketplace: Prisma.$MarketplacePayload<ExtArgs>
     applications: Prisma.$ApplicationPayload<ExtArgs>[]
-    assignment: Prisma.$AssignmentPayload<ExtArgs> | null
-    favorites: Prisma.$FavoritePayload<ExtArgs>[]
+    assignments: Prisma.$AssignmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2908,6 +2854,8 @@ export type $ShiftPostPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     status: $Enums.ShiftPostStatus
     district: string
     address: string
+    lat: runtime.Decimal | null
+    lng: runtime.Decimal | null
     landmark: string | null
     description: string
     shiftDate: Date
@@ -3324,8 +3272,7 @@ export interface Prisma__ShiftPostClient<T, Null = never, ExtArgs extends runtim
   city<T extends Prisma.CityDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CityDefaultArgs<ExtArgs>>): Prisma.Prisma__CityClient<runtime.Types.Result.GetResult<Prisma.$CityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   marketplace<T extends Prisma.MarketplaceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MarketplaceDefaultArgs<ExtArgs>>): Prisma.Prisma__MarketplaceClient<runtime.Types.Result.GetResult<Prisma.$MarketplacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   applications<T extends Prisma.ShiftPost$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShiftPost$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  assignment<T extends Prisma.ShiftPost$assignmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShiftPost$assignmentArgs<ExtArgs>>): Prisma.Prisma__AssignmentClient<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  favorites<T extends Prisma.ShiftPost$favoritesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShiftPost$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignments<T extends Prisma.ShiftPost$assignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShiftPost$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3366,6 +3313,8 @@ export interface ShiftPostFieldRefs {
   readonly status: Prisma.FieldRef<"ShiftPost", 'ShiftPostStatus'>
   readonly district: Prisma.FieldRef<"ShiftPost", 'String'>
   readonly address: Prisma.FieldRef<"ShiftPost", 'String'>
+  readonly lat: Prisma.FieldRef<"ShiftPost", 'Decimal'>
+  readonly lng: Prisma.FieldRef<"ShiftPost", 'Decimal'>
   readonly landmark: Prisma.FieldRef<"ShiftPost", 'String'>
   readonly description: Prisma.FieldRef<"ShiftPost", 'String'>
   readonly shiftDate: Prisma.FieldRef<"ShiftPost", 'DateTime'>
@@ -3826,9 +3775,9 @@ export type ShiftPost$applicationsArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
- * ShiftPost.assignment
+ * ShiftPost.assignments
  */
-export type ShiftPost$assignmentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ShiftPost$assignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Assignment
    */
@@ -3842,30 +3791,11 @@ export type ShiftPost$assignmentArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   include?: Prisma.AssignmentInclude<ExtArgs> | null
   where?: Prisma.AssignmentWhereInput
-}
-
-/**
- * ShiftPost.favorites
- */
-export type ShiftPost$favoritesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Favorite
-   */
-  select?: Prisma.FavoriteSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Favorite
-   */
-  omit?: Prisma.FavoriteOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FavoriteInclude<ExtArgs> | null
-  where?: Prisma.FavoriteWhereInput
-  orderBy?: Prisma.FavoriteOrderByWithRelationInput | Prisma.FavoriteOrderByWithRelationInput[]
-  cursor?: Prisma.FavoriteWhereUniqueInput
+  orderBy?: Prisma.AssignmentOrderByWithRelationInput | Prisma.AssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.AssignmentWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.FavoriteScalarFieldEnum | Prisma.FavoriteScalarFieldEnum[]
+  distinct?: Prisma.AssignmentScalarFieldEnum | Prisma.AssignmentScalarFieldEnum[]
 }
 
 /**

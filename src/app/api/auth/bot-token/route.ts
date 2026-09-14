@@ -1,4 +1,7 @@
+import { createHash } from "crypto";
+
 import { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 import { fail, ok } from "@/lib/api";
 import { createSessionToken, setSessionCookie } from "@/lib/auth/session";
@@ -6,37 +9,90 @@ import { inspectTelegramInitData } from "@/lib/auth/telegram";
 import { tgDebug } from "@/lib/log";
 import { prisma } from "@/lib/prisma";
 
+function sanitizeUrlForAuthLog(value: string) {
+  return value
+    .replace(/([?&](?:loginToken|token)=)[^&#]+/g, "$1<hidden>")
+    .replace(/([?&]tgWebAppData=)[^&#]+/g, "$1<hidden>")
+    .replace(/#tgWebAppData=.*$/g, "#<hidden>");
+}
+
+function getTokenFingerprint(token: string) {
+  if (!token) {
+    return null;
+  }
+
+  return createHash("sha256").update(token).digest("hex").slice(0, 16);
+}
+
+function dateToLog(value: unknown) {
+  return value instanceof Date ? value.toISOString() : null;
+}
+
 function getClientMeta(request: NextRequest) {
+  const userAgent = request.headers.get("user-agent") ?? "unknown";
+  const referer = request.headers.get("referer") ?? "unknown";
+  const ua = userAgent.toLowerCase();
+
   return {
-    userAgent: request.headers.get("user-agent") ?? "unknown",
-    referer: request.headers.get("referer") ?? "unknown",
+    userAgent,
+    referer: sanitizeUrlForAuthLog(referer),
+    refererHasLoginToken: referer.includes("loginToken="),
     origin: request.headers.get("origin") ?? null,
+    forwardedFor: request.headers.get("x-forwarded-for") ?? null,
+    realIp: request.headers.get("x-real-ip") ?? null,
     forwardedHost: request.headers.get("x-forwarded-host") ?? null,
     forwardedProto: request.headers.get("x-forwarded-proto") ?? null,
+    dublerClient: request.headers.get("x-dubler-client") ?? null,
+    isTelegramLikeUserAgent:
+      ua.includes("telegram-android") ||
+      ua.includes("telegram-ios") ||
+      ua.includes("telegramios") ||
+      ua.includes("tgwebview"),
   };
 }
 
-export async function POST(request: NextRequest) {
-  const body = (await request.json().catch(() => null)) as
-    | { token?: string; initData?: string }
-    | null;
-  const token = body?.token?.trim() ?? "";
-  const initData = body?.initData ?? "";
-  const meta = getClientMeta(request);
-
-  tgDebug("server:auth-bot-token-start", {
+function getBotTokenLogMeta(token: string, initData: string) {
+  return {
     tokenPresent: Boolean(token),
     tokenLength: token.length,
+    tokenFingerprint: getTokenFingerprint(token),
+    hasInitData: Boolean(initData),
     initDataLength: initData.length,
-    ...meta,
-  });
+  };
+}
+
+function getSafeRedirectTarget(value: string | null) {
+  const target = value?.trim() || "/telegram/shifts";
+  if (!target.startsWith("/") || target.startsWith("//")) {
+    return "/telegram/shifts";
+  }
+  return target;
+}
+
+async function redeemBotLoginToken({
+  token,
+  initData,
+  request,
+}: {
+  token: string;
+  initData: string;
+  request: NextRequest;
+}) {
+  const meta = getClientMeta(request);
+  const tokenLogMeta = getBotTokenLogMeta(token, initData);
+  const authLogMeta = { ...tokenLogMeta, ...meta };
+  const startedAt = Date.now();
+
+  console.info("[tg-auth] server:auth-bot-token-start", authLogMeta);
+
+  tgDebug("server:auth-bot-token-start", authLogMeta);
 
   if (!token) {
     console.warn("[tg-auth] server:auth-bot-token-denied", {
       reason: "missing_token",
-      ...meta,
+      ...authLogMeta,
     });
-    return fail("Не удалось подтвердить вход через бота.", 401);
+    return { ok: false as const, response: fail("Не удалось подтвердить вход через бота.", 401) };
   }
 
   // Если в Mini App пришёл подписанный initData — это надёжный источник
@@ -49,9 +105,9 @@ export async function POST(request: NextRequest) {
       console.warn("[tg-auth] server:auth-bot-token-denied", {
         reason: "init_data_invalid",
         inspectionReason: inspection.reason,
-        ...meta,
+        ...authLogMeta,
       });
-      return fail("Ссылка входа недействительна.", 401);
+      return { ok: false as const, response: fail("Ссылка входа недействительна.", 401) };
     }
     verifiedIncomingTelegramId = String(inspection.user.id);
   }
@@ -65,32 +121,39 @@ export async function POST(request: NextRequest) {
     if (!existing) {
       console.warn("[tg-auth] server:auth-bot-token-denied", {
         reason: "not_found",
-        ...meta,
+        ...authLogMeta,
       });
-      return fail("Ссылка входа устарела. Отправьте боту /start ещё раз.", 401);
+      return {
+        ok: false as const,
+        response: fail("Ссылка входа устарела. Отправьте боту /start ещё раз.", 401),
+      };
     }
+
+    console.info("[tg-auth] server:auth-bot-token-found", {
+      tokenTelegramId: existing.telegramId,
+      tokenCreatedAt: dateToLog(existing.createdAt),
+      tokenExpiresAt: dateToLog(existing.expiresAt),
+      tokenPreviouslyUsed: Boolean(existing.usedAt),
+      tokenUsedAt: dateToLog(existing.usedAt),
+      verifiedIncomingTelegramId,
+      tokenAgeMs: existing.createdAt instanceof Date ? Date.now() - existing.createdAt.getTime() : null,
+      ...authLogMeta,
+    });
 
     if (verifiedIncomingTelegramId && existing.telegramId !== verifiedIncomingTelegramId) {
       console.warn("[tg-auth] server:auth-bot-token-denied", {
         reason: "telegram_mismatch",
         tokenTelegramId: existing.telegramId,
         incomingTelegramId: verifiedIncomingTelegramId,
-        ...meta,
+        ...authLogMeta,
       });
-      return fail(
-        "Эта ссылка для другого Telegram-аккаунта. Отправьте боту /start со своего.",
-        401,
-      );
-    }
-
-    if (existing.usedAt) {
-      console.warn("[tg-auth] server:auth-bot-token-denied", {
-        reason: "already_used",
-        telegramId: existing.telegramId,
-        usedAt: existing.usedAt.toISOString(),
-        ...meta,
-      });
-      return fail("Ссылка входа уже использована.", 401);
+      return {
+        ok: false as const,
+        response: fail(
+          "Эта ссылка для другого Telegram-аккаунта. Отправьте боту /start со своего.",
+          401,
+        ),
+      };
     }
 
     if (existing.expiresAt.getTime() <= Date.now()) {
@@ -98,16 +161,19 @@ export async function POST(request: NextRequest) {
         reason: "expired",
         telegramId: existing.telegramId,
         expiresAt: existing.expiresAt.toISOString(),
-        ...meta,
+        ...authLogMeta,
       });
-      return fail("Ссылка входа устарела. Отправьте боту /start ещё раз.", 401);
+      return {
+        ok: false as const,
+        response: fail("Ссылка входа устарела. Отправьте боту /start ещё раз.", 401),
+      };
     }
 
-    // Atomically claim the token: only one concurrent caller can flip usedAt from null.
+    // The bot login link is valid until expiresAt. Keep usedAt as last-use telemetry,
+    // not as a single-use burn flag: Telegram clients may open the same button twice.
     const claimed = await prisma.botLoginToken.updateMany({
       where: {
         token,
-        usedAt: null,
         expiresAt: { gt: new Date() },
       },
       data: { usedAt: new Date() },
@@ -115,11 +181,14 @@ export async function POST(request: NextRequest) {
 
     if (claimed.count === 0) {
       console.warn("[tg-auth] server:auth-bot-token-denied", {
-        reason: "race_lost",
+        reason: "expired_during_claim",
         telegramId: existing.telegramId,
-        ...meta,
+        ...authLogMeta,
       });
-      return fail("Ссылка входа устарела. Отправьте боту /start ещё раз.", 401);
+      return {
+        ok: false as const,
+        response: fail("Ссылка входа устарела. Отправьте боту /start ещё раз.", 401),
+      };
     }
 
     const loginToken = await prisma.botLoginToken.findUniqueOrThrow({ where: { token } });
@@ -145,22 +214,54 @@ export async function POST(request: NextRequest) {
 
     await setSessionCookie(sessionToken);
 
-    tgDebug("server:auth-bot-token-success", {
+    const successLogPayload = {
       userId: user.id,
       telegramId: user.telegramId,
       onboardingCompleted: user.isOnboardingCompleted,
       hasUsername: Boolean(user.username),
-      ...meta,
-    });
+      tokenTelegramId: loginToken.telegramId,
+      tokenExpiresAt: dateToLog(loginToken.expiresAt),
+      tokenUsedAt: dateToLog(loginToken.usedAt),
+      durationMs: Date.now() - startedAt,
+      ...authLogMeta,
+    };
 
-    return ok({ user });
+    console.info("[tg-auth] server:auth-bot-token-success", successLogPayload);
+
+    tgDebug("server:auth-bot-token-success", successLogPayload);
+
+    return { ok: true as const, user, response: ok({ user }) };
   } catch (error) {
     console.error("[tg-auth] server:auth-bot-token-failed", {
       message: error instanceof Error ? error.message : "unknown error",
       stack: error instanceof Error ? error.stack : null,
-      ...meta,
+      durationMs: Date.now() - startedAt,
+      ...authLogMeta,
     });
 
-    return fail("Не удалось выполнить вход через бота.", 500);
+    return { ok: false as const, response: fail("Не удалось выполнить вход через бота.", 500) };
   }
+}
+
+export async function GET(request: NextRequest) {
+  const token = request.nextUrl.searchParams.get("token")?.trim() ?? "";
+  const redirectTarget = getSafeRedirectTarget(request.nextUrl.searchParams.get("redirect"));
+  const result = await redeemBotLoginToken({ token, initData: "", request });
+  const redirectUrl = new URL(redirectTarget, request.url);
+
+  if (!result.ok) {
+    redirectUrl.searchParams.set("authError", "bot-token");
+  }
+
+  return NextResponse.redirect(redirectUrl);
+}
+
+export async function POST(request: NextRequest) {
+  const body = (await request.json().catch(() => null)) as
+    | { token?: string; initData?: string }
+    | null;
+  const token = body?.token?.trim() ?? "";
+  const initData = body?.initData ?? "";
+  const result = await redeemBotLoginToken({ token, initData, request });
+  return result.response;
 }

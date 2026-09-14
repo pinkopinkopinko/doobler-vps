@@ -1,8 +1,13 @@
 import { z } from "zod";
 
 import { fail, ok } from "@/lib/api";
+import { requireTrustedMutationRequest } from "@/lib/auth/mutation-guard";
 import { getSessionPayload } from "@/lib/auth/session";
-import { getShiftPostById, updateShiftPostStatus } from "@/server/services/shift-post-service";
+import {
+  deleteShiftPost,
+  getShiftPostById,
+  updateShiftPostStatus,
+} from "@/server/services/shift-post-service";
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -33,6 +38,11 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     return fail("Нужен вход через Telegram.", 401);
   }
 
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: session.telegramId,
+  });
+  if (untrusted) return untrusted;
+
   const { id } = await params;
   const body = (await request.json().catch(() => ({}))) as unknown;
   const parsed = patchSchema.safeParse(body);
@@ -54,5 +64,40 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     }
     console.error("[shift-posts] patch failed", error);
     return fail("Не удалось обновить объявление.", 500);
+  }
+}
+
+export async function DELETE(request: Request, { params }: RouteParams) {
+  const session = await getSessionPayload();
+
+  if (!session) {
+    return fail("Нужен вход через Telegram.", 401);
+  }
+
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: session.telegramId,
+  });
+  if (untrusted) return untrusted;
+
+  const { id } = await params;
+
+  try {
+    await deleteShiftPost(id, session.userId);
+    return ok({ id });
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "FORBIDDEN") {
+        // 404 чтобы не подсвечивать существование чужой смены.
+        return fail("Объявление не найдено.", 404);
+      }
+      if (error.message === "HAS_ACTIVE_ASSIGNMENT") {
+        return fail(
+          "На смене уже подтверждён исполнитель. Сначала отмените смену, потом удалите.",
+          409,
+        );
+      }
+    }
+    console.error("[shift-posts] delete failed", error);
+    return fail("Не удалось удалить объявление.", 500);
   }
 }

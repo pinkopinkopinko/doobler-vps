@@ -2,13 +2,6 @@ Version 1
 Date: 2026-05-01
 Author: codex gpt-5.4
 Changes:
-- Added `.devin/` to `.gitignore`.
-- Removed `.devin/config.local.json` from git tracking without deleting the local file.
-
-Version 2
-Date: 2026-05-01
-Author: codex gpt-5.4
-Changes:
 - Added `src/lib/dev-fallback.ts` to centralize dev fallback gating and logging.
 - Updated `src/app/api/auth/telegram/route.ts` to use the shared auth fallback helper.
 - Removed hidden demo-profile fallback from `src/lib/auth/get-current-user.ts`; errors now log and return `null`.
@@ -17,43 +10,1575 @@ Changes:
 - Tightened demo fallback behavior in `src/server/services/shift-post-service.ts` so it only works behind the explicit dev flag and logs when used.
 - Tightened city-context fallback behavior in `src/lib/geocoder/yandex-geocode.ts` and `src/lib/geocoder/yandex-suggest.ts` so demo data is used only when explicit dev fallback is enabled.
 
+Version 2
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Ran `npm run lint` successfully in `pvz_zamena_bot`.
+- Ran `npm run build` successfully in `pvz_zamena_bot`.
+- Started the local `dev:ngrok` workflow for `pvz_zamena_bot`.
+- Updated runtime ngrok URL in `.dev-ngrok-url`.
+- Updated `NEXT_PUBLIC_APP_URL` in `.env.local` to the current ngrok public URL through the existing app script.
+
 Version 3
 Date: 2026-05-01
 Author: codex gpt-5.4
 Changes:
-- Installed project dependencies with `npm install`.
-- Renamed the application-service helper from `useDemoFallback` to `buildDemoFallbackResult` to satisfy ESLint hook rules.
-- Ran `npm run lint` successfully after the rename.
+- Added `isPhoneVerified` to the `User` model in `prisma/schema.prisma`, regenerated Prisma client, and synchronized the local PostgreSQL schema with `prisma db push`.
+- Added a new authenticated route `src/app/api/profile/phone-verification/request/route.ts` that asks the Telegram bot to send a contact-share button for phone verification.
+- Extended `src/lib/telegram/bot.ts` to send the `request_contact` keyboard, accept `message.contact` updates from Telegram, validate contact ownership, save the phone number to the user profile, and mark the number as verified.
+- Extended profile and application view typing/mapping in `src/lib/types.ts`, `src/lib/demo-data.ts`, `src/lib/auth/app-access.ts`, `src/server/services/profile-service.ts`, and `src/server/services/application-service.ts` so phone verification status reaches the UI.
+- Added `src/components/profile/phone-verification-panel.tsx` and updated `src/components/profile/profile-summary.tsx` to show the warning card above the marketplaces block and a soft green `Номер телефона подтвержден` badge after verification.
+- Ran `npm run lint` and `npm run build` successfully after the phone verification changes.
 
 Version 4
 Date: 2026-05-01
 Author: codex gpt-5.4
 Changes:
-- Ran `npm audit --json` and reviewed the 5 moderate vulnerabilities.
-- Ran safe `npm audit fix` without `--force`; this updated transitive dependency resolution in `package-lock.json`.
-- Re-ran `npm audit --json` and confirmed 5 moderate vulnerabilities still remain.
-- Verified that the remaining audit issues are tied to `next` -> `postcss` and `prisma` -> `@prisma/dev` -> `@hono/node-server`, with npm only offering unsafe breaking/downgrade fixes.
-- Re-ran `npm run lint` successfully after the dependency refresh.
+- Updated `src/components/profile/phone-verification-panel.tsx` so, after the bot sends the contact-share button, the profile automatically checks verification status on focus, visibility return, and a short interval.
+- Removed the manual `Проверить статус` step from the phone verification UI and replaced it with an automatic refresh flow after Telegram confirms the contact.
 
 Version 5
-Date: 2026-05-03
+Date: 2026-05-01
 Author: codex gpt-5.4
 Changes:
-- Created branch codex/port-pvzbot-updates-to-vds for porting the latest pvz_zamena_bot app changes into the VDS repository.
-- Preserved existing VDS hardening work in a separate commit before the app-layer port.
-- Copied current src/ and prisma/ app code from pvz_zamena_bot into doobler-vps while keeping deploy/, DEPLOY.md, .dockerignore, and VDS infrastructure untouched.
-- Added Vitest support, typecheck/test scripts, vitest.config.ts, and installed updated dependencies.
-- Ported phone verification, profile photo SVG support, owner apply restrictions, dark theme, theme toggle, UX fixes, chat/avatar fixes, and smoke tests into the VDS codebase.
-- Added /backups to .gitignore and rewrote README.md as a VDS-oriented project overview with local checks and deploy pointers.
-- Ran db:generate with a temporary local DATABASE_URL, npm run typecheck, npm run lint, npm run test, and npm run build successfully.
+- Added `typecheck` and `test` scripts to `package.json`.
+- Installed `vitest` and refreshed `package-lock.json`, so the project now has a working baseline for TypeScript and unit-test verification.
+- Added `src/server/services/application-service.test.ts` with smoke tests for `applyToShift`, covering the happy path plus key guardrails: own-shift rejection, non-published shift rejection, and same-day assignment conflict rejection.
+- Re-ran `npm run lint`, `npm run build`, `npm run typecheck`, and `npm run test` successfully after the new test baseline and core-flow smoke tests.
 
 Version 6
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Added `vitest.config.ts` with the `@ -> ./src` alias and `node` test environment so service-level tests can import the project code the same way the app and TypeScript compiler do.
+
+Version 7
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Updated `src/server/services/application-service.test.ts` to use `vi.hoisted(...)` for Prisma mocks, fixing Vitest mock hoisting and making the new service-level smoke tests execute correctly.
+- Re-ran `npm run typecheck` and `npm run test` successfully after the mock fix; the suite now passes with 3 test files and 14 tests green.
+
+Version 8
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Expanded `src/server/services/application-service.test.ts` with guardrail smoke tests for `confirmApplication`, `completeAssignment`, and `createAssignmentReview`.
+- Added coverage for forbidden confirmation, already-completed assignment short-circuiting, and rejection of reviews before assignment completion so lifecycle regressions are caught earlier in CI/local runs.
+
+Version 9
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Simplified the Telegram login flow in `src/lib/telegram/bot.ts`: `/start` and `/app` now open the Mini App directly without attaching a `loginToken` to the normal invite URL.
+- Tightened `src/lib/auth/client.ts` so `bot-token` remains only a fallback for cases where Telegram did not provide `initData`; the client no longer retries a failed `initData` login through `bot-token`.
+- Added URL cleanup in `src/lib/auth/client.ts` so an old `loginToken` parameter is removed after a successful regular Telegram session bootstrap.
+
+Version 10
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Added `src/app/api/auth/telegram/route.test.ts` with smoke coverage for valid Telegram login, denied login without `initData`, explicit dev fallback login, and server-side failure handling.
+- Added `src/app/api/auth/bot-token/route.test.ts` with smoke coverage for successful one-time `bot-token` login, rejection of reused tokens, Telegram account mismatch, and invalid `initData`.
+- Re-ran the auth test layer through the shared Vitest suite so the app now has direct route-level regression checks for both primary Telegram auth and the remaining fallback path.
+
+Version 11
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Added `compactProfilePhotoUrl(...)` to `src/lib/profile-photo.ts` so lightweight API payloads can strip oversized inline `data:image/...` avatars while keeping normal URLs and tiny placeholders.
+- Updated `src/server/services/chat-service.ts` to compact peer avatars in chat list and chat header payloads, which removes huge base64 blobs from `/api/chats` and `/api/chats/[id]`.
+- Updated `src/server/services/application-service.ts` to compact applicant/employer avatars in application cards and in the upcoming assignment summary used by the worker flow.
+- Updated `src/server/services/admin-service.ts` to compact user avatars in admin search/details payloads for the same reason.
+- Added `src/lib/profile-photo.test.ts` with unit coverage for normal URLs, tiny inline images, and oversized inline images.
+- Re-ran lint, typecheck, test, and build successfully after the payload optimization changes.
+
+Version 12
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Updated `src/lib/auth/app-access.ts` so the cached current-user bootstrap payload now compacts oversized inline avatars before they reach the global app shell and banned-user guard.
+- Updated `src/server/services/profile-service.ts` so `getProfileShell(...)` compacts oversized inline avatars for lightweight profile-shell responses while keeping the full `getProfile(...)` detail view unchanged.
+- Kept initials/fallback rendering intact on profile and banned-user surfaces, which lets us reduce hot-path payload size without changing the visible UX for users who had old base64 avatars.
+
+Version 13
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Narrowed the `ApplicationCard` applicant payload in `src/lib/types.ts` from a full `UserSummary` down to the smaller field set actually used by the worker/employer application cards.
+- Updated `src/server/services/application-service.ts` so application list queries no longer select unused applicant fields such as Telegram ID, age, username, role list, verification state, onboarding flag, and review counters not shown in the UI.
+- Updated `src/lib/demo-data.ts` to build compact applicant fixtures that match the slimmer application-card contract, keeping demo mode aligned with the live API shape.
+
+Version 14
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Reworked `src/app/api/auth/me/route.ts` to reuse the cached current-user record from `src/lib/auth/app-access.ts` instead of issuing an extra Prisma lookup on every app-shell bootstrap.
+- Trimmed the `/api/auth/me` response down to the fields actually consumed by `AppShell`: `roles`, `isBanned`, `bannedProfile`, and `onboardingCompleted`.
+- Kept the existing Telegram identity checks, banned-user payload, and completion logging intact while making the hottest auth bootstrap path lighter.
+
+Version 15
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Added lightweight `view=editor` and `view=phone-status` branches to `src/app/api/profile/route.ts` so client-side profile bootstrap requests no longer pull the full profile with reviews and unrelated fields.
+- Updated `src/components/profile/registration-form.tsx` to load its bootstrap data from `/api/profile?view=editor`, requesting only the fields the form actually edits.
+- Updated `src/components/profile/phone-verification-panel.tsx` to poll `/api/profile?view=phone-status`, reducing the auto-refresh verification loop to a minimal `isPhoneVerified` payload.
+
+Version 16
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Trimmed `src/server/services/chat-service.ts` so chat list and chat detail payloads no longer include unused peer `username` fields, and chat list previews no longer send unused `lastMessage.id` / `authorUserId`.
+- Slimmed chat message payloads in `src/server/services/chat-service.ts` by removing unused `editedAt`, `deletedAt`, `mimeType`, `width`, and `height` fields from message/list responses.
+- Updated `src/components/chat/chats-index.tsx` and `src/components/chat/chat-conversation.tsx` to match the leaner chat response contracts, keeping the UI behavior unchanged while reducing hot polling payload size.
+
+Version 17
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Rewrote `README.md` in normal UTF-8 encoding to replace the broken mojibake text and reflect the actual current state of the `pvz_zamena_bot` project.
+- Updated the documentation for the current auth model, phone verification flow, test commands, local `ngrok` workflow, and practical local запуск steps.
+- Simplified the project overview so the README now matches the real Mini App scope instead of mixing in stale or misleading setup notes.
+
+Version 18
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Fixed chat avatar delivery for users whose profile photo is still stored as a large inline `data:` URL: chat payloads now return a lightweight `/api/profile-photo/[userId]` source instead of dropping the avatar to `null`.
+- Added inline photo decoding helpers in `src/lib/profile-photo.ts` and covered the new compact-source behavior with tests in `src/lib/profile-photo.test.ts`.
+- Added `src/app/api/profile-photo/[userId]/route.ts` so the chat UI can fetch heavy inline profile photos on demand without bloating the `/api/chats` JSON payloads again.
+
+Version 19
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Updated the chat header back button in `src/components/chat/chat-conversation.tsx` to use a darker icon, clearer border, and stronger contrast so it no longer looks like an empty grey circle.
+
+Version 20
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Strengthened the visual treatment of the chat back button in `src/components/chat/chat-conversation.tsx` with a larger white button, darker border, stronger shadow, and a thicker explicit `ArrowLeft` stroke so the control reads clearly as “back”.
+
+Version 21
+Date: 2026-05-01
+Author: codex gpt-5.4
+Changes:
+- Adjusted the chat back button in src/components/chat/chat-conversation.tsx to a grey background with an explicitly black arrow and heavier stroke so the control remains clearly visible against the light chat header.
+
+Version 22
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Removed the forced avatar requirement from onboarding in src/components/profile/registration-form.tsx so first-time users can finish profile setup without being blocked by photo upload.
+- Split profile-form feedback into clearer neutral, success, and error states in src/components/profile/registration-form.tsx so save failures no longer look the same as helper notices.
+- Added explicit next-step actions to src/components/profile/phone-verification-panel.tsx, src/components/ui/empty-state.tsx, src/components/shifts/shift-feed.tsx, and src/app/(app)/posts/page.tsx so verification and empty screens guide the user forward.
+
+Version 23
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Added a proper empty state to the urgent-shifts block on src/app/(app)/home/page.tsx so the home screen no longer shows a dead blank section when there are no urgent posts nearby.
+- Corrected the application-card marketplace label in src/components/applications/application-card.tsx to represent the shift context instead of the applicant profile context.
+- Extended the application card payload shape in src/lib/types.ts and src/server/services/application-service.ts so cards receive explicit shift marketplace data without guessing it from applicant fields.
+
+Version 24
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Improved the chats list in src/components/chat/chats-index.tsx with skeleton loading cards and next-step CTA buttons for empty chat states.
+- Hardened long-text rendering in src/components/chat/chat-conversation.tsx, src/components/shifts/shift-card.tsx, src/components/applications/application-card.tsx, and src/components/applications/applications-list.tsx so long names, addresses, and messages do not break narrow mobile layouts.
+- Polished worker-facing application cards in src/components/applications/application-card.tsx with clearer applicant location context.
+- Strengthened visible success and error feedback in src/components/applications/confirm-application-button.tsx, src/components/applications/assignment-actions.tsx, and src/components/chat/start-chat-button.tsx so key user actions no longer fail or complete with barely noticeable text.
+
+Version 25
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Removed the leftover server-side avatar requirement in src/lib/validations/shift-post.ts so onboarding now truly allows registration without a profile photo.
+
+Version 26
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Removed profile-photo dependency from src/lib/profile-completion.ts so onboarding and profile completion no longer treat an avatar as a required field.
+
+Version 27
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Raised profile age rules to 16-99 in src/components/profile/registration-form.tsx, src/lib/validations/shift-post.ts, and src/lib/profile-completion.ts.
+- Blocked digits in first name and last name input on the client and reinforced the same rule on the server.
+
+Version 28
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Allowed trusted Telegram userpic URLs, including `.svg`, in src/lib/profile-photo.ts so existing Telegram avatars no longer fail profile validation.
+- Rewrote src/lib/validations/shift-post.ts cleanly after fixing the Telegram userpic validation path, preserving the new age and name rules while allowing trusted Telegram avatar URLs during onboarding.
+
+Version 29
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Changed the `Открыть смены` CTA in src/components/chat/chats-index.tsx to use black text on the light grey button background for better contrast.
+
+Version 30
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Updated src/server/services/application-service.ts so avatars in application cards use the compact-photo fallback source and no longer disappear when the stored photo is a heavy inline image.
+- Updated the `Профиль` action in src/components/applications/application-card.tsx to use black text and icon with a darker outline.
+
+Version 31
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Hardened the Профиль CTA styling in src/components/applications/application-card.tsx with explicit black color on the link and icon so it no longer renders as washed-out grey.
+
+
+Version 32
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Deleted the local test user @explorererer from the pvz_zamena_bot PostgreSQL database together with cascaded related records.
+
+
+Version 33
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Disallowed shift applications from users with the OWNER role in src/server/services/application-service.ts and surfaced a dedicated API error in src/app/api/shift-posts/[id]/applications/route.ts.
+- Updated src/app/(app)/shifts/[id]/page.tsx and src/components/shifts/shift-actions.tsx so owners immediately see a disabled apply button with the correct reason instead of being offered an application flow.
+- Updated src/components/layout/app-shell.tsx and src/components/profile/registration-form.tsx so onboarding completion also pushes fresh roles into the client app session, making the bottom navigation refresh immediately after registration for both owners and employees.
+- Added a service-level regression test for owner application rejection in src/server/services/application-service.test.ts.
+
+
+Version 34
+Date: 2026-05-02
+Author: codex gpt-5.4
+Changes:
+- Removed the permanent-job option from src/lib/constants.ts so the create-shift UI only offers replacement-oriented post types.
+- Rejected PERMANENT_JOB and MONTHLY payment submissions in src/lib/validations/shift-post.ts for new shift posts, keeping the database enum untouched for compatibility with any older rows.
+- Converted the permanent-job demo fallback entry in src/lib/demo-data.ts into a normal one-day replacement shift with replacement-oriented copy.
+
+Version 35
 Date: 2026-05-03
 Author: codex gpt-5.4
 Changes:
-- Updated src/lib/telegram/webapp.ts so the theme follows Telegram colorScheme by default and falls back to the device prefers-color-scheme outside Telegram.
-- Added runtime listeners for Telegram themeChanged and OS prefers-color-scheme changes so the Mini App updates theme without reload.
-- Changed manual theme override storage to doobler-theme-override and cleared the legacy doobler-theme key so old local overrides do not block device theme syncing.
-- Updated TelegramThemeProvider to register and clean up theme listeners.
-- Updated ThemeToggle so it reflects the current resolved theme, stores only explicit manual overrides, and supports double-click reset back to device theme.
-- Verified with npm run lint, npm run test, npm run build, and npm run typecheck after build regenerated Next.js route types.
+- Added dark-mode/color-palette.md with a proposed dark-mode color direction that keeps readable UI text black by using light cards and soft surfaces over a dark background.
+- Added dark-mode/tokens.css with draft CSS variables for the proposed dark theme palette.
+
+Version 36
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Added dark-mode/index.html as a visual dark-theme concept in the same standalone mockup style as design-test.
+- Added dark-mode/styles.css with the prototype layout, phone mockup, dark background, light cards, black UI text, and black-text action buttons.
+- Adjusted the dark-mode concept shell so showcase headings, phone chrome, and rules also sit on light surfaces with black text instead of using white text on the dark background.
+
+Version 37
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Reworked dark-mode/index.html and dark-mode/styles.css from a dark-background/light-card hybrid into a fully dark UI concept with dark cards, dark bottom navigation, dark chat bubbles, dark actions, and dark status surfaces.
+
+Version 38
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Replaced dark-mode/index.html with a standalone catalog of separate dark-page mockups instead of a single combined concept screen.
+- Added dark-mode/app-pages.css as the shared no-gradient dark palette for page-by-page mockups, preserving the current app layout proportions while changing only colors.
+- Added separate dark-mode mockup pages for home, shifts, applications, chats, profile, owner posts, and create-shift flows.
+
+Version 39
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Replaced placeholder text symbols in the dark-mode bottom navigation with inline SVG icons matching the current app semantics: home, search/shifts, file-text/applications, message-circle/chats, circle-user/profile, plus-square/create, and briefcase/posts.
+
+Version 40
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Added a full real-app dark color override layer in src/app/globals.css for html[data-tg-scheme="dark"] and html[data-theme="dark"], preserving current layout, spacing, radii, and structure while remapping existing hardcoded Tailwind colors.
+- Added local dark preview support in src/lib/telegram/webapp.ts via ?theme=dark or localStorage doobler-theme=dark, while keeping Telegram colorScheme support.
+
+Version 41
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Added src/components/theme/theme-toggle.tsx with a sun/moon switch that persists the selected light or dark theme in localStorage and updates document theme attributes immediately.
+- Placed the theme switch in the top-right area of src/app/(app)/home/page.tsx next to the Dubler/city brand pill.
+- Updated src/lib/telegram/webapp.ts so a manually selected theme overrides Telegram colorScheme consistently, including switching back to light inside Telegram.
+
+Version 42
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Fixed dark-mode chat list dividers in src/app/globals.css so divide-[#eef1f4], divide-[#eef3f7], and divide-white no longer render as bright separators.
+- Restored text-white to real white in dark mode so blue action cards like "Создать смену" keep white text.
+
+Version 43
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Replaced the dark-mode warm warning surface color in src/app/globals.css with a cleaner deep blue-gray tone so phone verification cards no longer look muddy brown.
+- Lightened dark-mode danger badge colors so labels like "Активен" look softer and more readable.
+
+Version 44
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Deleted the local test user "Игорь Панов" (username igor_shift) from the development database together with 1 related conversation and 1 related assignment.
+- Added a soft-action-link dark-mode style in src/app/globals.css so secondary "Смотреть" buttons are light and readable.
+- Applied soft-action-link to secondary profile quick-action buttons in src/components/profile/profile-summary.tsx.
+
+Version 45
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Replaced Tailwind divide-y on the chat list with a chat-list-card class in src/components/chat/chats-index.tsx.
+- Added explicit light/dark chat-list-card separators in src/app/globals.css so dark chat rows no longer show bright white divider lines.
+
+Version 46
+Date: 2026-05-03
+Author: codex gpt-5.4
+Changes:
+- Rewrote README.md with an up-to-date project overview, local/ngrok setup, feature list, commands, checks, and repository hygiene notes.
+- Added /backups to .gitignore so local backup artifacts are not committed again.
+- Removed tracked legacy backup files from backups/2026-04-22-profile-ui from Git.
+
+Version 47
+Date: 2026-05-04
+Author: codex gpt-5.4
+Changes:
+- Added design-test/map-test.html with a standalone static Yandex map preview concept for shift/profile address cards in light and dark themes.
+- Collected a local OpenStreetMap/Overpass metro station snapshot for Moscow, Saint Petersburg, Kazan, Nizhny Novgorod, Novosibirsk, Samara, and Ekaterinburg.
+- Added src/lib/geo/metro-stations.ts with 370 metro stations and helpers for distance calculation and nearest-station lookup.
+- Added src/lib/geo/metro-stations.test.ts to verify the Kazan station snapshot and nearest metro lookup.
+
+Version 48
+Date: 2026-05-04
+Author: codex gpt-5.4
+Changes:
+- Expanded design-test/map-test.html with scrollable light and dark phone mockups.
+- Added employer profile and applications sections below the static map concept to preview the full shift-detail flow.
+
+Version 49
+Date: 2026-05-04
+Author: codex gpt-5.4
+Changes:
+- Added the approved static map design to the real shift details page.
+- Added ShiftLocationMap with Yandex Maps deep-link support, static-map URL support when coordinates and NEXT_PUBLIC_YANDEX_STATIC_MAPS_KEY are available, and a styled fallback map preview.
+- Added ShiftEmployerCard below the map for workers viewing a shift.
+- Extended ShiftCard data with optional pickup point lat/lng and mapped these coordinates from linked pickup points.
+- Added light/dark CSS for the real static map preview in src/app/globals.css.
+- Verified with npm run lint and npm run typecheck.
+
+Version 50
+Date: 2026-05-04
+Author: codex gpt-5.4
+Changes:
+- Moved the shift location map block to the top of the shift details page.
+- Removed the duplicated "district and address" mention from the shift info grid and replaced it with a simple city tile.
+- Added ShiftPost lat/lng fields to Prisma and mapped them through shift services and ShiftCard data.
+- Extended DaData address verification to return geo_lat/geo_lon so new shifts save coordinates.
+- Backfilled coordinates for 21 existing local shift posts from DaData.
+- Switched the static map renderer to the working Yandex static-maps 1.x PNG endpoint because the existing Yandex API key returns 403 for the newer Static API v1 endpoint.
+- Ran prisma generate, prisma db push, npm run typecheck, and npm run lint successfully.
+
+Version 51
+Date: 2026-05-04
+Author: codex gpt-5.4
+Changes:
+- Cleaned the visible shift map address label so region/country/city/district parts are removed from the displayed address while the full address remains available for Yandex Maps search links.
+
+Version 52
+Date: 2026-05-04
+Author: codex gpt-5.4
+Changes:
+- Restored the district segment in the visible shift map location label while keeping region/country/city noise removed from the compact address part.
+
+Version 53
+Date: 2026-05-04
+Author: codex gpt-5.4
+Changes:
+- Removed the duplicate small external-link button from the shift map card and kept one full-width "Show on big map" action.
+
+Version 54
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Removed demoProfile/demoApplications fallbacks from app pages that could show the demo "Игорь Панов" profile while Telegram auth or profile loading was incomplete.
+- Made development Telegram auth fallback require an explicit valid NEXT_PUBLIC_DEV_TELEGRAM_ID instead of silently falling back to a demo user.
+- Added an auth route test to ensure enabled fallback without an explicit dev user is denied instead of logging in as demo data.
+
+Version 55
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Kept the Mini App splash screen visible until /api/auth/me verifies the Telegram session instead of allowing cached shell state to reveal stale server-rendered page content.
+- Added a post-auth router.refresh() delay so server-rendered app pages reload with the fresh session cookie before showing the interface.
+- Added a minimum auth loading duration to make the login transition stable when Telegram WebApp/initData arrives slowly.
+
+Version 56
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Removed the visible border around the chat messages area.
+- Removed bright chat header/composer outlines and shadows in dark mode so the chat screen no longer shows white artifacts.
+
+Version 57
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Rebuilt design-test/dialog-design.html as a UTF-8 chat design sandbox with four concepts: chat list, clean current dialog, work-context dialog, and compact messenger-style dialog.
+- Used current Dubler colors, dark theme direction, bottom navigation, avatars, message bubbles, attachment preview, and composer behavior as the base.
+
+Version 58
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Reworked design-test/dialog-design.html to use one consistent dark theme across all chat concepts instead of mixing light and dark surfaces.
+- Adjusted the preview phone to the real Mini App frame size of 430x844 with app-shell padding and bottom navigation spacing matching the current layout.
+- Rebuilt the concept bottom navigation with six current owner items and lucide-style SVG icons for Home, Shifts, Create, My Shifts, Chats, and Profile.
+
+Version 59
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Increased vertical spacing in the shift-context chat concept so message bubbles have more breathing room.
+- Kept the shift card, phone sizing, and bottom navigation unchanged.
+
+Version 60
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Implemented the shift-context chat design in the real ChatConversation screen.
+- Added activeShift data to getConversationForUser by selecting the latest relevant assignment between chat participants, prioritizing in-progress, future confirmed, then completed shifts.
+- Passed activeShift from the chat detail page into the client chat component and rendered status-aware cards for upcoming, active, and completed shifts.
+- Verified the change with typecheck, lint, production build, and the full Vitest suite.
+
+Version 61
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Compressed the chat shift-context card so it no longer takes over the conversation screen.
+- Changed the shift card to a compact horizontal summary with status, marketplace, title, date/time, payment, and truncated location in one meta line.
+- Verified the compact card with typecheck and lint.
+
+Version 62
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Reduced the real chat shift-context card to match the compact design-test example: no icon column, no marketplace badge, two short text lines only.
+- Restarted the local Next.js dev server so the browser stops showing the stale oversized card from the previous HMR state.
+- Verified the change with typecheck, lint, and a browser load of /chats without console errors.
+
+Version 63
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Replaced the real chat shift-context card with the compact green design from dialog-design concept 03.
+- Removed status-style visual treatment, icons, and marketplace badges from the real shift card so it matches the two-line green concept.
+- Verified the change with typecheck and lint.
+
+Version 64
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Removed the separate rounded/background container around the chat message list so the real dialog matches design-test concept 03 without a chat frame.
+- Updated dark-mode CSS so chat-messages-scroll stays transparent instead of being forced into its own dark card.
+- Verified with typecheck, lint, and a browser load of /chats without console errors.
+
+Version 65
+Date: 2026-05-05
+Author: codex gpt-5.4
+Changes:
+- Changed the chat shift-context card in light theme to a soft translucent light-green surface with darker green text.
+- Added dark-theme overrides so the same card remains the compact dark green concept in dark mode.
+- Verified with typecheck, lint, and a browser load of /chats without console errors.
+
+Version 66
+Date: 2026-05-05
+Author: claude opus 4.7 high
+Changes:
+- Fixed a runtime crash in `getProfileShell` / `getAppAccessState` where the home page logged `[profile-service] getProfileShell failed {}` because the running dev server held a stale Prisma client that did not know about the new `identityVerifications` relation on `User`.
+- Re-ran `npm run db:generate` to refresh `src/generated/prisma` and `npm run db:push` (already in sync) so the Postgres schema matches the latest `prisma/schema.prisma`.
+- Terminated the stale `next dev` / `npm run dev` / postcss daemon node processes (started 09:35, before the Prisma regenerate) so the next dev start picks up the regenerated client.
+- Improved `console.error` formatting in `src/server/services/profile-service.ts` for `getProfileShell` and `getProfile`: the log now inlines the error message and passes the raw `error` as a second argument, so Next.js 16 dev overlay shows real details instead of an empty `{}`.
+- Fixed CP1251/UTF-8 mojibake in `withPhoneBadge` fallback strings in `src/server/services/profile-service.ts` (`"РџСЂРѕС„РёР»СЊ"` → `"Профиль"`, `"РќРѕРјРµСЂ..."` → `"Номер телефона подтверждён"`).
+- Verified with `npm run typecheck` and `npm run lint` (both pass).
+- NOTE for the user: please restart the dev server (`npm run dev` or `npm run dev:ngrok`) so the freshly regenerated Prisma client gets loaded; the in-memory state of the previously running server was the actual cause of the overlay error.
+
+Version 67
+Date: 2026-05-05
+Author: claude opus 4.7 high
+Changes:
+- Renamed the identity-verification action button in `src/components/profile/phone-verification-panel.tsx` so that when `identityVerificationStatus === "NEEDS_MORE_PHOTOS"` the button now reads "Дополнить заявку" instead of "Подтвердить документы". All other statuses keep the original label.
+- Verified with `npm run typecheck` and `npm run lint` (both pass).
+
+Version 68
+Date: 2026-05-05
+Author: claude opus 4.7 high
+Changes:
+- Fixed dark-theme contrast in the verification warning card (`PhoneVerificationPanel`): the `bg-white/70` "Требуется уточнение: …" pill used to render as a washed-out near-white block with amber text, making the note almost invisible on dark.
+- Added a scoped dark-mode override in `src/app/globals.css` so `bg-white/70` inside the orange warning card (`bg-[#fff7eb]` / `bg-[#fff7ea]` / `bg-[#fff4e8]`) becomes a subtle translucent dark surface (`rgba(255,255,255,0.05)`) with a soft amber inset border. The existing amber text override (`#f0c778`) now has enough contrast to be readable.
+- Verified with `npm run lint`.
+
+Version 69
+Date: 2026-05-05
+Author: claude opus 4.7 high
+Changes:
+- Hardened `src/lib/prisma.ts` to throw a clear startup error when `DATABASE_URL` is not set, instead of silently falling back to `postgres:postgres@localhost`. This removes a whole class of "deployed to the wrong DB" bugs.
+- Added `src/lib/geocoder/dadata-fetch.ts` with a shared `fetchDaData(url, init, timeoutMs=3000)` helper that wraps every DaData call in an `AbortController`. Rewrote the three DaData call sites in `src/lib/geocoder/yandex-suggest.ts` and `src/lib/geocoder/yandex-geocode.ts` to use it. A timeout now throws `DADATA_TIMEOUT`, which is already caught by the existing `DADATA_*` error branches in `/api/address-verify` and `/api/address-suggestions` (502 "DaData temporarily unavailable"). Prevents stuck upstream requests from accumulating workers.
+- Hardened `/api/auth/client-debug` in `src/app/api/auth/client-debug/route.ts`: added in-memory per-IP rate limit (20 req/min) via the existing `checkInMemoryRateLimit` helper, a hard 8 KB body-size cap (checked both via `Content-Length` and on the parsed text), and early 429/413 responses without logging. Auth is intentionally not required because this endpoint is used to report Telegram WebApp bootstrap failures when no session exists yet.
+- Tightened `/api/cities` in `src/app/api/cities/route.ts`: added `take: 500` for non-search queries (safety cap against table growth), `take: 50` for `q`-search, and a 2-character minimum on `q`. Short `q` strings now return an empty list instead of scanning the whole table. Applied the same slicing to the demo-data fallback branch.
+- Verified with `npm run typecheck`, `npm run lint`, and `npm run test` (44 passed, up from the README baseline of 41 because of new identity-verification tests that landed earlier). The running `npm run dev:ngrok` process picked up the changes via HMR without additional restart.
+
+Version 70
+Date: 2026-05-05
+Author: claude opus 4.7 high
+Changes:
+- Extended `.gitignore` to cover `.codex-*.log` and `.postgres-*.log` so local dev sessions stop dropping tracked-looking log files into the repo root.
+- Audited auth-route logging (`src/app/api/auth/me`, `.../telegram`, `.../bot-token`). Result: no raw `initData`, `phone`, `token`, or `hash` values are logged — only lengths, ids, and metadata. No changes needed there.
+- While auditing `auth/me`, found four user-facing `fail()` messages and a block of code comments stored as CP1251-as-UTF-8 mojibake (users were seeing `РЎРµСЃСЃРёСЏ РЅРµ РЅР°Р№РґРµРЅР°.` instead of `Сессия не найдена.`). Restored the original Russian text.
+- Ran a repo-wide scan for the same mojibake pattern; confirmed `auth/me` was the last remaining file (earlier pass cleaned `profile-service.withPhoneBadge`).
+- Split the previously uncommitted working tree into five logical commits on `main`:
+  1. `chore: ignore local dev log files`
+  2. `fix(auth): repair mojibake in /api/auth/me user-facing messages`
+  3. `security: harden config, geocoder timeouts, and public endpoints` (the four-pack from v69)
+  4. `feat(verification): identity verification flow + polish` (the large identity-verification feature plus bundled profile-service cleanup, dark-mode pill contrast, and "Дополнить заявку" button)
+  5. `docs: append update-logs entries for versions 66-69`
+- Final verification: `npm run typecheck`, `npm run lint`, and `npm run test` all pass (44 tests).
+
+Version 71
+Date: 2026-05-05
+Author: claude opus 4.7 high
+Changes:
+- Refreshed `README.md` to reflect the current state of the project:
+  * "Что уже есть": added identity verification flow, DaData-backed address suggestions with timeout, and rate-limit coverage notes.
+  * "Стек": added `@prisma/adapter-pg`, Telegram WebApp SDK, and DaData.
+  * "Структура": expanded src/lib (geocoder, notifications, rate-limit, scoring, validations), src/server/services (identity-verification), the new admin/verifications UI, and mentioned `design-test/`.
+  * "Настроить окружение": marked DATABASE_URL as required with explicit hard-fail behaviour; added `DADATA_API_KEY`; clarified which vars are optional.
+  * "Проверка Telegram flow": added the identity-verification check steps (submit, admin review, NEEDS_MORE_PHOTOS → "Дополнить заявку").
+  * Tests baseline bumped from 41 → 44.
+  * "Важные заметки": called out the `prisma generate` requirement, listed the `.codex-*`/`.postgres-*` log ignore patterns, documented the DaData fetch wrapper.
+  * "Ближайшие направления": added nonce-based CSP migration and Redis-backed rate-limit as future work; kept existing items.
+
+Version 72
+Date: 2026-05-05
+Author: claude opus 4.7 high
+Changes:
+- Soft performance pass — eliminated four DB roundtrips on hot paths without changing any observable behaviour.
+- `src/app/(app)/chats/[id]/page.tsx` now calls `getCurrentUserRecord()` instead of `getCurrentUser()`. Both hit `User.findUnique`, but the `(app)/layout.tsx` above already calls `getCurrentUserRecord` via `getAppAccessState`, so the page now reuses the same React-cached result and saves one SELECT on every chat detail render.
+- `src/app/(app)/profiles/[userId]/page.tsx` got the same treatment — `Promise.all([getProfile(userId), getCurrentUserRecord()])` replaces `Promise.all([getProfile(userId), getCurrentUser()])`. Saves one SELECT per public-profile view.
+- `src/app/(app)/home/page.tsx`: `listShiftPosts({urgentOnly})` and `getUpcomingAssignmentForWorker()` are now wrapped in `Promise.all` instead of running sequentially. Independent queries → home page latency ≈ max(two queries) instead of sum.
+- `src/server/services/chat-service.ts::getConversationForUser` no longer makes a separate `assertParticipant` call. The existing `conversation.findUnique` already selects all participants with their user data, so the participation check now runs in JS against the returned data and returns `NOT_A_PARTICIPANT` if the current user isn't there. One less SELECT per chat detail view.
+- Verified with `npm run typecheck`, `npm run lint`, and `npm run test` (all 44 tests pass). No semantics change: the 401/403/404 error paths and the public API of these functions are unchanged.
+
+Version 73
+Date: 2026-05-06
+Author: codex gpt-5.4
+Changes:
+- Normalized `update-logs` from mixed legacy bytes to valid UTF-8 so future patches can edit the file safely.
+- Preserved existing authors, including Claude-authored entries.
+- Stored a temporary pre-normalization backup outside the repository before rewriting the file.
+
+Version 74
+Date: 2026-05-06
+Author: codex gpt-5.4
+Changes:
+- Replaced the shift report placeholder link with a real "Report shift" modal on the shift details page.
+- Added report submission to `/api/reports` with shift-specific reason codes and optional moderator comment.
+- Hardened shift report creation by checking that the shift exists, blocking reports on your own shift, and preventing duplicate open reports from the same user.
+- Added automatic risk levels for shift reports so fake shifts, suspicious employers, and payment issues reach admin moderation with higher priority.
+- Verified with typecheck, lint, production build, and the full Vitest suite.
+
+Version 75
+Date: 2026-05-06
+Author: codex gpt-5.4
+Changes:
+- Added public `/privacy` and `/offer` pages with privacy policy and public offer text for Doobler.
+- Covered Telegram Mini App data, profile data, phone verification, identity document verification, chats, reports, payments, and technical logs in the privacy policy.
+- Added offer clauses that Doobler only charges service commission, does not hold shift payments, is not an employer, and is not responsible for users' real-world actions on shifts.
+- Added explicit language that Doobler is independent from Ozon, Wildberries, Yandex Market, Avito, CDEK, Boxberry, and other marketplaces or delivery/PVZ networks.
+- Added onboarding links to the public offer and privacy policy below the registration submit button.
+- Verified with typecheck, lint, production build, and the full Vitest suite.
+
+Version 76
+Date: 2026-05-06
+Author: claude opus 4.7 high
+Changes:
+- Fixed `npm run dev:ngrok`, `npm run ngrok:sync` and `npm run bot:register`. The three scripts had been broken by ESM hoisting: `dev-ngrok.ts` and `sync-ngrok-url.ts` placed `dotenv.config({ path: ".env.local" })` between two groups of `import` statements, expecting it to run before the second group. In strict ESM all imports are hoisted before any top-level statement, so `src/lib/telegram/bot.ts` → `src/lib/prisma.ts` loaded with an empty `process.env.DATABASE_URL` and tripped the v69 hard-fail guard with `Error: DATABASE_URL is not set.`.
+- Switched the three scripts in `package.json` to `node --env-file-if-exists=.env --env-file-if-exists=.env.local --import=tsx scripts/<file>.ts`. Node 22's native env-file loader runs before any module is imported, so `DATABASE_URL` is set by the time `prisma.ts` evaluates. `--env-file-if-exists` (vs `--env-file`) keeps the scripts working when only one of the two env files is present.
+- Verified by killing the workaround-launched ngrok+next pair and starting a fresh `npm run dev:ngrok`. New tunnel `https://ef62-167-148-195-5.ngrok-free.app` came up, Telegram `setWebhook` returned `Webhook was set`, Next dev was Ready in 934ms, `/api/health` returns `databaseUrlConfigured:true, telegramBotConfigured:true, sessionSecretConfigured:true` both locally and through the ngrok tunnel.
+- Did not touch the inline `dotenv.config(...)` calls inside the script files. They are now redundant when run via `npm run`, but they keep `tsx scripts/<file>.ts` working for direct invocation, so left them as a fallback.
+- Re-ran `npm run lint`, `npm run typecheck`, `npm run test` (44/44) and `npm run build` after the change — all green.
+
+Version 77
+Date: 2026-05-06
+Author: claude opus 4.7 high
+Changes:
+- Diagnosed user complaint "Mini App opens but stays on the splash with 'Профиль не найден'". Logs showed `auth/telegram` and `auth/me` returned 200, but the second `GET /home` triggered by `router.refresh()` after auth took 21 seconds (`application-code: 21.3s`). Server logs surfaced `prisma:error P1017: Server has closed the connection. ConnectionClosed` followed by Prisma silently re-establishing the pg connection, eating most of those 21 seconds.
+- Root cause: `src/lib/prisma.ts` constructed `new PrismaPg(connectionString)`, which is forwarded to `pg.Pool` as `{ connectionString }` only. `pg.Pool` defaults to `keepAlive: false` and `idleTimeoutMillis: 10_000`, so on Windows-dev local Postgres 18 the idle TCP socket was being killed (Windows Firewall / AV / pg.Pool's own 10 s idle close), and the very next request paid 5–20 s to reconnect. This was the actual cause of the "Mini App is dead" experience — not Postgres being broken.
+- Fixed `src/lib/prisma.ts` to pass an explicit `pg.PoolConfig` to `PrismaPg`: `keepAlive: true`, `keepAliveInitialDelayMillis: 30_000` (TCP keepalives so intermediate firewalls do not drop the connection), `idleTimeoutMillis: 60_000` (one minute instead of ten seconds — fewer reconnect storms during dev), `max: 10` (kept explicit so dev-Turbopack hot imports cannot accidentally explode the pool). Behaviour is also safer for production VDS deploys when they happen.
+- Restarted `npm run dev:ngrok` so the cached `globalThis.prisma` instance picks up the new pool config. New tunnel `https://eb35-167-148-195-7.ngrok-free.app`, webhook re-set, Next dev Ready in 663 ms.
+- Verified the fix with three soak passes against `/api/shift-posts` over the ngrok tunnel: (1) 5 back-to-back hits — all 0.47–0.55 s, no reconnect; (2) 30 s idle, then 3 hits — all 0.44–0.51 s, no reconnect; (3) full warm-up of 11 routes runs without any `P1017`. Before the fix back-to-back hits randomly took up to 14 s and idle reconnects took 11–21 s.
+- Also did a routine warm-up pass for the dev box: hitting `/home /shifts /profile /chats /applications /onboarding /api/auth/me /api/shift-posts /api/marketplaces /api/cities /api/regions` once each so Turbopack pre-compiles before the user opens the Mini App from a fresh ngrok URL. This is a workflow note, not a code change — the underlying cold-start cost is inherent to `next dev` + Turbopack.
+- Re-ran `npm run typecheck`, `npm run lint`, `npm run test` — 44/44 still green. Did not run `npm run build` again because the only change is in `src/lib/prisma.ts` and is purely runtime configuration; production behaviour is identical except for the new pool params (which are passed-through `pg.PoolConfig`).
+
+Version 78
+Date: 2026-05-06
+Author: claude opus 4.7 high
+Changes:
+- REVERT of v77 pool tuning. The "fix" was a regression: it crippled `pg.Pool` parallelism. Confirmed with `pg_stat_activity`: under 5 concurrent `/api/shift-posts` requests the pool only ever opened **1** client (everything else queued on it), so each request waited ~12 s. After reverting to the original `new PrismaPg(connectionString)` form, 5 concurrent requests finish in ≤1.5 s and `pg_stat_activity` shows the expected `10 idle + 1 active` split. The user-visible symptom — "стало оооочень медленно работать" — was real and was caused by my v77 change.
+- Why v77 broke: passing an explicit options object (`{ connectionString, keepAlive: true, keepAliveInitialDelayMillis, idleTimeoutMillis, max: 10 }`) to `new PrismaPg(...)` somehow lands in a code path where `pg.Pool` does not scale beyond a single concurrent client. The string-shaped `new PrismaPg(connectionString)` form (which the code had since `bfd800d`) does not have this problem, even though it passes a near-equivalent `{ connectionString }` to `pg.Pool` internally. Did not chase the exact root cause inside `@prisma/adapter-pg@7.7.0` — reverting was the correct first action.
+- The original v77 motivation (`P1017: Server has closed the connection` on the very first burst of 19 parallel route warm-ups) was a one-off caused by Turbopack mass-compiling 19 routes simultaneously, not a chronic Windows-firewall-kills-idle-sockets issue. Sequential and reasonable-fanout traffic does not reproduce it. So the v77 trade-off was bad on its own merits even before discovering the pool-scaling regression.
+- `src/lib/prisma.ts` is now exactly back to its `5446fcc`-state contents: the v69 hard-fail check stays, no pool tuning. v76 (`package.json` env-file fix) is unaffected and still in place.
+- Verified after revert + dev-server restart: warm-up of `/home /api/shift-posts /api/auth/me /api/marketplaces /api/cities` at 0.7–10.8 s (cold compile dominates, Prisma is fine); 5 parallel `/api/shift-posts` at 0.95–1.54 s; 8 parallel mixed (`/api/shift-posts ×2 /home ×2 /api/marketplaces /api/cities /api/regions /api/auth/me`) at 0.6–2.8 s; `pg_stat_activity` confirms `10 idle + 1 active`. No `P1017` and no `client.query() while still executing` deprecation warnings.
+- Lesson for future agents: when touching `pg.Pool` config through the Prisma adapter, run `pg_stat_activity` under concurrent load to confirm the pool actually scales out. Soak-testing only with sequential traffic missed this regression in v77.
+
+Version 79
+Date: 2026-05-06
+Author: claude opus 4.7 high
+Changes:
+- Added per-query Prisma logging behind a `PRISMA_QUERY_LOG=1` flag in `src/lib/prisma.ts`. When enabled, every SQL statement is emitted with a duration in ms; queries slower than `PRISMA_SLOW_QUERY_MS` (default 200 ms) are tagged `[prisma:slow]` with the bound parameters. Off by default so `npm run dev` stdout stays clean.
+- Used the new logging to confirm post-revert performance is good: cold `/home` ~1.3 s (Turbopack first compile dominates), warm `/home` ~50–180 ms across 11 SELECTs of 1–7 ms each, `/api/auth/me` ~30–90 ms, no `[prisma:slow]` warnings on real Mini App traffic. The user's earlier "оооочень медленно" complaint was caused by v77 (now reverted), not by anything else.
+- Diagnosed user complaint "Яндекс карты не загрузились на странице смены". Cause: when creating the latest shift `cmotswq7400016ctbjgywf97i`, `verifyAddressSelection` in `src/server/services/shift-post-service.ts` got `DADATA_TIMEOUT` from the 3-second `fetchDaData` deadline and the catch fell back to `lat/lng = null`. The shift was created successfully but with no coordinates, so `ShiftLocationMap` rendered the CSS placeholder instead of the static-map PNG. `static-maps.yandex.ru/1.x/` itself still works (PNG, 200 OK) — the issue is empty `ShiftPost.lat/lng`.
+- Fixed `src/lib/geocoder/yandex-geocode.ts`: extended the anti-tamper re-verify on shift creation to use an 8-second DaData timeout instead of 3. Hot read paths (`/api/address-suggestions` while typing, `/api/address-verify` on click) keep the 3-second deadline because they block UX. The shift-creation submit is a one-shot POST where the user is already waiting for `/api/shift-posts` to complete, so an extra few seconds is acceptable in exchange for actually persisting coordinates. Added `timeoutMs?: number` parameter to both `requestDaDataSuggest` and `requestDaDataFindById` and threaded `VERIFY_TIMEOUT_MS = 8_000` through `verifyAddressSelection`.
+- Verified with `npm run typecheck`, `npm run lint`, `npm run test` — all green, 44/44 tests still pass.
+- The already-created `тест тест тест` shift will keep showing the CSS placeholder unless re-created; existing shifts with non-null `lat/lng` (the previous five in the table) keep rendering the real Yandex static map.
+
+Version 80
+Date: 2026-05-06
+Author: claude opus 4.7 high
+Changes:
+- Added "delete shift" flow for owners on the shift details page. Authors of a `ShiftPost` now see a "Опасная зона" section with a destructive button that opens a confirm modal and calls the new `DELETE /api/shift-posts/[id]` endpoint.
+- New service function `deleteShiftPost(id, actorUserId)` in `src/server/services/shift-post-service.ts`. Verifies the actor is the post author and refuses with `FORBIDDEN` otherwise (the API surfaces this as 404 on purpose, so we don't confirm the existence of someone else's post). Refuses with `HAS_ACTIVE_ASSIGNMENT` if the shift has an Assignment in `CONFIRMED` or `IN_PROGRESS` — in that case the owner has to cancel the shift first (`updateShiftPostStatus(.., CANCELLED, ..)`), which detaches the assignment, and only then delete. Final delete is a `deleteMany({ id, createdByUserId })` so we cannot accidentally drop someone else's row if `createdByUserId` flips mid-request.
+- New `DELETE` handler in `src/app/api/shift-posts/[id]/route.ts` returns 401 without a session, 404 on `FORBIDDEN`, 409 on `HAS_ACTIVE_ASSIGNMENT`, 500 on anything else. Reuses the existing `getSessionPayload()` auth flow.
+- New client component `src/components/shifts/shift-delete-button.tsx` with a destructive button + confirm modal (cannot be dismissed mid-request). On success it `router.push("/posts")` then `router.refresh()`. Errors from the API are surfaced inside the modal in red.
+- Replaced the old hardcoded "Пожаловаться" link to `/moderation` on `src/app/(app)/shifts/[id]/page.tsx` with the real `ShiftReportButton` (added in v74) — but only for non-owners; owners don't see a "report your own shift" link anymore.
+- Cascading deletes already cover `Application`, `Assignment`, and `Favorite` via `onDelete: Cascade` in `prisma/schema.prisma`, so no extra SQL is needed. `Report` rows are intentionally not cascaded — the model is polymorphic (`targetType + targetId`) and the moderator audit trail outlives the shift; future moderators see a dangling `targetId` and can close the report.
+
+Version 81
+Date: 2026-05-06
+Author: claude opus 4.7 high
+Changes:
+- Closed a chat-spam vector on the shift details flow. A worker viewing the shift could open the owner's public profile and tap "Написать в чат", initiating an unsolicited DM with the employer.
+- Server: extended `ensureConversation` in `src/server/services/chat-service.ts` to also fetch `roles` for both sides. Order: existing conversation is always returned first (so a worker can still reply if the owner already opened a chat). On creation only, if the peer has the `OWNER` role and the current user does not, throw `OWNER_PEER_FORBIDDEN`. Owners can still open chats with anyone (e.g. with applicants on their shifts), and worker→worker chats stay unaffected.
+- API: handled `OWNER_PEER_FORBIDDEN` in `src/app/api/chats/route.ts` POST as `403` with a clear message asking the worker to wait until the owner writes first.
+- UI: in `src/app/(app)/profiles/[userId]/page.tsx` the `<StartChatButton>` is hidden when the peer is an OWNER and the viewer is not. The profile, reviews, and rating remain fully visible. `application-card.tsx` was left as-is intentionally — it's shown on `/applications` to a worker who already has an open application; if they click "Написать работодателю" the server now surfaces the same dedicated 403 instead of a generic error, which is acceptable as a soft-fail. Existing chats opened by the owner appear in `/chats` and continue to work for the worker because `ensureConversation` returns the existing row before the role check.
+- Replaced the silent "уже откликался" failure on shift cards. Previously a worker's second tap on "Откликнуться на смену" hit the `@@unique([shiftPostId, applicantUserId])` index, surfaced as a raw P2002 → API 500 → "Не удалось откликнуться на смену.". Now both sides are handled:
+  - Server: `applyToShift` in `src/server/services/application-service.ts` catches `Prisma.PrismaClientKnownRequestError` with `code === "P2002"` and rethrows as a domain error `already_applied`, which the API maps to `409` with `"Вы уже откликнулись на эту смену."` (`src/app/api/shift-posts/[id]/applications/route.ts`). Added `already_applied` to the businessErrors set so the demo-fallback path doesn't swallow it.
+  - SSR: new lightweight helper `hasUserAppliedToShift(shiftPostId, applicantUserId)` in `application-service.ts` does a single `prisma.application.findUnique` on the unique compound key. Errors are logged and ignored — the page still renders and the user falls back to the friendly 409.
+  - UI: `ShiftActions` (`src/components/shifts/shift-actions.tsx`) gained an `alreadyApplied` prop. When true, the apply button is initially disabled and reads "Вы уже откликнулись" instead of "Откликнуться на смену". The shift detail page (`src/app/(app)/shifts/[id]/page.tsx`) computes the flag only for non-owners that are also not viewing their own shift.
+- Made the "Показать на большой карте" CTA on the shift static map full-width to match the rest of the call-to-action buttons in the card. Previously it was `inline-flex` and sized to its text, which looked stubby next to the wide map preview. Switched to `flex w-full` and folded the wrapping `<div>` into the `<Link>` itself in `src/components/shifts/shift-location-map.tsx`.
+- Verified with `npm run typecheck`, `npm run lint`, and `npm run test` — all 44 tests still green. Did not run `npm run build` because the changes are limited to existing route handlers and components and `npm run dev:ngrok` is already serving the new code through the live ngrok tunnel.
+
+Version 82
+Date: 2026-05-06
+Author: claude opus 4.7 high
+Changes:
+- Performance pass — cut DB roundtrips on the hottest polling paths in the Mini App. Six API routes plus two service functions touched, no observable behaviour change.
+- `src/app/api/chats/[id]/messages/route.ts` GET and POST swapped `getCurrentUser()` (User.findUnique with roles-join) for `getSessionPayload()` (JWT decode, no SQL). Access is still enforced by `assertParticipant` inside `listMessages`, and `sendMessage` already reads `author.isBanned` from the participants findMany, so the upstream User SELECT was dead weight. GET is hit every 8 s by `chat-conversation.tsx` polling — saves ~7.5 SELECTs/min per active chat.
+- Same swap applied to `src/app/api/chats/unread/route.ts` (polled every 30 s by `useUnreadChats`), `src/app/api/chats/[id]/route.ts`, and `src/app/api/chats/[id]/read/route.ts`. Each one only used `current.id`; the underlying service either re-checks participation (`getConversationForUser`, `markConversationRead`) or scopes by `userId` directly (`getTotalUnreadCount`).
+- `markConversationRead` in `src/server/services/chat-service.ts` collapsed `assertParticipant` (SELECT) + `update` (UPDATE) into a single `updateMany({ where: { conversationId, userId } })`. Same NOT_A_PARTICIPANT semantic via `result.count === 0`. Saves one roundtrip per chat-open and per "scrolled to bottom" auto-mark.
+- `sendMessage` in the same file dropped its leading `assertParticipant` call. The `findMany` over `ConversationParticipant` that follows already returns the current user's participation row; if it's missing we now throw `NOT_A_PARTICIPANT` (the API already maps it to 403). Saves one SELECT per message sent.
+- `src/app/api/profile/route.ts` view=phone-status used to call `getCurrentUserRecord()` with the wide `accessUserSelect` (roles + verifications + identityVerifications + city joins) just to read `isPhoneVerified`. Replaced with a narrow `prisma.user.findUnique({ select: { isPhoneVerified: true } })`. The endpoint is polled by `phone-verification-panel.tsx` while the user is sharing their contact through the Telegram bot, so this used to fire ~15 fat SELECTs/min during the phone-verification flow.
+- Bumped the `phone-verification-panel.tsx` polling interval from 4 s to 6 s. Telegram contact-share callbacks usually land in 1-2 s, and `focus`/`visibilitychange` listeners already retrigger the check immediately when the user switches back to the Mini App, so the 4 s tick was overkill.
+- `src/app/(app)/shifts/[id]/page.tsx` parallelised the three independent prefetches: `getShiftPostById(id)`, `getSessionPayload()`, and `getCurrentUserRecord()` are now run via `Promise.all`. Saves up to 1-2 roundtrips on a cold render. The dependent calls (`listApplicationsForShift` for owners, `hasUserAppliedToShift` for non-owner workers) stay sequential because they need the canManage/role decisions first.
+- Considered but skipped: home-page double-`await` (`getSessionPayload` then `getProfileShell`). `getProfileShell` already shortcircuits to the cached `getCurrentUserRecord`, so the actual DB cost is one SELECT. Skipping kept the diff small.
+- Verified with `npm run typecheck`, `npm run lint`, `npm run test` — all 44 tests still green. Existing `chat-service` API contracts (`NOT_A_PARTICIPANT`, `CONVERSATION_NOT_FOUND`, `USER_BANNED`) are preserved; route-handlers already mapped them to 403/404/403 respectively.
+
+Version 83
+Date: 2026-05-06
+Author: claude opus 4.7 high
+Changes:
+- Incremental message sync — `chat-conversation.tsx` no longer re-downloads the last 80 messages every 8 seconds. The polling tick now sends `?sinceId=<lastKnownMessageId>` and the server returns only messages newer than that cursor. In a quiet chat this collapses each tick to a tiny payload over two index-scans on `(conversationId, createdAt, id)`. Initial load and "scroll up to load older" still use the existing `?limit=80` / `?beforeId=<id>` paths.
+- `listMessages` in `src/server/services/chat-service.ts` got a new `sinceId` mode. Cursor lookup is intentionally lenient: if the message id was deleted or belongs to a different conversation, we return `{ messages: [], hasMore: false }` instead of throwing — clients keep their existing state and can fall back to a full reload via `loadInitial` on focus/visibility events. Same `assertParticipant` check at the top, so authorisation behaves identically.
+- API: `src/app/api/chats/[id]/messages/route.ts` GET now accepts the new `sinceId` query parameter alongside the existing `beforeId` and threads it into the service. Both can theoretically be sent; service treats `sinceId` as the priority because that's the live-update path.
+- Client: split `load` into `loadInitial` (full fetch, replaces state) and `loadIncremental(sinceId)` (appends only new messages, dedupes by id). The polling tick uses `lastMessageIdRef.current` (already kept fresh by the existing scroll-to-bottom effect) to choose mode. Errors during incremental ticks are silently swallowed — the next focus or initial reload fixes any drift, and we don't want a transient network blip to flash an error toast every 8 seconds.
+- Fixed the long-standing `favorite: false` hardcode on the shift detail page. `getShiftPostById(id, currentUserId?)` in `src/server/services/shift-post-service.ts` now optionally fetches the user's `Favorite` row in parallel with the main `ShiftPost.findUnique` (one extra index lookup, no roundtrip cost). `mapShiftPost` accepts a `favorite` parameter that defaults to `false`. The shift detail page (`src/app/(app)/shifts/[id]/page.tsx`) reads `getSessionPayload()` first so it can pass `session.userId` into `getShiftPostById`, then runs the shift fetch and `getCurrentUserRecord()` in parallel. Public/anonymous and API callers stay on the old behaviour (no Favorite check, `favorite=false`).
+- Did not touch `listShiftPosts` favorite handling — feed cards always say "В избранное" until clicked, which is acceptable for now and would require an extra `Favorite.findMany({ in: postIds })` per request to fix.
+- Verified with `npm run typecheck`, `npm run lint`, `npm run test` — 44/44 tests still pass. Manual chat-flow check left for the live ngrok session: open a chat, watch the network panel — the periodic poll should now hit `/messages?sinceId=...` instead of `/messages?limit=80`, and the response should be `{"messages":[],"hasMore":false}` until a new message arrives.
+
+Version 84
+Date: 2026-05-06
+Author: claude opus 4.7 high
+Changes:
+- Real `favorite` flag on the public shift feed too. `listShiftPosts` now accepts an optional `currentUserId` filter; if passed, after the main query it does one batched `prisma.favorite.findMany({ where: { userId, shiftPostId: { in: ids } } })` and projects the resulting set into each `mapShiftPost(post, favorite)` call. Without `currentUserId` (anon `/api/shift-posts` clients) we keep the old `favorite=false` default. The home page (`urgent` posts), the main `/shifts` feed, and the `/api/shift-posts` GET handler all now thread `session?.userId` through. Owner's `/posts` view (`listMyShiftPosts`) intentionally left unchanged — owners don't favourite their own shifts.
+- Bounded the unbounded application history fetch. `listMyApplications` and `listApplicationsForEmployer` in `src/server/services/application-service.ts` now both have a hard `take: 50` ordered by `createdAt desc`. With multiple `shiftPost.createdBy` / `assignment.reviews` / `applicant.city` joins per row, an active worker or owner with hundreds of historic applications was loading megabytes per page render. The 50-row cap covers the realistic UI window; if anyone needs full history later, the existing `(applicantUserId, createdAt)` and `(employerUserId, createdAt)` indexes are ready for cursor-based pagination.
+- Tried-and-reverted micro-optimization: making `getCurrentUser` reuse the cached `getCurrentUserRecord` result. Reading the actual call sites showed every active `getCurrentUser` consumer is in `/api/*` route handlers (chat send/upload/managers/moderation/etc.), where `(app)/layout.tsx` doesn't run, so `getCurrentUserRecord` cache is cold. Sharing it would have replaced a narrow `User+roles` SELECT with the wide `accessUserSelect` (extra `verifications`/`identityVerifications`/`city` joins) on every API call. Left the original narrow select in place and added a comment explaining why future agents shouldn't re-introduce the wrapper.
+- Verified with `npm run typecheck`, `npm run lint`, `npm run test` — 44/44 tests still pass.
+
+Version 85
+Date: 2026-05-07
+Author: codex gpt-5.4
+Changes:
+- Renamed `src/lib/russian-million-cities.ts` to `src/lib/russian-cities.ts` and expanded the seed dataset from 16 millionniks to ~165 cities with population >=100k (RUSSIAN_CITIES). Each entry keeps `regionId/regionSlug/federalDistrict/cityId/citySlug/timezone`; existing slugs (e.g. `moskva`, `kazan`, `sankt-peterburg`) are preserved so DB upserts in `prisma/seed.ts` add new rows without disturbing user `regionId`/`cityId` foreign keys. Added optional `population` field for documentation only. Re-exported `RUSSIAN_MILLION_CITIES` and `MillionCityDefinition` as compatibility aliases (none are used now, but cheap to keep).
+- Updated imports in `prisma/seed.ts` and `src/lib/demo-data.ts` to consume `RUSSIAN_CITIES`. `demoRegions`/`demoCities` automatically grow to the new set; demo fallback in `/api/regions` and `/api/cities` now covers the full list when DB is unreachable.
+- Added `q` search support to `/api/regions/route.ts` mirroring `/api/cities`: case-insensitive `contains` filter, `MIN_QUERY_LENGTH=2`, `MAX_REGIONS_WITH_QUERY=50`, `MAX_REGIONS_WITHOUT_QUERY=200`, `Cache-Control: private, max-age=600` for non-search responses, and the same demo fallback. Removed the previous route-level `revalidate=3600` because per-`q` cache buckets would balloon the server cache.
+- Added a reusable `SearchableSelect` component at `src/components/ui/searchable-select.tsx`. Native `<select>` is unusable with ~80 regions and ~165 cities, so the new component renders a button trigger with a popover containing a search input and a filtered list. Search uses a Russian-aware normalizer (`ё→е`, lowercase, whitespace collapse) and supports keyboard navigation (Esc / ArrowUp / ArrowDown / Enter). Outside-click and touch handlers close the menu; the search input gets focus via a `setTimeout(0)` after open. State reset (`query`, `activeIndex`) happens synchronously in the `openMenu` handler to satisfy `react-hooks/set-state-in-effect`.
+- Replaced native region/city `<select>` dropdowns with `SearchableSelect` in `src/components/profile/registration-form.tsx` and `src/components/shifts/create-shift-form.tsx`. Manager mode and pickup-point linkage in the shift form continue to disable the dropdowns through the `disabled` prop. Cleared two outdated user-facing strings that hardcoded "Москва, Казань и Санкт-Петербург".
+- Verified with `npm run typecheck`, `npm run lint`, `npm run test` (44/44), and `npm run build` after the refactor. Note: `/api/regions` flipped from `○` (static prerender) to `ƒ` (dynamic) in the build manifest because of the new `q` parameter, mirroring `/api/cities`.
+
+Version 86
+Date: 2026-05-07
+Author: codex gpt-5.4
+Changes:
+- Cleared a stale `codex-smoke-region` + `codex-smoke-city` pair left over in the DB from past smoke tests. No `User`, `ShiftPost`, or `PickupPoint` referenced them, so a plain `DELETE FROM "City" ... ; DELETE FROM "Region" ...` was safe; counts now line up with the seed (79 regions / 168 cities).
+- Reworked `profileSchema` in `src/lib/validations/shift-post.ts` so `cityId` is `optional().nullable()`. A new `superRefine` rule requires `cityId` only when roles include `EMPLOYEE` or `TEMP_WORKER`; owners can register with just a `regionId`. `regionId` itself stays required for everyone.
+- Updated `src/lib/profile-completion.ts` to match: `isProfileComplete` now requires `regionId` for the base location field, then asks for `cityId` only on the employee branch. `getProfileCompletionScore` mirrors that so the UI completion bar doesn't disagree with `isProfileComplete`. Added `regionId` to `ProfileLike` for type accuracy.
+- Updated `src/components/profile/registration-form.tsx`: the city `SearchableSelect` is now hidden whenever `form.role === "OWNER"`, the region select expands to full width in that mode and shows a hint ("конкретные адреса появятся при добавлении ПВЗ и публикации смен"). The submit payload sends `cityId: null` for owners, the chosen city id for employees. `canSubmit` no longer requires a city for owners.
+- Reworked `src/components/shifts/create-shift-form.tsx`: dropped the separate region select entirely. The initial `loadReferences` fetch now also pulls the full city list (`refs:cities:all`), and the per-region `loadCities` effect was removed. Cities are rendered through a single `SearchableSelect` with the region name attached as the option `hint`, so users can type "Белгородская" or "Старый" and find the city. On selection the form sets `regionId` from the picked city's `regionId`, keeping `shiftPostSchema` happy and routing address suggestions to the right place. Manager mode and pickup-point pre-fill keep working through the existing `disabled` prop.
+- Verified with `npm run typecheck`, `npm run lint`, and `npm run test` (44/44). Skipped a fresh `npm run build` to avoid colliding with the running `npm run dev:ngrok` (Turbopack already picked up the hot reload during the session).
+
+Version 87
+Date: 2026-05-07
+Author: codex gpt-5.4
+Changes:
+- Added `color-scheme: light` to `:root` and `color-scheme: dark` to the dark-mode block in `src/app/globals.css`. Without it native `<select>` popovers and `<input type=date>` controls keep their light system colors inside our dark Telegram theme; the district/marketplace dropdowns in the `/shifts` filter sheet rendered with low-contrast gray text on a dark panel. With `color-scheme` set the browser draws those native popovers in matching dark palette.
+- Filtered the city `SearchableSelect` in `src/components/shifts/create-shift-form.tsx` to the owner's profile region: derived `lockedRegionId` from the form's `regionId` (which is preloaded from the profile or the picked pickup point) and used it to slice `cities` before mapping to options. The region hint next to each city is now suppressed when locked (otherwise every option would repeat "Республика Татарстан"), and the explanatory copy under the field switches to "Показываем города региона: ${lockedRegionName}. Чтобы выбрать другой — измените регион в профиле." Owners with a legacy profile that has no `regionId` still see the full list, so the form does not deadlock.
+- Verified with `npm run typecheck`, `npm run lint`, and `npm run test` (44/44).
+
+Version 88
+Date: 2026-05-07
+Author: codex gpt-5.4
+Changes:
+- Audited all `!text-[#...]` / `!bg-[#...]` (Tailwind v3 leading-bang important modifier) usages and stripped the `!` everywhere. Tailwind generates a literal class name like `\!text-\[\#1c232b\]`, but our dark-mode override in `src/app/globals.css` matches `[class~="text-[#1c232b]"]` (без `!`), so the override silently failed and the text stayed dark on the now-dark background.
+- Fixed places: `src/components/shifts/shift-filters.tsx` (район-чипы и кнопка «Сбросить»), `src/components/applications/application-card.tsx` (плашка «Профиль» работодателя), `src/components/profile/profile-summary.tsx` (три soft-action-link «Смотреть»). В application-card.tsx также удалил `[&_svg]:!text-[#101214]` — внутренний `<ExternalLink>` уже имеет свой класс `text-[#101214]`, который теперь нормально проходит dark-override.
+- Verified with `npm run lint` and `npm run typecheck`. Tests/build не гонял отдельно — патч косметический и компилируется без типовых ошибок.
+
+Version 89
+Date: 2026-05-11
+Author: claude opus-4.7-medium
+Changes:
+- Edge-фильтрация запросов на уровне nginx (релиз-таргет doobler-vps): default-deny модель для `/api/`. Telegram webhook режется по IP-allowlist (149.154.160.0/20, 91.108.4.0/22) и njs-проверке `X-Telegram-Bot-Api-Secret-Token`; Mini-App-ручки требуют валидный Telegram `initData` (HMAC-SHA256 проверяется в njs ДО proxy_pass в Next.js); `/api/auth/client-debug` → 204, `/api/auth/debug` → 404, оба без логов и нагрузки; `/api/admin/*` и `/admin*` идут passthrough в app (cookie-сессия), `/api/health` открыт. Глобальные `limit_req` (10 r/s api, 1 r/s upload, 5 r/s html, 30 r/s webhook) + `limit_conn` 20 на IP. См. doobler-vps update-logs Version 9 для конкретных файлов nginx/Dockerfile/compose.
+- Фронт-сторона initData-фильтра: `bootstrapTelegramSession` и `bootstrapWithBotLoginToken` в `src/lib/auth/client.ts` теперь дополнительно дублируют initData в заголовке `x-telegram-init-data` (раньше только в body), иначе njs-валидатор зарезал бы их 401 до обращения к роуту. Голые `fetch()` в `src/components/profile/registration-form.tsx` (`/api/regions`, `/api/cities`), `src/components/shifts/create-shift-form.tsx` (`/api/regions`, `/api/cities`, `/api/marketplaces`) и `src/components/applications/confirm-application-button.tsx` (`/api/applications/:id/confirm`) переведены на `fetchWithTelegramAuth`, чтобы заголовок ставился автоматически.
+- In-memory TTL-кеш для wide-select `User`-record'а (новый файл `src/lib/cache/user-record-cache.ts`, `Map<userId, {data, expiresAt}>` с TTL 30 секунд и LRU-капом 5000 записей). Подключён в `loadCurrentUserRecord` (`src/lib/auth/app-access.ts`) — до этого fat-SQL с `verifications`/`identityVerifications`/`city` летел на каждый переход по нижним табам Mini App, потому что все страницы `(app)/*` помечены `force-dynamic` и React `cache()` дедуплицирует только в пределах одного рендера. Кеш шерится между всеми навигациями одного процесса.
+- Явная инвалидация `invalidateCachedUserRecord` после всех мутаций, влияющих на закешированные поля: `updateProfile` (`src/server/services/profile-service.ts`), `banUser`/`unbanUser`/`setUserRole` (`src/server/services/admin-service.ts`), `completeAssignment` и `createAssignmentReview` (`src/server/services/application-service.ts` — для `completedAssignmentsCount`/`ratingAvg`/`ratingCount`), `createIdentityVerification` и `actOnIdentityVerification` (`src/server/services/identity-verification-service.ts`), `createEmployerVerification` и `actOnEmployerVerification` (`src/server/services/employer-verification-service.ts`), подтверждение телефона через бота (`src/lib/telegram/bot.ts`). Без них юзер до 30 сек видел бы старые бейджи после ban/role/верификации.
+- Серверный кеш справочников через `unstable_cache` (`next/cache`): `/api/cities/route.ts` для запросов без `q` ключуется по `regionId` с `revalidate: 3600`, `/api/regions/route.ts` — один общий ключ с тем же TTL. `q`-поиск идёт мимо кеша, чтобы не раздувать его произвольными ключами. Паритет с `/api/marketplaces`, где `revalidate: 3600` уже стоял. До этого справочник был кэширован только в браузере через `Cache-Control: private`, и cold-cache каждого нового юзера бил по БД.
+- Фикс инициализации `initData` на Telegram Web (`web.telegram.org/{a,k}`). Раньше `telegram-web-app.js` грузился через `useEffect` в client-компоненте, поэтому в Web-клиенте (где `window.Telegram` НЕ инжектится нативно, а создаётся SDK при разборе `window.location.hash`) Mini App уходил в 8-секундный поллинг `waitForTelegramWebApp` и часто отваливался по таймауту. Исправлено в `src/components/layout/telegram-webapp-script.tsx`: компонент стал server-component с `<Script strategy="beforeInteractive" />` из `next/script` — Next.js теперь инжектит SDK прямо в SSR-вывод `<head>`, и `window.Telegram.WebApp.initData` готов ДО гидратации. Добавлен резервный парсер `readInitDataFromUrlHash()` в `src/lib/telegram/webapp.ts` для случая когда CDN недоступен: вытаскивает `tgWebAppData` из `window.location.hash` напрямую (бэк всё равно делает HMAC, подсунуть фейк не получится). Fallback подключён в `getTelegramInitData{,Safe}` и `getTelegramUserId{,Safe}`.
+- Фикс сессионной cookie для iframe-контекста Telegram Web (`src/lib/auth/session.ts`): `setSessionCookie` теперь ставит `SameSite=None; Secure=true` вместо `SameSite=Lax`. Без этого браузер считал cookie third-party и не отправлял её обратно: `auth/telegram` возвращал 200 со Set-Cookie, но следующий `auth/me` уходил без cookie и получал 401 — Mini App показывал «Не удалось войти через Telegram». Admin-session (отдельный cookie) остался `SameSite=Lax`, потому что админка открывается напрямую в браузере, а не в iframe.
+- Проверено: `npx tsc --noEmit`, `npx eslint`, `npm run test` (44/44), плюс end-to-end проверка на Telegram Web K через ngrok-туннель (логи в `[tg-auth] auth/me success` после фикса cookie).
+
+Version 90
+Date: 2026-05-14
+Author: Cursor Agent (Composer)
+Changes:
+- `src/components/theme/theme-toggle.tsx`: выравнивание иконок (сетка 2 колонки, бегунок `top-1/2 -translate-y-1/2`); затем вместо круглого thumb — половина капсулы: внутренний `overflow-hidden rounded-full`, синий слой `w-1/2` с `translate-x-0` / `translate-x-full`, без «летающего» круга.
+- `src/components/navigation/bottom-nav.tsx`: убран таб «Главная» (`/home`, иконка House); у контейнера навигации `gap-2` и `p-2` для большего расстояния между кнопками.
+- Стартовый маршрут Mini App переведён на профиль: `src/app/page.tsx` → `redirect("/profile")`; после онбординга `src/components/layout/app-shell.tsx` → `router.replace("/profile")`; после регистрации `src/components/profile/registration-form.tsx` → `/profile`; `getMiniAppUrl()` в `src/lib/telegram/bot.ts` суффикс `/profile`; `src/server/services/chat-notifier.ts` срез базы `replace(/\/profile$/, "")`; ссылки «в приложение» в `src/app/offer/page.tsx`, `src/app/privacy/page.tsx`, `src/components/admin/admin-shell.tsx` → `/profile`.
+- `src/components/profile/profile-summary.tsx`: удалены оба блока «Быстрые действия» (владелец/управляющий и сотрудник); убран неиспользуемый `import Link`; под аватаром колонка «Возраст» + число (или «—»); дублирующая строка «Возраст:» убрана из карточки «Рабочий профиль».
+- `src/components/profile/profile-editor-panel.tsx`: кнопка «Редактировать» / «Скрыть» перенесена под текст (колонка `flex-col`, кнопка `w-full`).
+- `src/server/services/shift-post-service.ts`: хелпер `prismaDateToIso` в `mapShiftPost` — после `unstable_cache` даты приходят строками, без этого падал `post.shiftDate.toISOString is not a function` на главной.
+
+Version 91
+- Внедрён Redis для shared-кэша и rate-limit поверх редеплоев app-контейнера. Бэкенд гибридный: Redis при наличии `REDIS_URL`, иначе тот же per-process in-memory как до этого. Любая ошибка Redis в потребителях = cache miss / allow, в HTTP-handler ошибки не пробрасываются.
+- `npm i ioredis` (production-deps).
+- `src/lib/redis/client.ts`: singleton ioredis с lazyConnect, exp-backoff retryStrategy, namespace ключей `doobler:`, парсингом URL (включая `rediss://`) и хелпером `safeRedisCall`.
+- `src/lib/cache/user-record-cache.ts`: сделан async; пишет в memory + Redis, читает Redis → memory; `clearUserRecordCache` чистит только namespace `doobler:user:*`. Все callsite в `app-access.ts` и services перешли на `await`.
+- `src/lib/rate-limit/in-memory.ts`: fixed-window через `INCR + PEXPIRE` в Redis с fallback на Map. `enforceUserRateLimit` и `enforceUserApiBudget` стали async; обновлены 5 route handlers + `lib/rate-limit/user.ts`.
+- `docker-compose.yml` (dev): добавлен опциональный сервис `redis:7-alpine` с `maxmemory 128mb / allkeys-lru / save '' / appendonly no`. Запускать только если хочется проверить Redis-путь локально.
+- `deploy/docker-compose.yml` (prod, doobler-vps): сервис `redis` в internal-сети без публикации портов наружу, healthcheck, depends_on в app, env-проброс `REDIS_URL`.
+- `deploy/env.production.template`, `.env.example`: добавлен `REDIS_URL=redis://redis:6379` (в example закомментирован).
+- Тесты: `src/lib/cache/user-record-cache.test.ts` и `src/lib/rate-limit/in-memory.test.ts` (через `vi.stubEnv("REDIS_URL", "")` гарантируем in-memory путь). `npm run test` — 52 passed.
+- Typecheck чист по моим правкам; единственная сохраняющаяся ошибка `revalidateTag(SHIFTS_CACHE_TAG)` в `shift-post-service.ts:742` — pre-existing, Next 16 требует второй аргумент (отдельная задача).
+
+Version 92
+- Систематические меры против рассинхрона цветов между светлой и тёмной темой (см. theme-audit.md). Полная миграция legacy-кода НЕ делалась — слишком большой объём, существующее работает через override-layer в globals.css.
+- Фикс критического: `src/components/chat/chat-conversation.tsx:467,470` — `text-black` на стрелке «Назад» был невидим в тёмной теме (фон шапки переопределяется на `#1b2630`). Заменено на `text-[#101214]` (этот hex покрыт override-layer'ом).
+- `src/app/globals.css`: добавлены семантические токены `--success`, `--success-foreground`, `--success-soft`, `--success-soft-foreground`, `--warning`, `--warning-foreground`, `--warning-soft`, `--warning-soft-foreground`, `--danger-foreground`, `--danger-soft`, `--danger-soft-foreground` с парами для light/dark. Зарегистрированы в `@theme inline` чтобы Tailwind v4 раскрывал их в утилиты `bg-danger-soft`, `text-success-soft-foreground` и т.п.
+- `src/app/globals.css`: расширен dark color override-layer для именованных tailwind-цветов `rose-{50,100,500,600,700,800}`, `emerald-{50,100,500,600,600,700,800}`, `amber-{50,100,500,700,800,900}` — статус-плашки в чатах, бейджи непрочитанных и success/error баннеры теперь корректно читаются в тёмной теме. Админка (`slate-*`) сюда НЕ включена — она остаётся light-only.
+- `scripts/check-theme-colors.mjs`: lint-чек для предотвращения регрессий. Error: `text-black`, named tailwind-цвета не из whitelist'а (`gray-*`, `slate-*`, `zinc-*`, `red-*`, `sky-*`, и т.д.) в user-facing коде, inline `style={{ color: "#..." }}`. Warning: `rose/emerald/amber` (работают, но лучше через токены). Маркер `theme-color-disable-line` для осознанных одно-темных случаев. Папки `src/{app,components}/admin*` исключены — light-only.
+- `package.json`: `npm run lint` теперь = `eslint && check-theme-colors --staged` (на legacy не падает); `npm run lint:colors` для полной проверки.
+- `src/components/layout/splash-frame.tsx`: добавлен `theme-color-disable-line` маркер — splash намеренно одно-темный.
+- `AGENTS.md`: новая секция «Цвета и темы» с правилами для нового кода: использовать `text-foreground` / `bg-card` / `text-danger-soft-foreground` etc., не использовать `text-black` / `text-gray-NNN` / inline-hex.
+- `theme-audit.md`: подробный отчёт по найденным провалам (~570 хардкодов в src/) — для справки и будущей миграции по частям.
+- `npm run lint` ✓, `npm test` ✓ (52 passed).
+
+Version 93
+Date: 2026-05-15
+Author: codex gpt-5
+Changes:
+- Fixed the Next 16 `revalidateTag` API break in `src/server/services/shift-post-service.ts`: the shift feed cache invalidation now calls `revalidateTag(SHIFTS_CACHE_TAG, "max")`, matching the local Next 16 type definition and stale-while-revalidate docs.
+- Removed stale/corrupted generated route validator types from `.next/dev/types` / `.next/types` and regenerated route types with `npx next typegen`; `npm run typecheck` no longer fails on `.next/dev/types/validator.ts`.
+- Fixed the React lint regression in `src/components/shifts/shift-filters.tsx` by replacing eight synchronous `setState` calls inside effects with a single guarded draft-state reset when URL-provided filter props change.
+- Verified with `npm run typecheck` and `npm run lint`.
+
+Version 94
+Date: 2026-05-15
+Author: codex gpt-5
+Changes:
+- Made `cityId` required for owner profiles again in `profileSchema` and `profile-completion`: owners now have both a region and a primary city, while still needing at least one marketplace.
+- Updated `src/components/profile/registration-form.tsx` so OWNER users see and save the city field instead of sending `cityId: null`; the label is "Основной город ПВЗ" and explains that it becomes the default city for new shifts.
+- Updated `src/components/shifts/create-shift-form.tsx` so new shifts prefill the city from the owner profile, but the owner can still choose another city; selecting a different city updates `regionId` automatically. Manager / selected-PVZ flows remain locked to the pickup point city.
+- Verified with `npm run typecheck`, `npm run lint`, and `npm test` (52 passed).
+
+Version 95
+Date: 2026-05-15
+Author: codex gpt-5
+Changes:
+- Changed the Mini App entry point back to shift search: root `/`, completed-onboarding redirects, onboarding completion, offer/privacy return links, admin "open app" link, and Telegram `getMiniAppUrl()` now point to `/shifts` instead of `/profile`.
+- Updated `chat-notifier` base URL trimming so chat notification links still resolve to `/chats/:id` after `getMiniAppUrl()` started returning `/shifts`.
+- Re-registered the Telegram bot menu/webhook with `npm run bot:register`; Telegram `setWebhook` returned "Webhook was set".
+- Verified with `npm run typecheck` and `npm run lint`.
+
+Version 96
+Date: 2026-05-15
+Author: codex gpt-5
+Changes:
+- Polished the profile registration form layout for narrow Telegram screens: region and "Основной город ПВЗ" now render as separate full-width rows instead of two cramped columns.
+- Reworked the role selector from two tall text cards into a compact segmented control with an animated blue thumb and a short dynamic explanation below it.
+- Replaced the marketplace chip row with a vertical checklist using right-side check icons, so long labels like "Яндекс Маркет" no longer wrap awkwardly.
+- Made the avatar upload block more compact by reducing the preview size, card padding, and helper copy.
+- Verified the UI-only changes with `npm run typecheck` and `npm run lint`.
+
+Version 97
+Date: 2026-05-17
+Author: codex gpt-5
+Changes:
+- Parsed the public Telegram channel `https://t.me/Blacklist_pvz` into local artifacts under `data/blacklist-pvz/`. The first history crawl via `t.me/s` only found 1109 grouped entries, so the scraper was extended with direct post-id scanning (`scripts/scrape-telegram-blacklist.mjs --direct --max-id 2955`), which found 2568 public post ids matching Telegram Desktop search much more closely.
+- Generated compact blacklist lookup files: `data/blacklist-pvz/telegram-ids.json` and `.csv` with unique Telegram IDs and one source URL per ID. Added manual entry `6344041488 -> https://t.me/dooblerinfo`. Current compact count: 287 unique IDs.
+- Added static design exploration in `blacklist-design/`: base dark/light warning, plus alternate visual directions. Final chosen copy: "Есть совпадение с Чёрным списком" / "Проверьте источник перед договорённостью". The warning is a fully clickable card, no separate source button.
+- Implemented the real profile warning: `src/lib/blacklist-pvz.ts` loads the compact JSON lookup, and `src/components/profile/profile-summary.tsx` shows the warning after the identity card and before the rating/reviews/shifts stats when `profile.telegramId` is present in the blacklist lookup. The whole warning links to the stored source post.
+- Added theme-aware warning styles to `src/app/globals.css` using semantic CSS variables (`--danger`, `--danger-soft`, `--card`, etc.), with rounded shape, subtle gradient, arrow affordance, and visible warning icon outline in both light and dark Telegram themes.
+- Local infra/dev: Docker CLI is not available in this shell, but Postgres was already reachable on `localhost:5432` and a `pg` connection test succeeded. Started `npm run dev:ngrok`; Next dev is on `http://localhost:3000`, ngrok URL is `https://dbfe-88-119-176-126.ngrok-free.app`, and Telegram webhook was set to `/api/bot/webhook`.
+- Verified with `npm run typecheck`, `npm run lint`, `npm run lint:colors` (0 errors, pre-existing warnings only), `npm run test` (52 passed), `npm run build`, and HTTP smoke checks for `/` and `/profile` (200).
+
+Version 98
+Date: 2026-05-19
+Author: codex gpt-5
+Changes:
+- Payment/balance MVP was put into an honest "in progress" mode: `src/app/api/balance/route.ts` no longer increments balances and returns 503 on POST; `src/components/balance/balance-top-up-menu.tsx` now shows "Пополнение скоро появится" and explains that publication is temporarily free.
+- Removed live balance debiting from shift publication: `src/server/services/shift-post-service.ts` creates posts without decrementing `User.balanceRub`; `src/app/api/shift-posts/route.ts` no longer handles `INSUFFICIENT_BALANCE`; `src/components/shifts/create-shift-form.tsx` no longer blocks publishing on balance or shows the 1% fee card.
+- Added profile document access: new `src/components/profile/profile-documents.tsx` links to `/offer`, `/privacy`, and `legal@doobler.ru`; profile page renders it after editing/reviews; offer/privacy return links now point back to `/profile`.
+- Local dev infra: Docker CLI is still unavailable, but local PostgreSQL service `postgresql-x64-18` was running on `localhost:5432`. Started Next dev + ngrok via `npm run dev:ngrok`; current ngrok URL was `https://2966-88-119-176-123.ngrok-free.app`, and Telegram webhook was registered to `/api/bot/webhook`.
+- Support bot work lives outside this repo in `C:\Users\mintd\Documents\doobler_tech_support_bot` and was synced to `C:\Users\mintd\Documents\doobler-vps\support-bot`; see their `update-logs` entries for ticket-system details.
+- Verified main app changes with `npm run typecheck`, `npm run lint`, `npm run lint:colors` (0 errors, legacy warnings only), and `npm run test` (52 passed).
+
+Version 99
+Date: 2026-05-19
+Author: codex gpt-5
+Changes:
+- Fixed public profile role escalation: `profileSchema` no longer accepts `MANAGER` or `MODERATOR` from `/api/profile`; existing privileged roles are only preserved server-side.
+- Added `src/lib/auth/mutation-guard.ts` and wired trusted mutation checks into core write endpoints. The guard accepts same-origin requests, valid Telegram `initData`, or the Mini App client header added by `fetchWithTelegramAuth`.
+- Closed application-list IDOR: `/api/shift-posts/[id]/applications` now returns applications only to the shift owner or a moderator.
+- Limited `/api/reports` GET to the current reporter's own reports and kept report creation behind the mutation guard.
+- Verified with `npm run typecheck`, `npm run lint`, `npm run lint:colors` (0 errors, legacy warnings only), and `npm run test` (52 passed).
+
+Version 100
+Date: 2026-05-20
+Author: codex gpt-5
+Changes:
+- Closed the remaining CSRF gaps from `possible-dangerous`: admin/moderation actions, shift PATCH/DELETE, notification read, and balance POST now require trusted mutation checks or same-origin checks.
+- Hardened admin auth mutations: login/logout now reject non-same-origin POSTs; Telegram initData is only accepted by the generic mutation guard when it matches the active session telegramId.
+- Strengthened `/api/reports` target validation for USER, APPLICATION, ASSIGNMENT, REVIEW, PICKUP_POINT and duplicate open reports across all target types, not only SHIFT_POST.
+- Hardened chat/media uploads with magic-byte validation for JPEG/PNG/WebP/GIF before saving; added tests for accepted signatures and MIME/content mismatch rejection.
+- Made Telegram webhook secret strict in production: `TELEGRAM_WEBHOOK_SECRET` is now required when `NODE_ENV=production`, while the bot-token-derived fallback remains dev-only.
+- Updated `possible-dangerous` with fixed/backlog status.
+- Verified with `npm run typecheck`, `npm run lint`, `npm run lint:colors` (0 errors, 26 existing warnings), and `npm run test` (54 passed).
+
+Version 101
+Date: 2026-05-20
+Author: codex gpt-5
+Changes:
+- Removed the obsolete favorites feature remnants: deleted `/api/shift-posts/[id]/favorite`, removed the favorite button/state from shift actions, removed favorite overlays from shift listing/detail services, and dropped `favorite` from `ShiftCard`/demo data.
+- Updated Prisma schema to remove the unused `Favorite` model and relations, then regenerated the Prisma client.
+- Added safe performance indexes in Prisma schema for hot existing queries: `Report(reporterUserId, targetType, targetId, status)` and `Notification(userId, createdAt)`.
+- Cleared stale `.next/types` after deleting the route so Next type validation no longer referenced the removed favorite endpoint.
+- Applied the schema locally with `npx prisma db push --accept-data-loss`; it dropped the obsolete non-empty `Favorite` table (1 row), synced the new indexes, and a `pg_indexes` check confirmed `Report_reporterUserId_targetType_targetId_status_idx` plus `Notification_userId_createdAt_idx`.
+- Verified with `npm run db:generate`, `npm run typecheck`, `npm run lint:colors` (0 errors, 26 existing warnings), `npm run lint`, and `npm run test` (54 passed).
+
+Version 102
+Date: 2026-05-20
+Author: codex gpt-5
+Changes:
+- Added a VPS deploy reminder in `VPS_DEPLOY.md`: after deploying, run `docker exec doobler-app npm run db:push` so production schema receives the `Favorite` removal and new Report/Notification indexes.
+- Optimized authenticated media serving in `/api/uploads/[id]`: the route still checks login and uploader/chat-participant access first, then supports private `ETag` / `Last-Modified` conditional responses and streams files instead of loading the whole file into memory.
+- Added `statMedia` and `createMediaReadStream` helpers to `src/server/services/media-storage.ts` while keeping the existing `readMedia` helper for admin document/photo routes.
+- Verified with `npm run typecheck`, `npm run lint:colors` (0 errors, 26 existing warnings), `npm run lint`, and `npm run test` (54 passed).
+
+Version 103
+Date: 2026-05-20
+Author: codex gpt-5
+Changes:
+- Synced the current application state into `C:\Users\mintd\Documents\doobler-vps`: mirrored `src`, `public`, `scripts`, `data`, Prisma schema/seed, package/config files, docs, theme audit, and update logs while leaving `deploy/`, `.env*`, `support-bot`, volumes, and node_modules intact.
+- Confirmed in `doobler-vps` that the obsolete favorite endpoint/model is gone, the Report/Notification indexes are present in `prisma/schema.prisma`, and `/api/uploads/[id]` uses private conditional streaming.
+- Added `deploy/**` and `support-bot/**` to ESLint global ignores so the production-only nginx njs/support bot files do not break Next app linting in `doobler-vps`.
+- Fixed production-target verification issues by copying `data/blacklist-pvz` and clearing stale `.next/types` that referenced the removed favorite route.
+- Verified `doobler-vps` with `DATABASE_URL='postgresql://x:x@localhost:5432/x?schema=public' npm run db:generate`, `npm run typecheck`, `npm run lint:colors` (0 errors, 26 existing warnings), `npm run lint`, and `npm run test` (54 passed).
+
+Version 104
+Date: 2026-05-21
+Author: codex gpt-5
+Changes:
+- Added the Telegram Mini App route namespace `/telegram/*` through `src/proxy.ts`: `/telegram` opens the shifts feed, `/telegram/shifts` and other Mini App paths rewrite to the existing app pages, and `/telegram/admin*` is redirected to the real admin path so the existing admin guard still applies.
+- Added shared routing helpers in `src/lib/routing/platform.ts` and `src/lib/routing/platform-server.ts` so server and client UI can preserve the current platform prefix without duplicating pages.
+- Updated the Telegram bot/menu URL builder to publish `${NEXT_PUBLIC_APP_URL}/telegram/shifts`, and chat notification buttons now open `/telegram/chats/{id}` directly.
+- Updated Mini App navigation and key internal links across bottom nav, onboarding redirects, shifts feed/cards/filters, home, posts, applications, chats, profile documents, offer/privacy, and shift detail management so users stay inside `/telegram/...`.
+- Updated `VPS_DEPLOY.md` Telegram menu button snippets and manual check notes to use `/telegram/shifts`.
+- Verified with `npm run typecheck`, `npm run lint`, `npm run lint:colors` (0 errors, 26 existing warnings), and `npm run test` (54 passed).
+
+Version 105
+Date: 2026-05-21
+Author: codex gpt-5
+Changes:
+- Created `homepage-design-test/index.html` as a static design exploration for the public `doobler.ru` homepage.
+- Added 8 broad landing-page directions: map of shifts, operations dashboard, trust/documents, Telegram-native bridge, city/region scaling, high-contrast terminal, transparent platform, and people/community.
+- Each option includes the real Doobler logo, product description, animated hero scene, service sections, FAQ, and bottom panels for offer, privacy policy, and technical support/contact.
+- Used current landing-page and Telegram Mini App UX research patterns: clear first-screen value, early product/workflow visual, restrained motion, trust-first copy, mobile-first structure, and visible legal/support surfaces.
+- Verified the static artifact exists at `homepage-design-test/index.html`, references `../public/logo.png`, and contains all 8 variants.
+
+Version 106
+Date: 2026-05-21
+Author: codex gpt-5
+Changes:
+- Made `homepage-design-test` self-contained for sharing: copied `public/logo.png` to `homepage-design-test/logo.png`.
+- Updated `homepage-design-test/index.html` logo references from `../public/logo.png` to local `logo.png`, so the folder can be sent as-is.
+
+Version 107
+Date: 2026-05-21
+Author: codex gpt-5
+Changes:
+- Rebuilt `homepage-design-test/index.html` through `apply_patch` after PowerShell rewrites corrupted the Russian text encoding.
+- Confirmed the file is UTF-8, contains normal Russian strings like "Дублер" and "Публичная оферта", and no longer contains replacement symbols or long question-mark runs.
+
+Version 108
+Date: 2026-05-21
+Author: codex gpt-5
+Changes:
+- Rebuilt `homepage-design-test/index.html` again after design feedback into a more serious B2B landing-page exploration instead of similar decorative variants.
+- Added 5 distinct homepage concepts for `doobler.ru`: operations control room, urgent same-day replacement, transparent rules, Telegram-first gateway, and city/district network.
+- Each concept now follows the requested structure in order: hero with a strong H1, problem analysis, service advantages, CTA block, and contact/legal/support information.
+- Kept the folder self-contained with local `homepage-design-test/logo.png` and verified UTF-8 integrity with a Node check: Russian text is present, no replacement symbols, and no long question-mark runs.
+
+Version 109
+Date: 2026-05-21
+Author: codex gpt-5
+Changes:
+- Reworked `homepage-design-test/index.html` around the user's concrete references: `wakadoo.pro`, `wakadoo.pro/spectehnika`, `bitrix24.ru`, and `start-set.ru`.
+- Renamed and redesigned the directions as recognizable landing-page styles: Cinematic B2B Hero, Product-led SaaS Landing, Enterprise SaaS Homepage, Editorial Minimalism, and Marketplace Trust Landing.
+- Shifted the artifact away from internal UI mockups toward public B2B landing-page composition: larger typography, stronger first screens, more spacious sections, clearer visual hierarchy, and more explicit business positioning.
+- Preserved the required structure in every variant: hero block, problem analysis, service advantages, CTA, and contact/legal/support information.
+- Verified the static HTML through Playwright screenshot capture and a UTF-8 Node check, then removed temporary reference screenshots so `homepage-design-test` remains shareable with only `index.html` and `logo.png`.
+
+Version 110
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Rebuilt `homepage-design-test/index.html` as a single Dribbble-inspired landing page based on the referenced travel app landing style and the user's attached Telegram Mini App phone screenshot.
+- Added a pastel app-promo composition: rounded glass navigation, oversized hero typography, soft organic background shapes, floating info cards, and a large iPhone-style mockup showing the Doobler shifts feed.
+- Adapted the phone mockup to the current Doobler Mini App visual language: Telegram top bar, dark shifts feed, search/filter card, empty-state panel, and bottom tab navigation.
+- Kept B2B landing content below the hero: problem analysis, service advantages, three-step flow, CTA, and contact/legal/support footer.
+- Verified the static HTML with a UTF-8 Node check and Playwright screenshot capture, then removed the temporary screenshot so `homepage-design-test` remains shareable with only `index.html` and `logo.png`.
+
+Version 111
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Expanded `homepage-design-test/index.html` from one Dribbble-inspired page into 6 app-landing variations: Lime Travel, Sky Glass, Peach Promo, Mint B2B, Sand Minimal, and Dark App.
+- Recreated the user's Telegram Mini App screenshot directly in HTML/CSS inside each iPhone mockup because the physical attached PNG was not present in local temporary files.
+- Added different slogans and positioning angles across the variants: chat chaos, Telegram-first flow, urgent shift coverage, B2B process, transparent marketplace rules, and a dark app-promo theme.
+- Kept the app-landing visual language consistent across variants: oversized typography, soft organic background blobs, glass cards, floating annotations, rounded navigation, and the large phone as the main object.
+- Verified UTF-8 and all six variants with a Node check, then captured Playwright screenshots for the light and dark layouts and removed the temporary screenshots so `homepage-design-test` remains shareable with only `index.html` and `logo.png`.
+
+Version 112
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Simplified `homepage-design-test/index.html` to keep only the first Dribbble-style Lime Travel direction as a single polished homepage instead of a multi-variant gallery.
+- Removed the hero eyebrow/chip that said "Telegram Mini App для ПВЗ" and replaced all "Mini App" wording with "приложение".
+- Reworked the page to use the full browser window: sticky rounded navigation, first-screen hero with oversized typography, large phone mockup, floating info cards, metrics, and responsive content sections below.
+- Improved responsive behavior for desktop/tablet/mobile so the hero, metrics, phone mockup, CTA, and legal/contact blocks reflow cleanly without the previous design-lab wrapper.
+- Verified with a UTF-8 Node check and Playwright desktop/mobile screenshots, then removed temporary screenshots so `homepage-design-test` stays shareable with only `index.html` and `logo.png`.
+
+Version 113
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Added the real app screenshot from the user's Desktop (`photo_2026-05-22_13-28-23.jpg`) to `homepage-design-test/app-screenshot.jpg` and used it inside the homepage phone mockup.
+- Kept the "приложение" wording by overlaying a small label over the screenshot's Telegram subtitle area.
+- Hid the phone mockup entirely on mobile viewports so the mobile landing page does not show a phone inside a phone and the hero content stays compact.
+- Adjusted the screenshot rendering to use full image scaling inside the phone frame instead of the previous CSS-recreated app screen.
+- Verified the desktop and mobile renders with Playwright screenshots, then removed temporary check screenshots from `homepage-design-test`.
+
+Version 114
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Removed the extra handmade iPhone frame/notch around the real `app-screenshot.jpg` in `homepage-design-test/index.html` so the full screenshot is visible instead of being cropped by a second phone shell.
+- Changed the screenshot container to render the real image at `100% 100%` and kept only a soft outer shadow.
+- Moved floating promo cards behind the screenshot layer so they no longer cover the phone header or app content.
+- Rechecked the desktop render with Playwright and removed temporary check screenshots from `homepage-design-test`.
+
+Version 115
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Rebuilt `homepage-design-test/index.html` again to remove the screenshot-based phone mockup and instead use a static preview composed from the app's real design components.
+- Based the preview on the current component structure: `PageHeader` with balance action, `ShiftFilters`, `EmptyState`, and `BottomNav`.
+- Removed the copied `app-screenshot.jpg` because the homepage preview no longer depends on a screenshot file.
+- Kept the app preview visible on desktop/tablet and hidden on mobile so the mobile landing page stays clean without an app screen inside the phone viewport.
+- Verified UTF-8 plus desktop/mobile Playwright renders, then removed temporary check screenshots from `homepage-design-test`.
+
+Version 116
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Added real inline SVG icons to the static `homepage-design-test` bottom navigation preview: search, create, briefcase, chat, and profile.
+- Removed the previous square placeholder icon styling from the preview nav and matched the app's icon-led bottom navigation more closely.
+- Verified the desktop render with Playwright and removed the temporary check screenshot.
+
+Version 117
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Replaced the root-page redirect with a real public `doobler.ru` homepage in `src/app/page.tsx`.
+- Added `src/app/page.module.css` for the production landing page: B2B hero, problem block, service advantages, CTA, FAQ, contacts, adaptive desktop/mobile layouts, and dark-mode-aware styling.
+- Wired the homepage CTAs to `https://t.me/doobler_bot`, the tech support contact to `https://t.me/dooblerhelp_bot`, and the legal footer links to `/offer` and `/privacy`.
+- Updated app metadata description in `src/app/layout.tsx` to match the public landing positioning.
+- Verified the page through `npm run typecheck`, `npm run lint:colors`, `npm run lint`, HTTP checks for the homepage links, and desktop/mobile Chrome screenshots.
+
+Version 118
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Fixed the landing-page app preview so the bottom navigation no longer overlaps the empty-state content.
+- Removed the fake reset-filters button from the static homepage preview and made the bottom navigation part of the normal preview layout flow.
+- Tightened the preview card height and lifted it slightly in the hero so it fits the first desktop viewport more cleanly.
+- Rechecked the production homepage with a Chrome screenshot plus `npm run typecheck` and `npm run lint`.
+
+Version 119
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Reworked the homepage app preview into a dark-theme version that matches the Telegram Mini App mood better.
+- Added a visible rounded-rectangle frame around the preview with an outer border, inner outline, and darker app surface.
+- Updated the preview cards, balance pill, search controls, empty state, and bottom navigation to dark surfaces with readable light text.
+- Verified the updated homepage preview with a Chrome screenshot plus `npm run typecheck` and `npm run lint`.
+
+Version 120
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Aligned the homepage preview header so `Смены и вакансии` and the balance pill sit on the same vertical centerline.
+- Reduced the preview title size slightly and tightened the header gap so the title and balance fit cleanly inside the rounded frame.
+- Verified the alignment with a Chrome screenshot plus `npm run typecheck` and `npm run lint`.
+
+Version 121
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Updated `VPS_DEPLOY.md` with the new public URL structure: `/` is now the homepage and Telegram Mini App lives under `/telegram/*`.
+- Documented that the production Telegram entrypoint is `https://doobler.ru/telegram/shifts`, while `src/proxy.ts` rewrites it internally to `/shifts`.
+- Added deployment verification commands for the homepage and `/telegram/shifts` route.
+
+Version 122
+Date: 2026-05-22
+Author: claude opus 4.7 medium
+Changes:
+- SEO baseline (Phase 1 of 4): expanded Next.js Metadata API in `src/app/layout.tsx` with metadataBase, title template (`"%s — Дублер"`), keyword list focused on ПВЗ Ozon/WB/Yandex, Open Graph (locale ru_RU, image `/logo.png` 512×512, site_name), Twitter card `summary_large_image`, robots index/follow with Google-bot directives (`max-image-preview: large`, `max-snippet: -1`), canonical alternate, `applicationName`, `category: "business"`. Reserved `verification: { yandex, google }` for Phase 4 (commented placeholder).
+- Added `src/app/robots.ts`: allows `/`, `/offer`, `/privacy`; explicitly disallows `/telegram/`, `/admin`, `/admin-login`, `/api/`, `/uploads/` and Mini App paths (`/profile`, `/shifts`, `/posts`, `/applications`, `/chats`, `/home`, etc.). Sitemap and host pointed to `https://doobler.ru`.
+- Added `src/app/sitemap.ts` with the three indexable pages: `/`, `/offer`, `/privacy`. Build manifest now shows `○ /robots.txt` and `○ /sitemap.xml` as static prerenders.
+- Tightened per-page metadata for `/offer` and `/privacy`: removed duplicated "| Дублер" suffix (layout template adds it now), added canonical, OG `type: "article"`, and explicit `robots: { index: true, follow: true }`.
+- Documented SEO scope split into 4 phases in agent's plan: Phase 1 = tech baseline (this entry); Phase 2 = landing copy + keywords; Phase 3 = JSON-LD (Organization, WebSite+SearchAction, FAQPage, Service); Phase 4 = analytics + verification (Yandex.Metrika, Yandex.Webmaster, Google Search Console, GA4) — pending account registration by the user.
+- Verified with `npm run typecheck` and `npm run lint`; production build succeeds with no new errors.
+
+Version 123
+Date: 2026-05-22
+Author: claude opus 4.7 medium
+Changes:
+- SEO copy pass (Phase 2 of 4): rewrote homepage copy in `src/app/page.tsx` to surface high-intent keywords for both audiences (PVZ owners looking for a replacement, workers looking for a one-day shift / vacancy in a pickup point).
+- New H1: "Замена в ПВЗ и подработка без чатов". Lead paragraph now explicitly mentions Ozon, Wildberries и Яндекс Маркета and both target use cases.
+- Section H2's tightened around target queries: "Почему искать замену сотрудника ПВЗ через чаты больше не работает", "Замены, подмены и вакансии для пунктов выдачи Ozon, WB и Яндекс Маркета", "Частые вопросы о работе и подработке в ПВЗ".
+- Expanded the benefits grid from 3 to 4 cards: добавлены отдельные блоки про "Замена сотрудника ПВЗ за час", "Подмена и подработка на день", "Вакансии в ПВЗ без лишних шагов" и "Подтверждённые профили и отзывы".
+- Expanded FAQ from 3 to 8 entries covering high-intent search queries: срочный поиск замены, цена публикации, маркетплейсы (Ozon/WB/Я.Маркет), как сотруднику найти подработку, документы для регистрации, открытие приложения, техподдержка. FAQ blocks are intentionally written as full sentences with keywords to feed both Yandex SERP and JSON-LD FAQPage in Phase 3.
+- Replaced the empty `alt=""` on the footer logo with `alt="Логотип Дублер"` (informative — brand entity).
+
+Version 124
+Date: 2026-05-22
+Author: claude opus 4.7 medium
+Changes:
+- SEO structured data (Phase 3 of 4): added `src/app/structured-data.tsx` rendering a single `<script type="application/ld+json">` with three Schema.org graphs:
+  * Organization (logo 512×512, areaServed Russia, sameAs Telegram bot, contactPoint технический support через @dooblerhelp_bot).
+  * WebSite with publisher pointing to the Organization (used for Yandex/Google site card).
+  * FAQPage built from the same `faqItems` array that renders the visible `<details>` blocks — keeps visible UI and structured data in lockstep, which is required by Google's policy on FAQ rich results.
+- Wired `<StructuredData faqItems={faqItems} />` at the top of `<main>` in `src/app/page.tsx`.
+- Verified validity with `npm run typecheck`, `npm run lint` (clean — removed an unused `eslint-disable react/no-danger` directive after the rule turned out to be inactive in the project's flat config), and `npm run build` (homepage stays as `ƒ /` dynamic route, no regression).
+- Phase 4 (analytics + verification) blocked on the user registering Yandex.Webmaster, Yandex.Metrika, Google Search Console и Google Analytics 4 accounts and providing the verification meta-tags / counter IDs / measurement ID.
+
+Version 125
+Date: 2026-05-22
+Author: claude opus 4.7 medium
+Changes:
+- SEO analytics scaffolding (Phase 4 of 4, code-side complete, IDs pending): wired Yandex.Metrika, Google Analytics 4, Yandex.Webmaster и Google Search Console behind env vars so the user only needs to drop IDs into `.env.production` and redeploy.
+- Added `src/app/analytics.tsx` rendering official Yandex.Metrika and gtag.js snippets (strategy `afterInteractive`) gated on `NEXT_PUBLIC_YANDEX_METRIKA_ID` and `NEXT_PUBLIC_GA_MEASUREMENT_ID`. Empty env → no script rendered. Yandex snippet includes the standard noscript tracking pixel for crawlers without JS.
+- Wired `<Analytics />` into `<body>` of `src/app/layout.tsx`, after the Telegram WebApp SDK so Telegram bootstrap is not blocked by analytics evaluation.
+- Wired `metadata.verification = { yandex, google }` in `src/app/layout.tsx` reading server-side env vars `YANDEX_VERIFICATION` and `GOOGLE_SITE_VERIFICATION`. Empty → meta-tag not rendered.
+- Updated `.env.example` and `deploy/env.production.template` with the four new env vars + comments about format and source.
+- Updated `deploy/docker-compose.yml` for `doobler-vps`: added `build.args` block for the two `NEXT_PUBLIC_*` IDs plus runtime `environment` entries for all four. `args:` is critical because Next.js inlines `NEXT_PUBLIC_*` into the client bundle at BUILD time — runtime-only env would silently leave the production bundle empty.
+- Updated `deploy/Dockerfile` builder stage with `ARG NEXT_PUBLIC_YANDEX_METRIKA_ID=""` / `ARG NEXT_PUBLIC_GA_MEASUREMENT_ID=""` and matching `ENV` re-export so `npm run build` sees them.
+- Updated `VPS_DEPLOY.md` with a new "SEO / Analytics" section: explains the runtime-vs-buildtime env split (verification = no rebuild needed, counters = full rebuild with `--no-cache app`), copy-paste commands for both paths, curl-verification.
+- Synced all SEO files (`layout.tsx`, `page.tsx`, `structured-data.tsx`, `analytics.tsx`, `robots.ts`, `sitemap.ts`, `offer/page.tsx`, `privacy/page.tsx`, `.env.example`, `update-logs`) into `doobler-vps`. Verified `npm run typecheck`, `npm run lint`, `npm run test` (54/54), and `npm run build` (homepage `ƒ /`, robots/sitemap statically prerendered) in `doobler-vps`.
+
+Version 126
+Date: 2026-05-22
+Author: claude opus 4.7 medium
+Changes:
+- Homepage hero copy revert: восстановили формулировки до v123 на главной (`/`). H1 снова "Закрывайте смены без хаоса в чатах" (три строки), eyebrow "Приложение для ПВЗ"; lead остался от v123 ("Дублер — приложение для владельцев и сотрудников пунктов выдачи Ozon, Wildberries и Яндекс Маркета..."). FAQ/проблема/преимущества и JSON-LD от v123-v124 не трогали — там SEO-ключи целевые.
+- Удалена третья метрика "0 выплат исполнителям внутри сервиса" в hero. Остались две: `3 000 ₽ — пример оплаты смены в объявлении` и `1% — плановая стоимость публикации`.
+- Иконки нижней навигации в превью телефона на главной увеличены: SVG `21x21` → `26x26`, gap иконка-подпись `4px` → `6px`, font-size подписей `11px` → `12px`. Раньше выглядели "пиксельно мелкими" по сравнению с реальной Mini App.
+- GSAP-анимация секций. Установлен `gsap` (production-deps), новый client-component `src/app/home-animations.tsx` грузит `gsap` + `gsap/ScrollTrigger` через dynamic-import (не блокирует SSR). Hero-элементы анимируются on-mount каскадом (stagger 0.09s, fade+slide-up 28px, `power3.out`); секции problem/benefits/CTA/FAQ — через ScrollTrigger при попадании в viewport (`top 85%`, `toggleActions: play none none reverse`); внутренние карточки имеют отдельный stagger через `[data-animate-item]`. Уважается `prefers-reduced-motion: reduce` — анимация не запускается.
+- Smooth scroll по якорным ссылкам (`#problem`, `#benefits`, `#faq`, `#contacts`). В `src/app/globals.css` добавлено `html { scroll-behavior: smooth }` под `@media (prefers-reduced-motion: no-preference)`.
+- FAQ chevron-индикатор. Каждый вопрос (`<details>`/`<summary>`) теперь имеет стрелку справа через `::after` (двойной border, поворот через transform). Поворачивается на 180° при `details[open]` с transition 250ms. Дефолтный треугольник браузера убран через `list-style: none` + `::-webkit-details-marker { display: none }`.
+- Cursor spotlight на карточках главной. Новый client-component `src/app/cursor-spotlight.tsx` — единственный `pointermove` listener на `document` (event delegation, `{ passive: true }`), обновляет CSS-переменные `--mx`/`--my` на ближайшем элементе из переданного `selector`. В CSS на карточках (`.metrics article`, `.problemGrid article`, `.benefitGrid article`, `.faqList details`) добавлен `::before` с `radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(42,171,238,0.22), ...)`, opacity 0→1 на `:hover`. Border карточки тоже подкрашивается синим. На тач-устройствах (`@media (hover: none)`) скрыто, listener не вешается.
+- Контактный e-mail переименован: `legal@doobler.ru` → `dooblertech@mail.ru` во всех 5 местах (`src/app/privacy/page.tsx` x2, `src/app/offer/page.tsx`, `src/components/profile/profile-documents.tsx` mailto + видимый текст).
+- Удалён зарезервированный Windows-файл `nul` из корня репозитория. Был оставлен прошлым агентом (видимо после `cmd > nul` в bash, который интерпретировал `nul` как обычное имя), и Tailwind v4 / Turbopack при сканировании source-файлов падали с `os error 1` (FATAL panic, app endpoint /page не собирается). Удалить через `rm`/`del`/`Remove-Item` Windows не давала — пришлось через .NET API `[System.IO.File]::Delete('\\?\<full-path>')`.
+- Синхронизировано: те же правки `page.tsx`, `page.module.css`, `globals.css`, `home-animations.tsx`, `cursor-spotlight.tsx`, `package.json`/`package-lock.json` и e-mail в `pvz_zamena_bot` (dev-репо), чтобы dev не отставал от prod-таргета `doobler-vps`.
+
+Version 127
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Fixed the homepage GSAP animation so it no longer sets hero, section, or card content to `opacity: 0` while dynamic imports are loading or animations are running.
+- Kept the motion effect as transform-only (`y` slide with `clearProps: "transform"`), so the landing content remains visible for early headless screenshots and JS-delayed rendering.
+- Synced the same `src/app/home-animations.tsx` fix into `pvz_zamena_bot`.
+- Verified `npm run typecheck` and `npm run lint` in both `doobler-vps` and `pvz_zamena_bot`.
+- Rechecked `doobler-vps` on `localhost:3002` with mobile/tablet Chrome screenshots; hero content is visible.
+
+Version 128
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Reworked the homepage phone preview to follow the real Mini App structure instead of custom top tabs.
+- The preview now shows the real `Смены` flow: page title with balance, search field, filters, city/count row, and a test shift card for `Смена в ПВЗ Ozon`.
+- Added a compact profile block with `Иван Иванов`, Kazan, rating 4.8, and 7 completed shifts.
+- Kept the bottom navigation visible and aligned with the app structure: `Смены`, `Создать`, `Мои смены`, `Чаты`, `Профиль`.
+- Strengthened the rounded phone frame and adjusted preview sizing so the full phone perimeter and bottom navigation are visible in desktop hero screenshots.
+- Synced the same `page.tsx` and `page.module.css` changes into `pvz_zamena_bot`; verified `npm run typecheck` and `npm run lint` in both repos.
+
+Version 129
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Turned the homepage phone preview into an interactive client demo instead of a static mockup.
+- Added `src/app/home-phone-demo.tsx` with clickable bottom navigation for `Смены`, `Создать`, `Мои смены`, `Чаты`, and `Профиль`.
+- The plus button now performs a demo balance top-up, filters expand into active chips, and the test shift card can open/collapse details.
+- Added static demo screens matching the real Mini App structure: create-shift form, owned shifts with candidates, chat list, and Ivan Ivanov's profile.
+- Updated `src/app/page.tsx` to render `<HomePhoneDemo />` from the server homepage and removed the old static phone component from the page file.
+- Updated `src/app/page.module.css` for real button states, phone-screen scrolling, demo panels, clickable nav, and toast feedback while keeping the rounded phone frame.
+- Synced the same homepage demo files into `pvz_zamena_bot`; verified `npm run typecheck` and `npm run lint` in both repos.
+
+Version 130
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Removed the extra compact profile card from the default `Смены` screen inside the homepage phone demo.
+- The default phone view now contains only the shifts flow: search, filters, city/count row, and the test shift card, matching the user's screenshot more closely.
+- Kept the separate `Профиль` demo screen available only through the bottom navigation button.
+- Synced the same `home-phone-demo.tsx` change into `pvz_zamena_bot`; verified `npm run typecheck` and `npm run lint` in both repos.
+
+Version 131
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Removed the interactive live phone demo from the homepage hero.
+- Deleted `src/app/home-phone-demo.tsx`.
+- Removed the `<HomePhoneDemo />` import/render from `src/app/page.tsx`.
+- Switched the homepage hero layout back to a single-column grid so removing the phone does not leave an empty right column.
+- Synced the same removal into `pvz_zamena_bot`; verified `npm run typecheck` and `npm run lint` in both repos.
+
+Version 132
+Date: 2026-05-22
+Author: codex gpt-5
+Changes:
+- Added the provided phone screenshot as `public/home-phone-preview.webp`.
+- Restored the right-side hero visual slot and rendered the screenshot with Next/Image in `src/app/page.tsx`.
+- Added `.phonePreviewImage` styling in `src/app/page.module.css` for responsive sizing and drop shadow.
+- Synced the image and homepage changes into `pvz_zamena_bot`; verified `npm run typecheck` and `npm run lint` in both repos.
+
+Version 133
+Date: 2026-05-23
+Author: codex gpt-5
+Changes:
+- Improved the homepage phone screenshot asset by generating `public/home-phone-preview-2x.webp` at 1244×2064 from the original 622×1032 image.
+- Applied Lanczos upscaling, sharpening, and high-quality WebP export through `sharp`.
+- Updated the homepage hero image to use `/home-phone-preview-2x.webp`.
+- Increased the displayed phone size in `src/app/page.module.css` from `min(430px, 88vw)` to `min(520px, 92vw)` and strengthened the drop shadow.
+- Synced the new asset and homepage changes into `pvz_zamena_bot`; verified `npm run typecheck` and `npm run lint` in both repos.
+
+Version 134
+Date: 2026-05-23
+Author: codex gpt-5
+Changes:
+- Reprocessed the homepage phone screenshot again as `public/home-phone-preview-4x.webp` at 2488×4128 for a sharper large hero render.
+- Added light contrast/saturation correction, Lanczos 4x upscaling, stronger sharpening, and WebP quality 98 through `sharp`.
+- Updated `src/app/page.tsx` to use `/home-phone-preview-4x.webp`.
+- Increased the displayed phone size in `src/app/page.module.css` from `min(520px, 92vw)` to `min(610px, 94vw)`, widened the right hero column, and adjusted the image offset/drop shadow.
+- Removed the now-unused `home-phone-preview-2x.webp` asset.
+- Synced the new asset and homepage changes into `pvz_zamena_bot`; verified `npm run typecheck` and `npm run lint` in both repos.
+
+Version 135
+Date: 2026-05-23
+Author: codex gpt-5
+Changes:
+- Fixed the VPS deploy configuration for DaData address suggestions/verification.
+- Added `DADATA_API_KEY: ${DADATA_API_KEY}` to `deploy/docker-compose.yml` under the `app` service so the key from `/opt/doobler/.env.production` reaches Next.js.
+- Added app outbound proxy env references (`HTTPS_PROXY`, `HTTP_PROXY`, `NO_PROXY`, `NODE_OPTIONS=--dns-result-order=ipv4first --use-env-proxy`) to the same `app.environment` block. This matches the already configured support-bot proxy behavior and is required for Node 22 native `fetch()` on VPS networks where DaData/Telegram need a proxy.
+- Added `DADATA_API_KEY=CHANGE_ME_DADATA_API_KEY` to `deploy/env.production.template`.
+- Added `DADATA_API_KEY=""` to `.env.example` in both repos.
+- Updated `VPS_DEPLOY.md`: DaData/proxy config is now repo-tracked in compose, while real secrets stay only in `.env.production`; removed the old manual python compose-patching flow from the main deploy notes.
+- Verified `npm run typecheck` and `npm run lint` in both `doobler-vps` and `pvz_zamena_bot`. Docker compose validation was not run locally because Docker is not installed/in PATH on this Windows machine.
+
+Version 136
+Date: 2026-05-23
+Author: codex gpt-5
+Changes:
+- Fixed shift creation after DaData verification on VPS when the frontend sends a stale/demo marketplace id such as `mp_ozon`.
+- Added server-side marketplace id resolution in `src/server/services/shift-post-service.ts`: real DB ids still pass through, while fallback ids (`mp_ozon`, `mp_wb`, `mp_yandex`, `mp_other`) and direct codes (`OZON`, `WB`, `YANDEX`, `OTHER`) are resolved to the actual `Marketplace.id` before `prisma.shiftPost.create()`.
+- Added a `MARKETPLACE_NOT_FOUND` API response in `src/app/api/shift-posts/route.ts` so invalid marketplace input returns 400 instead of a Prisma FK 500.
+- Synced the same fix into `pvz_zamena_bot`; verified `npm run typecheck` and `npm run lint` in both repos.
+
+Version 137
+Date: 2026-05-23
+Author: codex gpt-5
+Changes:
+- Replaced the homepage hero phone preview with the new user-provided WebP image.
+- Overwrote `public/home-phone-preview.webp` with the 1053x1494 transparent phone render and removed the unused `public/home-phone-preview-4x.webp`.
+- Updated `src/app/page.tsx` to render `/home-phone-preview.webp` with matching intrinsic dimensions.
+- Synced the same asset and page change into `pvz_zamena_bot`.
+- Verified `npm run typecheck`, `npm run lint`, and local desktop/mobile homepage screenshots from `http://localhost:3000/`.
+
+Version 138
+Date: 2026-05-23
+Author: codex gpt-5
+Changes:
+- Replaced the homepage hero phone preview again with the newer user-provided WebP render.
+- Overwrote `public/home-phone-preview.webp` with the 1086x1448 transparent phone render and kept the old `home-phone-preview-4x.webp` asset removed.
+- Updated `src/app/page.tsx` intrinsic image dimensions to `1086x1448`.
+- Synced the same asset and page change into `pvz_zamena_bot`.
+
+Version 139
+Date: 2026-05-23
+Author: codex gpt-5
+Changes:
+- Replaced the homepage hero phone preview with the latest user-provided `carve.photos` WebP render.
+- Overwrote `public/home-phone-preview.webp` with the 962x1280 transparent phone render and kept the old `home-phone-preview-4x.webp` asset removed.
+- Updated `src/app/page.tsx` intrinsic image dimensions to `962x1280`.
+- Kept the enlarged `.phonePreviewImage` desktop width from the previous pass so the new render stays prominent in the hero.
+- Synced the same asset, page, and CSS state into `pvz_zamena_bot`.
+- Verified `npm run typecheck`, `npm run lint`, and local desktop/mobile homepage screenshots from `http://localhost:3000/`.
+
+Version 140
+Date: 2026-05-24
+Author: codex gpt-5
+Changes:
+- Reworked homepage hero parallax so the phone and both background blobs move independently instead of in one synchronized layer.
+- Added separate CSS variables for the left blob, right blob, and phone; each now has its own X/Y offset and subtle rotation.
+- Kept movement intentionally tiny: phone around 3-5px, background blobs around 6-7px, disabled for reduced motion and touch-only devices.
+- Synced the same parallax changes into `pvz_zamena_bot`; verified `npm run typecheck` and `npm run lint` in both repos.
+
+Version 141
+Date: 2026-05-24
+Author: codex gpt-5
+Changes:
+- Fixed shift location formatting so regional parts such as `респ Татарстан` and `Свердловская обл` are removed from the final card location.
+- Normalized short street/house labels in shift locations: `ул Татарстан, д 1` now renders as `ул. Татарстан, д.1`.
+- Reused the same compact address formatter on the shift details map block so cards and detail pages stay consistent.
+- Made DaData verification store the compact street-level address for new shift posts while the card still prepends city and district.
+- Changed shift creation start/end inputs from `datetime-local` to time-only fields and combine them with the selected shift date before submit.
+- Hardened date/time input sizing on mobile with max-width/min-inline-size/appearance rules to avoid iPhone field overflow.
+- Added `src/lib/utils.test.ts` coverage for compact shift address formatting.
+- Synced the same changes into `pvz_zamena_bot`; verified `npm run test -- src/lib/utils.test.ts`, `npm run typecheck`, and `npm run lint` in `doobler-vps`.
+
+Version 142
+Date: 2026-05-24
+Author: codex gpt-5
+Changes:
+- Fixed the production Content-Security-Policy that blocked Yandex Metrika on `doobler.ru`.
+- Added Metrika/Webvisor script sources (`mc.yandex.ru`, `mc.webvisor.com`, `mc.webvisor.org`, `yastatic.net`) to `script-src`.
+- Added Metrika/Webvisor request sources, including websocket endpoints, to `connect-src`.
+- Added `child-src` and `frame-src` permissions for `blob:` and `mc.yandex.ru` so Webvisor/click maps can work with the current `webvisor: true` analytics config.
+- Added Yandex Metrika/Analytics domains to `frame-ancestors` so replay/analytics tools can open the recorded pages.
+- Synced the same `next.config.ts` change into `pvz_zamena_bot`.
+
+Version 143
+Date: 2026-05-24
+Author: codex gpt-5
+Changes:
+- Added Google Analytics CSP allowances alongside the Yandex Metrika CSP fix.
+- Added `www.googletagmanager.com` to `script-src` so the GA loader can execute.
+- Added `www.google-analytics.com`, `region1.google-analytics.com`, `analytics.google.com`, and `stats.g.doubleclick.net` to `connect-src` for GA4 collection endpoints.
+- Synced the same `next.config.ts` change into `pvz_zamena_bot`.
+
+Version 144
+Date: 2026-05-24
+Author: codex gpt-5
+Changes:
+- Updated the production VPS runtime notes after diagnosing `/start` failures for the main `@doobler_bot`.
+- Confirmed the `/start` handler itself is healthy: manual POSTs to `/api/bot/webhook` return `mini_app_invite`, and Node `fetch()` from `doobler-app` reaches Telegram API through `HTTPS_PROXY` / `HTTP_PROXY` with `NODE_OPTIONS=--use-env-proxy`.
+- Root cause: Telegram webhook delivery to `https://doobler.ru/api/bot/webhook` times out before reaching nginx on the Russian VPS/IP, while external non-Telegram curl requests reach nginx/app correctly.
+- Added a production workaround on the VPS: `doobler-main-bot-poller` polls `getUpdates` for the main bot through the app proxy and forwards updates internally to `http://app:3000/api/bot/webhook` with `TELEGRAM_WEBHOOK_SECRET`.
+- Verified polling mode by receiving `/start` updates and forwarding them to the existing webhook handler, which sent Mini App invites successfully.
+- Important deploy note: the current `deploy/deploy.sh` still calls `setWebhook`; future deploys must not re-enable webhook for the main bot unless Telegram -> VPS delivery is fixed, and should keep/restart `main-bot-poller` instead.
+
+Version 145
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Added `public/llms.txt` at the standard root URL `/llms.txt` following the Jeremy Howard / Answer.AI proposal for concise LLM-readable website context.
+- Described `Дублер` as an independent Telegram Mini App service for ПВЗ shift and vacancy workflows, and linked only to public service, legal, support, and sitemap resources.
+- Kept user areas, chats, and internal Mini App workflows out of the public LLM context file.
+- Synced the same `llms.txt` file into `pvz_zamena_bot`.
+
+Version 146
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Added a shift-attendance score for employees and managers after 5 resolved confirmed assignments: completed shifts increase the percentage, while worker refusals and `NO_SHOW` outcomes lower it.
+- Added a public profile warning when attendance is 50% or lower: employers are prompted to confirm that the employee will really attend before choosing them.
+- Added the worker flow to decline a confirmed shift from `Мои отклики`; refusal is saved as `CANCELLED_BY_WORKER`, the shift is reopened for another candidate, and the employer receives a Telegram notification.
+- Changed `ShiftPost -> Assignment` from a one-to-one link to assignment history so replacement workers can be confirmed after an earlier confirmed worker declines; active confirmation uses a serializable transaction.
+- Added `src/lib/shift-attendance.test.ts` and service tests for worker refusal/reopening; verified `npm run db:generate`, `npm run typecheck`, `npm run lint`, and `npm run test`.
+- Synced the same implementation into `pvz_zamena_bot`; deployment requires applying the updated Prisma schema before serving the new app version.
+
+Version 147
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Added an explicit employer action `Отметить неявку` on an active confirmed shift, with a confirmation warning that it will reduce the employee's attendance score.
+- Added the protected `POST /api/assignments/[id]/no-show` flow: only the shift employer can use it, and only after the scheduled start time.
+- Stored non-attendance as `NO_SHOW` on both the assignment and application, closed the shift, and sent the employee a Telegram notice with a support path for disputes.
+- Prevented a recorded `NO_SHOW` or cancellation from later being overwritten as `COMPLETED` through the completion endpoint.
+- Updated employer and worker application views to state clearly when a shift was marked as a no-show.
+- Synced the implementation into `pvz_zamena_bot`; deployment requires applying the updated Prisma enum/schema before serving this version.
+
+Version 148
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Removed the worker-facing post-refusal message that exposed the shift being reopened for other employees; the worker now only sees confirmation of their refusal.
+- Fixed the native date/time picker indicator in the `Создать смену` form for Telegram dark mode so the clock/calendar control remains visible on dark fields.
+- Synced the same UI changes into `pvz_zamena_bot`.
+
+Version 149
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Changed the shift details apply state to retain the employee's existing application status instead of flattening every previous application to a boolean.
+- When an employee previously declined a confirmed shift (`CANCELLED_BY_WORKER`), reopening that shift now shows `Вы отказались от данной смены` instead of `Вы уже откликнулись`.
+- Added service coverage for returning the cancellation status and synced the same change into `pvz_zamena_bot`.
+
+Version 150
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Diagnosed missing Yandex Metrika execution as an nginx delivery problem: `/_next/static/chunks/*` was handled by the HTML rate-limit location and could return burst 503 responses before hydration.
+- Added a dedicated `location ^~ /_next/static/` in the production nginx config with no request-rate limit, a higher static connection bound, and immutable browser caching for versioned Next.js assets.
+- Documented a nginx-only VPS hotfix procedure that avoids `deploy/deploy.sh`, because the main production bot must remain on polling while Telegram webhook delivery to the Russian VPS is unreliable.
+
+Version 151
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Added public `/llms-full.txt` with expanded LLM-readable context about Дублер, its audiences, shift workflow, trust and safety boundaries, data processing, and official contacts.
+- Linked the extended context file from `/llms.txt` while keeping private application areas, user data, and internal workflows out of the public document.
+
+Version 152
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Added reusable shift templates for confirmed owners and managers: users can name a template, save current shift fields without a date, apply it later, overwrite it by saving under the same name, or delete it.
+- Added the `ShiftTemplate` database model and protected `/api/shift-templates` endpoints with per-user ownership, trusted mutation checks, rate limiting, and pickup-point access verification.
+- Added a visible `Шаблоны смен` control block in the shift creation form; applying a template fills the location, shift details, time and payment while leaving the chosen date unchanged.
+- Added validation coverage for date-free templates and address selection. VPS deployment requires applying the updated Prisma schema before serving this app version.
+
+Version 153
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Fixed a bug where deleting a shift template that was bound to a pickup point left marketplace, city, and address fields locked (disabled/readOnly). The delete handler now resets `pickupPointId` in the form when the deleted template had one, so fields become editable again.
+- Synced the fix into `pvz_zamena_bot`.
+
+Version 154
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Removed the "Создать объявление" title and "Минимум полей..." subtitle from the shift creation page (`shifts/new/page.tsx`) to reduce visual noise.
+
+Version 155
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Replaced the default Zod "Too small" error messages with Russian text: "Вам нужно добавить заголовок", "Выберите маркетплейс", "Выберите город", "Укажите регион", "Введите адрес", "Выберите дату смены".
+- Added per-field client-side validation with red border highlighting (`border-danger`) and inline error messages below each field.
+- Added smooth scroll-to-first-error on submit (`scrollIntoView({ behavior: "smooth" })`).
+- Errors clear automatically when the user starts typing in the affected field.
+- Synced all changes into `pvz_zamena_bot`.
+
+Version 156
+Date: 2026-05-25
+Author: codex gpt-5
+Changes:
+- Added `noValidate` to the shift creation form so browser-native HTML5 validation does not intercept submit before the custom client-side validation runs. Error highlighting and scroll-to-error now work correctly.
+
+Version 157
+Date: 2026-05-26
+Author: codex gpt-5
+Changes:
+- Disabled passport identity verification in the profile and admin flows: only Telegram phone confirmation remains for a worker profile, while owners and managers may still submit a PВЗ relationship document.
+- Closed the passport upload, moderation, and photo-read API routes with `410` responses, and removed identity-verification state from the profile payload and UI.
+- Added visible pre-action processing notices for phone confirmation, profile save/registration, and PВЗ document submission.
+- Disabled Google Analytics entirely and disabled Yandex Metrika Webvisor; Metrika remains available without session recording.
+- Added a 30-day retention rule for PВЗ verification documents plus audit entries for upload, view, moderation decision, retention deletion, and removal of legacy passport photos.
+- Added `npm run documents:purge` for scheduled document removal; the deploy stack should run it daily using the upload volume shared with the application.
+
+Version 158
+Date: 2026-05-26
+Author: codex gpt-5
+Changes:
+- Added `UserLegalEvent` and `/api/legal-events` so separate consents and offer acceptance are recorded with the text version, source, timestamp, and audit trail.
+- Required an active separate consent before saving profile data, requesting or accepting a phone number, and uploading a PВЗ verification document.
+- Added user-facing consent controls: separate onboarding checkboxes, optional profile sharing consent, profile consent management with withdrawal, and immediate hiding of profiles that are not shared.
+- Changed Yandex Metrika to load only on the public homepage after an explicit analytics choice, with withdrawal control on `/privacy`; it no longer runs in Mini App or private routes.
+- Removed dormant passport-verification UI/service source, stopped importing Telegram avatar automatically on initial auth, and extended cleanup to delete legacy passport metadata.
+- Extended scheduled cleanup to remove old phone numbers and PВЗ files that have no recorded consent after migration; affected users must confirm/upload them again.
+
+Version 159
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Replaced long onboarding consent blocks with compact expandable disclosures and accent-colored legal document links in the registration form.
+- Separated personal-data processing consent from public offer acceptance and made profile dissemination an optional, revocable choice that does not block registration.
+- Updated consent snapshots and the privacy policy wording to describe separate decisions and hidden-profile behavior when dissemination is not allowed.
+
+Version 160
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Made acceptance of every registration consent mandatory before a new profile can be created, including separate consent to display the working profile to authorized users.
+- Moved initial dissemination-consent recording before profile creation and added server-side onboarding checks for processing consent, current offer acceptance, and display consent.
+- Updated the privacy policy and consent snapshot to state that registration is unavailable without consent to show the working profile.
+
+Version 161
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Added a sticky top navigation bar with a back arrow and document title to the privacy policy and public offer pages.
+- Removed the in-card back link so document navigation stays visible while scrolling on mobile.
+
+Version 162
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Changed the public website legal-document toolbar to return visitors to the landing page instead of sending them into `/profile`.
+- Added inline full-screen privacy policy and offer viewing from Telegram onboarding so closing a document returns to the existing registration form state without reloading the Mini App.
+- Added embedded document rendering without duplicate navigation bars for the onboarding overlay.
+
+Version 163
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Confirmed that Yandex Metrika loads only on the public landing page after a separate analytics choice and is not loaded in Telegram Mini App routes.
+- Clarified in the privacy policy that ООО «ЯНДЕКС» processes public landing-page technical analytics data on the operator's instruction, only after separate consent and without Webvisor.
+
+Version 164
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Restyled the public landing-page Yandex Metrika consent prompt as a compact bottom-right notification on desktop, retaining a mobile-friendly full-width bottom layout.
+
+Version 165
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Allowed the public analytics consent notification to be previewed in development even before a Yandex Metrika counter ID is configured.
+- Kept production tracking disabled until a numeric Metrika counter ID exists and the visitor grants analytics consent.
+
+Version 166
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Reworded the public cookie notification to distinguish mandatory site cookies from optional Yandex Metrika analytics cookies.
+- Replaced the analytics-heavy wording with a short consent notice linked to the personal data policy.
+
+Version 167
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Restyled the public cookie notification as a dark compact card.
+- Removed the visible cookie notification heading so only the consent message and action buttons remain.
+
+Version 168
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Fixed the production document-cleaner startup failure by allowing the standalone purge script to import legal consent cleanup routines outside the Next.js server-only module resolver.
+
+Version 169
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Removed the in-profile "Мои согласия" management card now that registration requires the mandatory onboarding consents.
+- Updated the privacy policy to direct consent withdrawal and related personal-data requests through support instead of an in-profile control.
+
+Version 170
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Fixed empty marketplace, region, and city selectors in shift creation on production by sending Telegram-authenticated requests for protected reference endpoints.
+
+Version 171
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Replaced the old generic favicon declaration with the actual square Doobler logo for browser tabs and search-result favicon crawling.
+- Removed conflicting app icon files so crawlers receive one stable branded favicon asset.
+
+Version 172
+Date: 2026-05-27
+Author: codex gpt-5
+Changes:
+- Replaced the landing-page phone preview asset with the updated dark Mini App screenshot supplied for the hero section.
+
+Version 173
+Date: 2026-05-29
+Author: codex gpt-5
+Changes:
+- Added saved shift-notification filters so users can subscribe to new shifts by city, district, marketplace, urgency, and payment range.
+- Added a "notify by these filters" action in the shift filter modal and a profile card to view or disable the saved filter.
+- Send Telegram notifications and in-app notification records when a newly published shift matches active saved filters.
+
+Version 174
+Date: 2026-06-01
+Author: codex gpt-5
+Changes:
+- Added chat conduct rules to the public offer: allowed chat purpose, forbidden behavior, personal-data limits, suspicious links/codes/cards, and moderation consequences.
+- Bumped the public offer document version to `offer-2026-06-01` so new onboarding acceptances record the current legal text.
+- Refreshed `project_review.md` with the current app, legal, notification, bot-token, deployment, and VPS reliability notes.
+
+Version 175
+Date: 2026-06-01
+Author: codex gpt-5
+Changes:
+- Hardened Telegram bot Mini App URL generation so server-side `APP_URL` and `DOMAIN` are preferred before `NEXT_PUBLIC_APP_URL`, preventing build-time public env values from leaking localhost into bot buttons.
+- Added production compose env for `APP_URL`, `DOMAIN`, and `TELEGRAM_DROP_PENDING_UPDATES` in the VPS stack.
+
+Version 176
+Date: 2026-06-03
+Author: codex gpt-5
+Changes:
+- Extended the nginx njs edge validator to accept either `x-telegram-init-data` or `x-max-init-data`, each checked with its own bot token and the same 1-hour HMAC TTL.
+- Added private nginx token baking for `MAX_BOT_TOKEN` alongside the existing Telegram token file, keeping both secrets out of rendered nginx config.
+- Passed `MAX_BOT_TOKEN` and `MAX_WEBHOOK_SECRET` through production compose, added the env template entries, and opened `/api/auth/max`, `/api/max/webhook`, and `/max/*` in nginx.
+
+Version 177
+Date: 2026-06-03
+Author: codex gpt-5
+Changes:
+- Added explicit `MAX_BOT_URL=https://max.ru/id163205081110_bot` production env wiring so Telegram -> MAX profile linking can generate bot deep links without hard-coding deploy config.

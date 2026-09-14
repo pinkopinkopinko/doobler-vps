@@ -87,6 +87,11 @@ export type PickupPointManagerAccess = Prisma.PickupPointManagerAccessModel
  */
 export type ShiftPost = Prisma.ShiftPostModel
 /**
+ * Model ShiftTemplate
+ * 
+ */
+export type ShiftTemplate = Prisma.ShiftTemplateModel
+/**
  * Model Application
  * 
  */
@@ -112,20 +117,30 @@ export type Report = Prisma.ReportModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model IdentityVerification
+ * 
+ */
+export type IdentityVerification = Prisma.IdentityVerificationModel
+/**
+ * Model IdentityVerificationPhoto
+ * 
+ */
+export type IdentityVerificationPhoto = Prisma.IdentityVerificationPhotoModel
+/**
  * Model Notification
  * 
  */
 export type Notification = Prisma.NotificationModel
 /**
- * Model Favorite
- * 
- */
-export type Favorite = Prisma.FavoriteModel
-/**
  * Model AuditLog
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model UserLegalEvent
+ * 
+ */
+export type UserLegalEvent = Prisma.UserLegalEventModel
 /**
  * Model Conversation
  * 

@@ -1,4 +1,5 @@
 import { fail, ok } from "@/lib/api";
+import { requireTrustedMutationRequest } from "@/lib/auth/mutation-guard";
 import { getSessionPayload } from "@/lib/auth/session";
 import { updateShiftPostStatus } from "@/server/services/shift-post-service";
 
@@ -6,12 +7,17 @@ type RouteParams = {
   params: Promise<{ id: string }>;
 };
 
-export async function POST(_: Request, { params }: RouteParams) {
+export async function POST(request: Request, { params }: RouteParams) {
   const session = await getSessionPayload();
 
   if (!session) {
     return fail("Нужен вход через Telegram.", 401);
   }
+
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: session.telegramId,
+  });
+  if (untrusted) return untrusted;
 
   const { id } = await params;
 

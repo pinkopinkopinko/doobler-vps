@@ -1,5 +1,6 @@
 import { demoCities, demoRegions } from "@/lib/demo-data";
 import { isDevFallbackEnabled, logDevFallbackUsed } from "@/lib/dev-fallback";
+import { fetchDaData } from "@/lib/geocoder/dadata-fetch";
 import { prisma } from "@/lib/prisma";
 
 type DaDataSuggestionData = {
@@ -275,7 +276,7 @@ export async function fetchAddressSuggestions(input: FetchAddressSuggestionsInpu
     ],
   };
 
-  const response = await fetch(
+  const response = await fetchDaData(
     "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
     {
       method: "POST",

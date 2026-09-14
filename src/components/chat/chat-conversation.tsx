@@ -9,11 +9,23 @@ import {
   useRef,
   useState,
 } from "react";
-import { ArrowLeft, ImagePlus, LoaderCircle, SendHorizonal, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import {
+  ArrowLeft,
+  ImagePlus,
+  LoaderCircle,
+  SendHorizonal,
+  X,
+} from "lucide-react";
 
 import { fetchWithTelegramAuth } from "@/lib/auth/client";
 import { ChatAvatar } from "@/components/chat/chat-avatar";
 import { MAX_ATTACHMENTS_PER_MESSAGE } from "@/lib/chat/uploads";
+import {
+  getPlatformPrefixFromPathname,
+  withPlatformPrefix,
+} from "@/lib/routing/platform";
+import { formatMoney, formatShiftLocation, formatShiftTimeRange, getMarketplaceLabel } from "@/lib/utils";
 
 type Peer = {
   id: string;
@@ -36,6 +48,22 @@ type Message = {
   attachments: Attachment[];
 };
 
+type ActiveShift = {
+  id: string;
+  assignmentId: string;
+  title: string;
+  marketplace: string;
+  status: "CONFIRMED" | "IN_PROGRESS" | "COMPLETED" | "NO_SHOW" | "CANCELLED" | "DISPUTED";
+  cityName: string | null;
+  district: string;
+  address: string;
+  shiftDate: string;
+  startAt: string | null;
+  endAt: string | null;
+  paymentAmountRub: number;
+  completedAt: string | null;
+};
+
 type PendingUpload = {
   clientId: string;
   file: File;
@@ -49,6 +77,7 @@ type Props = {
   conversationId: string;
   currentUserId: string;
   peer: Peer;
+  activeShift: ActiveShift | null;
 };
 
 const timeFormat = new Intl.DateTimeFormat("ru-RU", {
@@ -57,6 +86,11 @@ const timeFormat = new Intl.DateTimeFormat("ru-RU", {
 });
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", {
+  day: "numeric",
+  month: "long",
+});
+
+const shiftDateFormat = new Intl.DateTimeFormat("ru-RU", {
   day: "numeric",
   month: "long",
 });
@@ -110,7 +144,14 @@ function areMessagesEqual(left: Message[], right: Message[]) {
   return true;
 }
 
-export function ChatConversation({ conversationId, currentUserId, peer }: Props) {
+export function ChatConversation({
+  conversationId,
+  currentUserId,
+  peer,
+  activeShift,
+}: Props) {
+  const pathname = usePathname();
+  const platformPrefix = getPlatformPrefixFromPathname(pathname);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -132,7 +173,10 @@ export function ChatConversation({ conversationId, currentUserId, peer }: Props)
     return [peer.firstName, peer.lastName].filter(Boolean).join(" ") || "Чат";
   }, [peer]);
 
-  const load = useCallback(async () => {
+  // Полный ребилд истории (initial-load или ручной refresh). Заменяет
+  // текущее состояние целиком и сохраняет id последнего сообщения, чтобы
+  // дальше polling шёл инкрементально.
+  const loadInitial = useCallback(async () => {
     if (loadingRef.current) {
       return;
     }
@@ -160,6 +204,53 @@ export function ChatConversation({ conversationId, currentUserId, peer }: Props)
     }
   }, [conversationId]);
 
+  // Инкрементальный poll: спрашиваем у сервера только сообщения новее
+  // последнего известного нам id. В тихом чате это возвращает пустой
+  // массив (ещё дешевле — после v82 это просто два index-scan по
+  // (conversationId, createdAt, id)). Дозаписываем результат к
+  // существующему хвосту с дедупом по id, чтобы не сломать порядок при
+  // оптимистичной отправке (отправитель сам уже добавил своё сообщение
+  // в state до того, как poll увидел его).
+  const loadIncremental = useCallback(
+    async (sinceId: string) => {
+      if (loadingRef.current) {
+        return;
+      }
+
+      loadingRef.current = true;
+
+      try {
+        const response = await fetchWithTelegramAuth(
+          `/api/chats/${conversationId}/messages?sinceId=${encodeURIComponent(sinceId)}&limit=80`,
+          { cache: "no-store" },
+        );
+        if (!response.ok) {
+          // Не показываем ошибку в UI на тиках — пользователь и так
+          // увидит «нет новых сообщений», а на следующем тике мы
+          // попробуем снова. Только если что-то совсем сломается —
+          // initial-load на возврате в фокус разрулит.
+          return;
+        }
+        const payload = (await response.json()) as { messages: Message[] };
+        if (payload.messages.length === 0) {
+          return;
+        }
+        setMessages((current) => {
+          const known = new Set(current.map((m) => m.id));
+          const fresh = payload.messages.filter((m) => !known.has(m.id));
+          if (fresh.length === 0) {
+            return current;
+          }
+          return [...current, ...fresh];
+        });
+        setError(null);
+      } finally {
+        loadingRef.current = false;
+      }
+    },
+    [conversationId],
+  );
+
   const markRead = useCallback(() => {
     void fetchWithTelegramAuth(`/api/chats/${conversationId}/read`, {
       method: "POST",
@@ -171,12 +262,17 @@ export function ChatConversation({ conversationId, currentUserId, peer }: Props)
 
     const tick = async () => {
       if (cancelled) return;
-      await load();
+      const lastId = lastMessageIdRef.current;
+      if (lastId) {
+        await loadIncremental(lastId);
+      } else {
+        await loadInitial();
+      }
     };
 
     queueMicrotask(() => {
       if (!cancelled) {
-        void tick();
+        void loadInitial();
       }
     });
 
@@ -189,7 +285,7 @@ export function ChatConversation({ conversationId, currentUserId, peer }: Props)
       cancelled = true;
       clearInterval(interval);
     };
-  }, [load]);
+  }, [loadInitial, loadIncremental]);
 
   useEffect(() => {
     if (messages.length === 0) return;
@@ -365,23 +461,37 @@ export function ChatConversation({ conversationId, currentUserId, peer }: Props)
     } finally {
       setSending(false);
     }
-  }, [body, canSend, clearPendingUrls, conversationId, pending]);
+  }, [
+    body,
+    canSend,
+    clearPendingUrls,
+    conversationId,
+    pending,
+    setBody,
+    setError,
+    setMessages,
+    setPending,
+    setSending,
+  ]);
 
   const grouped = useMemo(() => groupByDay(messages), [messages]);
 
   return (
     <section className="flex h-[calc(100dvh_-_var(--nav-height)_-_118px_-_env(safe-area-inset-bottom,0px))] min-h-[520px] max-h-[760px] flex-col gap-3 pb-[86px]">
-      <header className="shrink-0 rounded-[30px] border border-white/80 bg-white px-4 py-3 shadow-[0_14px_34px_rgba(20,27,33,0.08)]">
+      <header className="chat-conversation-header shrink-0 rounded-[30px] bg-white px-4 py-3 shadow-[0_14px_34px_rgba(20,27,33,0.08)]">
         <div className="flex items-center gap-3">
         <Link
-          href="/chats"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#c9d3dd] bg-[#e8edf2] text-black shadow-[0_2px_8px_rgba(16,18,20,0.08)]"
+          href={withPlatformPrefix("/chats", platformPrefix)}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#c9d3dd] bg-[#e8edf2] text-[#101214] shadow-[0_2px_8px_rgba(16,18,20,0.08)]"
           aria-label="Назад"
         >
-          <ArrowLeft className="h-5 w-5 text-black" strokeWidth={3.2} />
+          <ArrowLeft className="h-5 w-5 text-[#101214]" strokeWidth={3.2} />
         </Link>
         {peer ? (
-          <Link href={`/profiles/${peer.id}`} className="flex min-w-0 flex-1 items-center gap-3">
+          <Link
+            href={withPlatformPrefix(`/profiles/${peer.id}`, platformPrefix)}
+            className="flex min-w-0 flex-1 items-center gap-3"
+          >
             <ChatAvatar
               firstName={peer.firstName}
               lastName={peer.lastName}
@@ -406,9 +516,11 @@ export function ChatConversation({ conversationId, currentUserId, peer }: Props)
         </div>
       </header>
 
+      {activeShift ? <ActiveShiftCard shift={activeShift} hrefPrefix={platformPrefix} /> : null}
+
       <div
         ref={scrollRef}
-        className="min-h-0 flex-1 space-y-4 overflow-y-auto rounded-[30px] border border-[#e7edf3] bg-[#f4f8fb] px-3 pb-28 pt-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]"
+        className="chat-messages-scroll min-h-0 flex-1 space-y-4 overflow-y-auto px-2 pb-28 pt-4"
       >
         {loading ? (
           <div className="flex items-center justify-center gap-2 py-8 text-sm text-[#7f8791]">
@@ -478,7 +590,7 @@ export function ChatConversation({ conversationId, currentUserId, peer }: Props)
       ) : null}
 
       <form
-        className="fixed bottom-[calc(var(--nav-height)+12px+env(safe-area-inset-bottom,0px))] left-1/2 z-50 flex w-[calc(100vw-28px)] max-w-[402px] -translate-x-1/2 items-end gap-2 rounded-[30px] border border-[#e7edf3] bg-white px-3 py-2 shadow-[0_16px_36px_rgba(20,27,33,0.14)]"
+        className="chat-composer fixed bottom-[calc(var(--nav-height)+12px+env(safe-area-inset-bottom,0px))] left-1/2 z-50 flex w-[calc(100vw-28px)] max-w-[402px] -translate-x-1/2 items-end gap-2 rounded-[30px] bg-white px-3 py-2 shadow-[0_16px_36px_rgba(20,27,33,0.14)]"
         onSubmit={(event) => {
           event.preventDefault();
           void submit();
@@ -527,6 +639,29 @@ export function ChatConversation({ conversationId, currentUserId, peer }: Props)
 
       <Lightbox src={lightboxSrc} onClose={closeLightbox} />
     </section>
+  );
+}
+
+function ActiveShiftCard({ shift, hrefPrefix = "" }: { shift: ActiveShift; hrefPrefix?: string }) {
+  const date = shiftDateFormat.format(new Date(shift.shiftDate));
+  const time = formatShiftTimeRange(shift.startAt, shift.endAt);
+  const location = formatShiftLocation(shift.cityName, shift.district, shift.address);
+  const marketplace = getMarketplaceLabel(shift.marketplace);
+
+  return (
+    <Link
+      href={withPlatformPrefix(`/shifts/${shift.id}`, hrefPrefix)}
+      className="chat-shift-context block shrink-0 rounded-[24px] bg-[#dff4e9]/75 px-4 py-3 text-[#24634d]"
+    >
+      <p className="truncate text-[14px] font-semibold leading-5 text-[#163f31]">
+        {marketplace} · {date}
+        {time ? `, ${time}` : ""}
+      </p>
+      <p className="mt-1 truncate text-[12px] leading-4 text-[#2d755b]">
+        {location ? `${location} · ` : ""}
+        ставка {formatMoney(shift.paymentAmountRub)}
+      </p>
+    </Link>
   );
 }
 

@@ -18,6 +18,14 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 RUN apk add --no-cache libc6-compat
 ENV NEXT_TELEMETRY_DISABLED=1
+# Prisma 7 prisma.config.ts требует DATABASE_URL даже на generate; реальный URL
+# приходит в runtime из .env.production. На build этап подключения к БД нет.
+ENV DATABASE_URL="postgresql://build:build@localhost:5432/build?schema=public"
+# NEXT_PUBLIC_* инлайнятся в client bundle на этапе билда. Принимаем ARG из
+# docker-compose build.args (значения берутся из .env.production через :-).
+# Если ARG не задан — будет пустая строка, и Analytics-компонент скипнет рендер.
+ARG NEXT_PUBLIC_YANDEX_METRIKA_ID=""
+ENV NEXT_PUBLIC_YANDEX_METRIKA_ID=$NEXT_PUBLIC_YANDEX_METRIKA_ID
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run db:generate
@@ -40,7 +48,9 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/package-lock.json ./package-lock.json
-COPY --from=builder /app/src/generated ./src/generated
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/next.config.ts ./next.config.ts
@@ -57,4 +67,4 @@ EXPOSE 3000
 # появилось разрушительное изменение (DROP COLUMN и т.п.), prisma
 # свалится в non-TTY — это хорошо, ловим деплой-ошибку до запуска.
 # Используем shell-form, чтобы не плодить лишний entrypoint-файл.
-CMD ["sh", "-c", "npx prisma db push --skip-generate && npm run start"]
+CMD ["sh", "-c", "npx prisma db push && npm run start"]

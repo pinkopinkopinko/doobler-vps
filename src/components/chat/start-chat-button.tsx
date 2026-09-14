@@ -1,10 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { AlertCircle, LoaderCircle, MessageCircle } from "lucide-react";
 
 import { fetchWithTelegramAuth } from "@/lib/auth/client";
+import {
+  getPlatformPrefixFromPathname,
+  withPlatformPrefix,
+} from "@/lib/routing/platform";
 
 type Props = {
   peerUserId: string;
@@ -14,6 +18,8 @@ type Props = {
 
 export function StartChatButton({ peerUserId, disabled, className }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
+  const platformPrefix = getPlatformPrefixFromPathname(pathname);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +39,7 @@ export function StartChatButton({ peerUserId, disabled, className }: Props) {
         return;
       }
       const payload = (await response.json()) as { conversation: { id: string } };
-      router.push(`/chats/${payload.conversation.id}`);
+      router.push(withPlatformPrefix(`/chats/${payload.conversation.id}`, platformPrefix));
     } catch (err) {
       console.error("[start-chat]", err);
       setError("Сеть недоступна.");

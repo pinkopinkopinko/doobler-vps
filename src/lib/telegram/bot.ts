@@ -1,6 +1,10 @@
+import { randomBytes } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { invalidateCachedUserRecord } from "@/lib/cache/user-record-cache";
 import { prisma } from "@/lib/prisma";
+import { hasActiveConsent } from "@/server/services/legal-consent-service";
+import { getTelegramMiniAppPath } from "@/lib/routing/platform";
 
 type TelegramApiResponse<T> = {
   ok: boolean;
@@ -17,6 +21,13 @@ type TelegramFrom = {
   first_name?: string;
   last_name?: string;
   username?: string;
+};
+
+type TelegramLoginIdentity = {
+  telegramId: string | number;
+  firstName?: string | null;
+  lastName?: string | null;
+  username?: string | null;
 };
 
 type TelegramContact = {
@@ -40,8 +51,11 @@ export type TelegramUpdate = {
   message?: TelegramMessage;
 };
 
+const BOT_LOGIN_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+const TELEGRAM_API_TIMEOUT_MS = 8_000;
+
 function maskLoginToken(value: string) {
-  return value.replace(/([?&]loginToken=)[^&]+/g, "$1<hidden>");
+  return value.replace(/([?&](?:loginToken|token)=)[^&]+/g, "$1<hidden>");
 }
 
 function sanitizeTelegramPayload(value: unknown): unknown {
@@ -82,20 +96,114 @@ function normalizeTelegramPhoneNumber(value: string) {
   return `+${digits}`;
 }
 
-export function getMiniAppUrl() {
+function getConfiguredAppUrl() {
+  const candidates = [
+    process.env.APP_URL?.trim(),
+    process.env.DOMAIN?.trim(),
+    process.env.NEXT_PUBLIC_APP_URL?.trim(),
+  ].filter(Boolean) as string[];
+
+  for (const candidate of candidates) {
+    const url =
+      candidate.startsWith("http://") || candidate.startsWith("https://")
+        ? candidate
+        : `https://${candidate}`;
+    const isLocalhost = /^(https?:\/\/)?(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:\/|$)/i.test(
+      url,
+    );
+
+    if (process.env.NODE_ENV === "production" && isLocalhost) {
+      continue;
+    }
+
+    return url;
+  }
+
+  return process.env.NODE_ENV === "production" ? "https://doobler.ru" : "http://localhost:3000";
+}
+
+export function getMiniAppUrl(pathname = "/shifts") {
   const devUrlPath = join(process.cwd(), ".dev-ngrok-url");
   const devNgrokUrl =
     process.env.NODE_ENV !== "production" && existsSync(devUrlPath)
       ? readFileSync(devUrlPath, "utf8").trim()
       : "";
-  const appUrl = devNgrokUrl || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  return `${appUrl.replace(/\/$/, "")}/home`;
+  const appUrl = devNgrokUrl || getConfiguredAppUrl();
+  return `${appUrl.replace(/\/$/, "")}${getTelegramMiniAppPath(pathname)}`;
+}
+
+function addLoginTokenQueryParam(targetUrl: string, token: string) {
+  const target = new URL(targetUrl);
+  target.searchParams.set("loginToken", token);
+  return target.toString();
+}
+
+async function createBotLoginToken(identity?: TelegramLoginIdentity | null) {
+  if (!identity?.telegramId) {
+    return null;
+  }
+
+  const token = randomBytes(32).toString("base64url");
+  const expiresAt = new Date(Date.now() + BOT_LOGIN_TOKEN_TTL_MS);
+  const firstName = identity.firstName?.trim() || "Пользователь";
+
+  await prisma.botLoginToken.create({
+    data: {
+      token,
+      telegramId: String(identity.telegramId),
+      username: identity.username?.trim() || null,
+      firstName,
+      lastName: identity.lastName?.trim() || null,
+      expiresAt,
+    },
+  });
+
+  return token;
+}
+
+function getLoginIdentityFromTelegramFrom(from?: TelegramFrom): TelegramLoginIdentity | null {
+  if (!from?.id) {
+    return null;
+  }
+
+  return {
+    telegramId: from.id,
+    firstName: from.first_name ?? null,
+    lastName: from.last_name ?? null,
+    username: from.username ?? null,
+  };
+}
+
+export async function addLoginTokenToMiniAppUrl(
+  url: string,
+  identity?: TelegramLoginIdentity | null,
+) {
+  try {
+    const loginToken = await createBotLoginToken(identity);
+    return loginToken ? addLoginTokenQueryParam(url, loginToken) : url;
+  } catch (error) {
+    console.warn("[bot-debug] login-token-create-failed", {
+      telegramId: identity?.telegramId ? String(identity.telegramId) : null,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+    return url;
+  }
+}
+
+export async function getMiniAppUrlWithLoginToken(
+  pathname = "/shifts",
+  identity?: TelegramLoginIdentity | null,
+) {
+  return addLoginTokenToMiniAppUrl(getMiniAppUrl(pathname), identity);
 }
 
 export function getWebhookSecret() {
   const explicit = process.env.TELEGRAM_WEBHOOK_SECRET?.trim();
   if (explicit) {
     return explicit;
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("TELEGRAM_WEBHOOK_SECRET is not configured.");
   }
   // Fallback: deterministic from bot token. Acceptable for dev,
   // but production should set TELEGRAM_WEBHOOK_SECRET to a random value.
@@ -106,19 +214,34 @@ export function getWebhookSecret() {
 async function callTelegramApi<T>(method: string, payload: Record<string, unknown>) {
   const token = getBotToken();
   const startedAt = Date.now();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), TELEGRAM_API_TIMEOUT_MS);
 
   console.info("[bot-debug] telegram-api:start", {
     method,
     chatId: payload.chat_id ?? null,
   });
 
-  const response = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+  } catch (error) {
+    console.error("[bot-debug] telegram-api:request-failed", {
+      method,
+      durationMs: Date.now() - startedAt,
+      error: error instanceof Error ? error.message : "Unknown Telegram request error",
+    });
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   const data = (await response.json()) as TelegramApiResponse<T>;
 
@@ -169,24 +292,24 @@ export async function sendTelegramText(chatId: number | string, text: string) {
 }
 
 export async function sendMiniAppInvite(chatId: number | string, from?: TelegramFrom) {
-  const appUrl = getMiniAppUrl();
+  const appUrl = await getMiniAppUrlWithLoginToken("/shifts", getLoginIdentityFromTelegramFrom(from));
 
   console.info("[bot-debug] send-mini-app-invite", {
     chatId,
-    appUrl,
-    hasLoginToken: false,
+    appUrl: maskLoginToken(appUrl),
+    hasLoginToken: /[?&](?:loginToken|token)=/.test(appUrl),
     telegramId: from?.id ? String(from.id) : null,
   });
 
   return callTelegramApi("sendMessage", {
     chat_id: chatId,
     text:
-      "ПВЗ Подмена уже готов к работе.\n\nОткройте Mini App, чтобы найти смену, опубликовать срочную замену или посмотреть отклики.",
+      "Дублер - поиск замены в Пункт Выдачи. Ищите сотрудников или сами выходите на замену в любой пункт выдачи заказов.\n\nДля продолжения работы зайдите в приложение.",
     reply_markup: {
       inline_keyboard: [
         [
           {
-            text: "Открыть Mini App",
+            text: "Открыть приложение",
             web_app: {
               url: appUrl,
             },
@@ -250,7 +373,7 @@ async function handlePhoneVerificationContact(message: TelegramMessage) {
 
     await sendPhoneVerificationResult(
       message.chat.id,
-      "Не удалось определить ваш Telegram-профиль. Откройте Mini App ещё раз и повторите попытку.",
+      "Не удалось определить ваш Telegram-профиль. Откройте приложение ещё раз и повторите попытку.",
     );
 
     return { handled: true, action: "phone_verification_missing_from" };
@@ -294,10 +417,19 @@ async function handlePhoneVerificationContact(message: TelegramMessage) {
   if (!user) {
     await sendPhoneVerificationResult(
       message.chat.id,
-      "Сначала откройте Mini App, чтобы мы связали Telegram-аккаунт с профилем, а потом повторите подтверждение номера.",
+      "Сначала откройте приложение, чтобы мы связали Telegram-аккаунт с профилем, а потом повторите подтверждение номера.",
     );
 
     return { handled: true, action: "phone_verification_user_not_found" };
+  }
+
+  if (!(await hasActiveConsent(user.id, "PHONE_PROCESSING"))) {
+    await sendPhoneVerificationResult(
+      message.chat.id,
+      "Сначала откройте профиль в приложении и отдельно подтвердите согласие на обработку номера телефона.",
+    );
+
+    return { handled: true, action: "phone_verification_consent_required" };
   }
 
   await prisma.user.update({
@@ -310,6 +442,11 @@ async function handlePhoneVerificationContact(message: TelegramMessage) {
     },
   });
 
+  // isPhoneVerified — часть кешируемого wide-select; без сброса юзер
+  // до 30 сек будет видеть «номер не подтверждён» в приложении после того,
+  // как Telegram уже принял contact.
+  invalidateCachedUserRecord(user.id);
+
   console.info("[bot-debug] phone-verification-complete", {
     chatId: message.chat.id,
     userId: user.id,
@@ -318,7 +455,7 @@ async function handlePhoneVerificationContact(message: TelegramMessage) {
 
   await sendPhoneVerificationResult(
     message.chat.id,
-    "Номер телефона подтверждён. Возвращайтесь в Mini App — отметка появится в вашем профиле.",
+    "Номер телефона подтверждён. Возвращайтесь в приложение — отметка появится в вашем профиле.",
   );
 
   return {
@@ -333,7 +470,7 @@ export async function setTelegramWebhook(webhookUrl: string) {
     url: webhookUrl,
     secret_token: getWebhookSecret(),
     allowed_updates: ["message"],
-    drop_pending_updates: true,
+    drop_pending_updates: process.env.TELEGRAM_DROP_PENDING_UPDATES === "true",
   });
 }
 
@@ -348,8 +485,8 @@ export async function getTelegramMe() {
 export async function setTelegramCommands() {
   return callTelegramApi("setMyCommands", {
     commands: [
-      { command: "start", description: "Запустить бота и открыть Mini App" },
-      { command: "app", description: "Открыть Mini App" },
+      { command: "start", description: "Запустить бота и открыть приложение" },
+      { command: "app", description: "Открыть приложение" },
       { command: "help", description: "Показать подсказку по использованию" },
     ],
   });
@@ -358,11 +495,7 @@ export async function setTelegramCommands() {
 export async function setTelegramChatMenuButton() {
   return callTelegramApi("setChatMenuButton", {
     menu_button: {
-      type: "web_app",
-      text: "Открыть ПВЗ Подмена",
-      web_app: {
-        url: getMiniAppUrl(),
-      },
+      type: "commands",
     },
   });
 }
@@ -414,7 +547,7 @@ export async function handleTelegramUpdate(update: TelegramUpdate) {
   if (text.startsWith("/help")) {
     await sendTelegramText(
       message.chat.id,
-      "Этот бот открывает Telegram Mini App для поиска смен и подмен в ПВЗ.\n\nНажмите /start или /app, чтобы открыть приложение.",
+      "Этот бот открывает приложение Дублер для поиска смен и подмен в ПВЗ.\n\nНажмите /start или /app, чтобы открыть приложение.",
     );
     return { handled: true, action: "help" };
   }

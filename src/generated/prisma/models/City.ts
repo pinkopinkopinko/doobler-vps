@@ -244,6 +244,7 @@ export type CityWhereInput = {
   users?: Prisma.UserListRelationFilter
   pickupPoints?: Prisma.PickupPointListRelationFilter
   shiftPosts?: Prisma.ShiftPostListRelationFilter
+  shiftTemplates?: Prisma.ShiftTemplateListRelationFilter
 }
 
 export type CityOrderByWithRelationInput = {
@@ -259,6 +260,7 @@ export type CityOrderByWithRelationInput = {
   users?: Prisma.UserOrderByRelationAggregateInput
   pickupPoints?: Prisma.PickupPointOrderByRelationAggregateInput
   shiftPosts?: Prisma.ShiftPostOrderByRelationAggregateInput
+  shiftTemplates?: Prisma.ShiftTemplateOrderByRelationAggregateInput
 }
 
 export type CityWhereUniqueInput = Prisma.AtLeast<{
@@ -278,6 +280,7 @@ export type CityWhereUniqueInput = Prisma.AtLeast<{
   users?: Prisma.UserListRelationFilter
   pickupPoints?: Prisma.PickupPointListRelationFilter
   shiftPosts?: Prisma.ShiftPostListRelationFilter
+  shiftTemplates?: Prisma.ShiftTemplateListRelationFilter
 }, "id" | "regionId_slug">
 
 export type CityOrderByWithAggregationInput = {
@@ -322,6 +325,7 @@ export type CityCreateInput = {
   users?: Prisma.UserCreateNestedManyWithoutCityInput
   pickupPoints?: Prisma.PickupPointCreateNestedManyWithoutCityInput
   shiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCityInput
 }
 
 export type CityUncheckedCreateInput = {
@@ -336,6 +340,7 @@ export type CityUncheckedCreateInput = {
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCityInput
   pickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutCityInput
   shiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCityInput
 }
 
 export type CityUpdateInput = {
@@ -350,6 +355,7 @@ export type CityUpdateInput = {
   users?: Prisma.UserUpdateManyWithoutCityNestedInput
   pickupPoints?: Prisma.PickupPointUpdateManyWithoutCityNestedInput
   shiftPosts?: Prisma.ShiftPostUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCityNestedInput
 }
 
 export type CityUncheckedUpdateInput = {
@@ -364,6 +370,7 @@ export type CityUncheckedUpdateInput = {
   users?: Prisma.UserUncheckedUpdateManyWithoutCityNestedInput
   pickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutCityNestedInput
   shiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCityNestedInput
 }
 
 export type CityCreateManyInput = {
@@ -550,6 +557,20 @@ export type CityUpdateOneRequiredWithoutShiftPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CityUpdateToOneWithWhereWithoutShiftPostsInput, Prisma.CityUpdateWithoutShiftPostsInput>, Prisma.CityUncheckedUpdateWithoutShiftPostsInput>
 }
 
+export type CityCreateNestedOneWithoutShiftTemplatesInput = {
+  create?: Prisma.XOR<Prisma.CityCreateWithoutShiftTemplatesInput, Prisma.CityUncheckedCreateWithoutShiftTemplatesInput>
+  connectOrCreate?: Prisma.CityCreateOrConnectWithoutShiftTemplatesInput
+  connect?: Prisma.CityWhereUniqueInput
+}
+
+export type CityUpdateOneRequiredWithoutShiftTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.CityCreateWithoutShiftTemplatesInput, Prisma.CityUncheckedCreateWithoutShiftTemplatesInput>
+  connectOrCreate?: Prisma.CityCreateOrConnectWithoutShiftTemplatesInput
+  upsert?: Prisma.CityUpsertWithoutShiftTemplatesInput
+  connect?: Prisma.CityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CityUpdateToOneWithWhereWithoutShiftTemplatesInput, Prisma.CityUpdateWithoutShiftTemplatesInput>, Prisma.CityUncheckedUpdateWithoutShiftTemplatesInput>
+}
+
 export type CityCreateWithoutUsersInput = {
   id?: string
   name: string
@@ -561,6 +582,7 @@ export type CityCreateWithoutUsersInput = {
   region: Prisma.RegionCreateNestedOneWithoutCitiesInput
   pickupPoints?: Prisma.PickupPointCreateNestedManyWithoutCityInput
   shiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCityInput
 }
 
 export type CityUncheckedCreateWithoutUsersInput = {
@@ -574,6 +596,7 @@ export type CityUncheckedCreateWithoutUsersInput = {
   updatedAt?: Date | string
   pickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutCityInput
   shiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCityInput
 }
 
 export type CityCreateOrConnectWithoutUsersInput = {
@@ -603,6 +626,7 @@ export type CityUpdateWithoutUsersInput = {
   region?: Prisma.RegionUpdateOneRequiredWithoutCitiesNestedInput
   pickupPoints?: Prisma.PickupPointUpdateManyWithoutCityNestedInput
   shiftPosts?: Prisma.ShiftPostUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCityNestedInput
 }
 
 export type CityUncheckedUpdateWithoutUsersInput = {
@@ -616,6 +640,7 @@ export type CityUncheckedUpdateWithoutUsersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutCityNestedInput
   shiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCityNestedInput
 }
 
 export type CityCreateWithoutRegionInput = {
@@ -629,6 +654,7 @@ export type CityCreateWithoutRegionInput = {
   users?: Prisma.UserCreateNestedManyWithoutCityInput
   pickupPoints?: Prisma.PickupPointCreateNestedManyWithoutCityInput
   shiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCityInput
 }
 
 export type CityUncheckedCreateWithoutRegionInput = {
@@ -642,6 +668,7 @@ export type CityUncheckedCreateWithoutRegionInput = {
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCityInput
   pickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutCityInput
   shiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCityInput
 }
 
 export type CityCreateOrConnectWithoutRegionInput = {
@@ -695,6 +722,7 @@ export type CityCreateWithoutPickupPointsInput = {
   region: Prisma.RegionCreateNestedOneWithoutCitiesInput
   users?: Prisma.UserCreateNestedManyWithoutCityInput
   shiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCityInput
 }
 
 export type CityUncheckedCreateWithoutPickupPointsInput = {
@@ -708,6 +736,7 @@ export type CityUncheckedCreateWithoutPickupPointsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCityInput
   shiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCityInput
 }
 
 export type CityCreateOrConnectWithoutPickupPointsInput = {
@@ -737,6 +766,7 @@ export type CityUpdateWithoutPickupPointsInput = {
   region?: Prisma.RegionUpdateOneRequiredWithoutCitiesNestedInput
   users?: Prisma.UserUpdateManyWithoutCityNestedInput
   shiftPosts?: Prisma.ShiftPostUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCityNestedInput
 }
 
 export type CityUncheckedUpdateWithoutPickupPointsInput = {
@@ -750,6 +780,7 @@ export type CityUncheckedUpdateWithoutPickupPointsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutCityNestedInput
   shiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCityNestedInput
 }
 
 export type CityCreateWithoutShiftPostsInput = {
@@ -763,6 +794,7 @@ export type CityCreateWithoutShiftPostsInput = {
   region: Prisma.RegionCreateNestedOneWithoutCitiesInput
   users?: Prisma.UserCreateNestedManyWithoutCityInput
   pickupPoints?: Prisma.PickupPointCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateCreateNestedManyWithoutCityInput
 }
 
 export type CityUncheckedCreateWithoutShiftPostsInput = {
@@ -776,6 +808,7 @@ export type CityUncheckedCreateWithoutShiftPostsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCityInput
   pickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutCityInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedCreateNestedManyWithoutCityInput
 }
 
 export type CityCreateOrConnectWithoutShiftPostsInput = {
@@ -805,6 +838,7 @@ export type CityUpdateWithoutShiftPostsInput = {
   region?: Prisma.RegionUpdateOneRequiredWithoutCitiesNestedInput
   users?: Prisma.UserUpdateManyWithoutCityNestedInput
   pickupPoints?: Prisma.PickupPointUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCityNestedInput
 }
 
 export type CityUncheckedUpdateWithoutShiftPostsInput = {
@@ -818,6 +852,79 @@ export type CityUncheckedUpdateWithoutShiftPostsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutCityNestedInput
   pickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCityNestedInput
+}
+
+export type CityCreateWithoutShiftTemplatesInput = {
+  id?: string
+  name: string
+  slug: string
+  timezone?: string
+  population?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  region: Prisma.RegionCreateNestedOneWithoutCitiesInput
+  users?: Prisma.UserCreateNestedManyWithoutCityInput
+  pickupPoints?: Prisma.PickupPointCreateNestedManyWithoutCityInput
+  shiftPosts?: Prisma.ShiftPostCreateNestedManyWithoutCityInput
+}
+
+export type CityUncheckedCreateWithoutShiftTemplatesInput = {
+  id?: string
+  regionId: string
+  name: string
+  slug: string
+  timezone?: string
+  population?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCityInput
+  pickupPoints?: Prisma.PickupPointUncheckedCreateNestedManyWithoutCityInput
+  shiftPosts?: Prisma.ShiftPostUncheckedCreateNestedManyWithoutCityInput
+}
+
+export type CityCreateOrConnectWithoutShiftTemplatesInput = {
+  where: Prisma.CityWhereUniqueInput
+  create: Prisma.XOR<Prisma.CityCreateWithoutShiftTemplatesInput, Prisma.CityUncheckedCreateWithoutShiftTemplatesInput>
+}
+
+export type CityUpsertWithoutShiftTemplatesInput = {
+  update: Prisma.XOR<Prisma.CityUpdateWithoutShiftTemplatesInput, Prisma.CityUncheckedUpdateWithoutShiftTemplatesInput>
+  create: Prisma.XOR<Prisma.CityCreateWithoutShiftTemplatesInput, Prisma.CityUncheckedCreateWithoutShiftTemplatesInput>
+  where?: Prisma.CityWhereInput
+}
+
+export type CityUpdateToOneWithWhereWithoutShiftTemplatesInput = {
+  where?: Prisma.CityWhereInput
+  data: Prisma.XOR<Prisma.CityUpdateWithoutShiftTemplatesInput, Prisma.CityUncheckedUpdateWithoutShiftTemplatesInput>
+}
+
+export type CityUpdateWithoutShiftTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  population?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  region?: Prisma.RegionUpdateOneRequiredWithoutCitiesNestedInput
+  users?: Prisma.UserUpdateManyWithoutCityNestedInput
+  pickupPoints?: Prisma.PickupPointUpdateManyWithoutCityNestedInput
+  shiftPosts?: Prisma.ShiftPostUpdateManyWithoutCityNestedInput
+}
+
+export type CityUncheckedUpdateWithoutShiftTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  regionId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  population?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutCityNestedInput
+  pickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutCityNestedInput
+  shiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCityNestedInput
 }
 
 export type CityCreateManyRegionInput = {
@@ -841,6 +948,7 @@ export type CityUpdateWithoutRegionInput = {
   users?: Prisma.UserUpdateManyWithoutCityNestedInput
   pickupPoints?: Prisma.PickupPointUpdateManyWithoutCityNestedInput
   shiftPosts?: Prisma.ShiftPostUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUpdateManyWithoutCityNestedInput
 }
 
 export type CityUncheckedUpdateWithoutRegionInput = {
@@ -854,6 +962,7 @@ export type CityUncheckedUpdateWithoutRegionInput = {
   users?: Prisma.UserUncheckedUpdateManyWithoutCityNestedInput
   pickupPoints?: Prisma.PickupPointUncheckedUpdateManyWithoutCityNestedInput
   shiftPosts?: Prisma.ShiftPostUncheckedUpdateManyWithoutCityNestedInput
+  shiftTemplates?: Prisma.ShiftTemplateUncheckedUpdateManyWithoutCityNestedInput
 }
 
 export type CityUncheckedUpdateManyWithoutRegionInput = {
@@ -875,12 +984,14 @@ export type CityCountOutputType = {
   users: number
   pickupPoints: number
   shiftPosts: number
+  shiftTemplates: number
 }
 
 export type CityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | CityCountOutputTypeCountUsersArgs
   pickupPoints?: boolean | CityCountOutputTypeCountPickupPointsArgs
   shiftPosts?: boolean | CityCountOutputTypeCountShiftPostsArgs
+  shiftTemplates?: boolean | CityCountOutputTypeCountShiftTemplatesArgs
 }
 
 /**
@@ -914,6 +1025,13 @@ export type CityCountOutputTypeCountShiftPostsArgs<ExtArgs extends runtime.Types
   where?: Prisma.ShiftPostWhereInput
 }
 
+/**
+ * CityCountOutputType without action
+ */
+export type CityCountOutputTypeCountShiftTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShiftTemplateWhereInput
+}
+
 
 export type CitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -928,6 +1046,7 @@ export type CitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   users?: boolean | Prisma.City$usersArgs<ExtArgs>
   pickupPoints?: boolean | Prisma.City$pickupPointsArgs<ExtArgs>
   shiftPosts?: boolean | Prisma.City$shiftPostsArgs<ExtArgs>
+  shiftTemplates?: boolean | Prisma.City$shiftTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.CityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["city"]>
 
@@ -972,6 +1091,7 @@ export type CityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   users?: boolean | Prisma.City$usersArgs<ExtArgs>
   pickupPoints?: boolean | Prisma.City$pickupPointsArgs<ExtArgs>
   shiftPosts?: boolean | Prisma.City$shiftPostsArgs<ExtArgs>
+  shiftTemplates?: boolean | Prisma.City$shiftTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.CityCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -988,6 +1108,7 @@ export type $CityPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     users: Prisma.$UserPayload<ExtArgs>[]
     pickupPoints: Prisma.$PickupPointPayload<ExtArgs>[]
     shiftPosts: Prisma.$ShiftPostPayload<ExtArgs>[]
+    shiftTemplates: Prisma.$ShiftTemplatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1396,6 +1517,7 @@ export interface Prisma__CityClient<T, Null = never, ExtArgs extends runtime.Typ
   users<T extends Prisma.City$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.City$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pickupPoints<T extends Prisma.City$pickupPointsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.City$pickupPointsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PickupPointPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   shiftPosts<T extends Prisma.City$shiftPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.City$shiftPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  shiftTemplates<T extends Prisma.City$shiftTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.City$shiftTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1903,6 +2025,30 @@ export type City$shiftPostsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.ShiftPostScalarFieldEnum | Prisma.ShiftPostScalarFieldEnum[]
+}
+
+/**
+ * City.shiftTemplates
+ */
+export type City$shiftTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShiftTemplate
+   */
+  select?: Prisma.ShiftTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ShiftTemplate
+   */
+  omit?: Prisma.ShiftTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShiftTemplateInclude<ExtArgs> | null
+  where?: Prisma.ShiftTemplateWhereInput
+  orderBy?: Prisma.ShiftTemplateOrderByWithRelationInput | Prisma.ShiftTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.ShiftTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ShiftTemplateScalarFieldEnum | Prisma.ShiftTemplateScalarFieldEnum[]
 }
 
 /**

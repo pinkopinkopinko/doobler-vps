@@ -1,7 +1,8 @@
 import { PageHeader } from "@/components/layout/page-header";
+import { BalanceTopUpMenu } from "@/components/balance/balance-top-up-menu";
 import { ShiftFeed } from "@/components/shifts/shift-feed";
 import { getSessionPayload } from "@/lib/auth/session";
-import { demoProfile } from "@/lib/demo-data";
+import { getRequestPlatformPrefix } from "@/lib/routing/platform-server";
 import { getTodayDateValue } from "@/lib/utils";
 import { getProfileShell } from "@/server/services/profile-service";
 import { listAvailableShiftDistricts, listShiftPosts } from "@/server/services/shift-post-service";
@@ -43,10 +44,11 @@ function parseMoneyFilter(value?: string | string[]) {
 
 export default async function ShiftsPage({ searchParams }: ShiftsPageProps) {
   const session = await getSessionPayload();
-  const profile = session ? ((await getProfileShell(session.userId)) ?? demoProfile) : demoProfile;
+  const hrefPrefix = await getRequestPlatformPrefix();
+  const profile = session ? await getProfileShell(session.userId) : null;
   const params = (await searchParams) ?? {};
-  const activeCityId = getSingleParam(params.cityId) || profile.cityId || null;
-  const activeCityName = activeCityId === profile.cityId ? profile.cityName : null;
+  const activeCityId = getSingleParam(params.cityId) || profile?.cityId || null;
+  const activeCityName = activeCityId === profile?.cityId ? profile.cityName : null;
   const urgentOnly = getSingleParam(params.urgentOnly) === "true";
   const paymentMin = parseMoneyFilter(params.paymentMin);
   const paymentMax = parseMoneyFilter(params.paymentMax);
@@ -78,12 +80,13 @@ export default async function ShiftsPage({ searchParams }: ShiftsPageProps) {
     <div>
       <PageHeader
         title="Смены и вакансии"
-        subtitle={`Показываем объявления ${activeCityName ? `по ${activeCityName}` : "по выбранному городу"}. Сейчас в ленте ${shifts.length}.`}
+        titleSize="compact"
+        action={<BalanceTopUpMenu initialBalanceRub={profile?.balanceRub ?? 0} />}
       />
       <ShiftFeed
         shifts={shifts}
         activeCityId={activeCityId}
-        activeCityName={activeCityName ?? profile.cityName}
+        activeCityName={activeCityName ?? profile?.cityName ?? undefined}
         activeDistrict={district ?? ""}
         districtOptions={districtOptions}
         marketplaceCode={marketplace ?? ""}
@@ -93,6 +96,7 @@ export default async function ShiftsPage({ searchParams }: ShiftsPageProps) {
         dateTo={dateTo ?? ""}
         paymentMin={paymentMin?.toString() ?? ""}
         paymentMax={paymentMax?.toString() ?? ""}
+        hrefPrefix={hrefPrefix}
       />
     </div>
   );

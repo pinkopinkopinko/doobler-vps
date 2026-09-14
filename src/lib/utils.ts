@@ -176,10 +176,17 @@ function isRegionLocationPart(value: string) {
 
   return (
     normalized.includes("область") ||
+    normalized.includes("обл.") ||
+    normalized === "обл" ||
+    normalized.endsWith(" обл") ||
     normalized.includes("край") ||
     normalized.includes("республика") ||
+    normalized.includes("респ.") ||
+    normalized.startsWith("респ ") ||
     normalized.includes("автономный округ") ||
-    normalized.includes("автономная область")
+    normalized.includes("автономная область") ||
+    normalized === "ао" ||
+    normalized.endsWith(" ао")
   );
 }
 
@@ -194,7 +201,16 @@ function locationPartMatches(part: string, target: string | null | undefined) {
   return normalizedPart === normalizedTarget || normalizedPart.includes(normalizedTarget);
 }
 
-export function formatShiftLocation(
+function formatShiftAddressPart(value: string) {
+  return value
+    .replace(/(^|\s)ул\.?\s+/giu, "$1ул. ")
+    .replace(/(^|\s)дом\s*([0-9А-ЯA-ZЁ/\\-])/giu, "$1д.$2")
+    .replace(/(^|\s)д\.?\s*([0-9А-ЯA-ZЁ/\\-])/giu, "$1д.$2")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function formatCompactShiftAddress(
   city: string | null | undefined,
   district: string | null | undefined,
   address: string | null | undefined,
@@ -215,11 +231,20 @@ export function formatShiftLocation(
     (part) => !locationPartMatches(part, city) && !locationPartMatches(part, district),
   );
 
+  return specificAddressParts.map(formatShiftAddressPart).join(", ");
+}
+
+export function formatShiftLocation(
+  city: string | null | undefined,
+  district: string | null | undefined,
+  address: string | null | undefined,
+) {
+  const compactAddress = formatCompactShiftAddress(city, district, address);
   const locationParts = [city, district]
     .map((part) => part?.trim())
     .filter((part): part is string => Boolean(part));
 
-  const resultParts = [...locationParts, ...specificAddressParts];
+  const resultParts = compactAddress ? [...locationParts, compactAddress] : locationParts;
 
   return resultParts.join(", ");
 }

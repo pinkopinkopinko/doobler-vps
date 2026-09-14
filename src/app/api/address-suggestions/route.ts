@@ -44,7 +44,7 @@ export async function GET(request: Request) {
   // Лимиты применяем ПОСЛЕ early-return'ов (короткий q даёт пустой ответ
   // и не должен жечь квоту). Per-user, не per-IP — так фейр'нее в Telegram
   // WebView, где у нескольких юзеров может оказаться один общий IP.
-  const minuteCheck = checkInMemoryRateLimit({
+  const minuteCheck = await checkInMemoryRateLimit({
     key: `dadata-suggest-min:${session.userId}`,
     ...PER_MINUTE_LIMIT,
   });
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     return buildRateLimitResponse(minuteCheck.retryAfterMs);
   }
 
-  const dayCheck = checkInMemoryRateLimit({
+  const dayCheck = await checkInMemoryRateLimit({
     key: `dadata-suggest-day:${session.userId}`,
     ...PER_DAY_LIMIT,
   });

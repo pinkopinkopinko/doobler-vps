@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { ALLOWED_MIME_TYPES, MAX_UPLOAD_BYTES, validateUpload } from "./uploads";
+import {
+  ALLOWED_MIME_TYPES,
+  MAX_UPLOAD_BYTES,
+  validateUpload,
+  validateUploadBytes,
+} from "./uploads";
 
 describe("validateUpload", () => {
   it("rejects empty files", () => {
@@ -35,5 +40,35 @@ describe("validateUpload", () => {
     const result = validateUpload({ size: 10, type: "image/webp", name: "photo.bin" });
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.extension).toBe(".webp");
+  });
+});
+
+describe("validateUploadBytes", () => {
+  it("accepts bytes matching the declared image type", () => {
+    expect(validateUploadBytes("image/jpeg", new Uint8Array([0xff, 0xd8, 0xff, 0x00])).ok).toBe(
+      true,
+    );
+    expect(
+      validateUploadBytes(
+        "image/png",
+        new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      ).ok,
+    ).toBe(true);
+    expect(
+      validateUploadBytes(
+        "image/webp",
+        new Uint8Array([
+          0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50,
+        ]),
+      ).ok,
+    ).toBe(true);
+    expect(
+      validateUploadBytes("image/gif", new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x39, 0x61])).ok,
+    ).toBe(true);
+  });
+
+  it("rejects bytes that do not match the declared image type", () => {
+    expect(validateUploadBytes("image/png", new Uint8Array([0x3c, 0x68, 0x74, 0x6d, 0x6c])).ok)
+      .toBe(false);
   });
 });

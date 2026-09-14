@@ -1,10 +1,11 @@
-import type { AppRole, MarketplaceCode } from "@/lib/types";
+import type { AppRole, MarketplaceCode, VerificationStatus } from "@/lib/types";
 import { isValidExperienceYears } from "@/lib/utils";
 
 type ProfileLike = {
   firstName?: string | null;
   lastName?: string | null;
   age?: number | null;
+  regionId?: string | null;
   cityId?: string | null;
   photoUrl?: string | null;
   pickupPointCode?: string | null;
@@ -58,8 +59,11 @@ export function getPrimaryRole(roles: AppRole[]) {
   return null;
 }
 
-export function canCreateShiftPosts(roles: AppRole[]) {
-  return hasEmployerCapabilities(roles);
+export function canCreateShiftPosts(
+  roles: AppRole[],
+  employerVerificationStatus: VerificationStatus | null | undefined,
+) {
+  return hasEmployerCapabilities(roles) && employerVerificationStatus === "APPROVED";
 }
 
 export function isProfileComplete(profile: ProfileLike | null | undefined) {
@@ -69,12 +73,12 @@ export function isProfileComplete(profile: ProfileLike | null | undefined) {
 
   const roles = normalizeRoles(profile);
   const hasBaseFields = Boolean(
-      profile.firstName?.trim() &&
+    profile.firstName?.trim() &&
       profile.lastName?.trim() &&
       profile.age &&
       profile.age >= 16 &&
       profile.age <= 99 &&
-      profile.cityId &&
+      profile.regionId &&
       roles.length,
   );
 
@@ -83,11 +87,12 @@ export function isProfileComplete(profile: ProfileLike | null | undefined) {
   }
 
   if (isOwnerRole(roles)) {
-    return hasAtLeastOneMarketplace(profile);
+    return Boolean(profile.cityId) && hasAtLeastOneMarketplace(profile);
   }
 
   if (isEmployeeRole(roles)) {
-    return isValidExperienceYears(profile.experienceSummary);
+    // Работнику нужен город, чтобы видеть смены в своём городе.
+    return Boolean(profile.cityId) && isValidExperienceYears(profile.experienceSummary);
   }
 
   return false;
@@ -107,11 +112,12 @@ export function getProfileCompletionScore(profile: ProfileLike | null | undefine
   }
 
   const roles = normalizeRoles(profile);
+  const locationCheck = Boolean(profile.regionId) && Boolean(profile.cityId);
   const checks = [
     Boolean(profile.firstName?.trim()),
     Boolean(profile.lastName?.trim()),
     Boolean(profile.age && profile.age >= 16 && profile.age <= 99),
-    Boolean(profile.cityId),
+    locationCheck,
     roles.length > 0,
     isOwnerRole(roles)
       ? hasAtLeastOneMarketplace(profile)

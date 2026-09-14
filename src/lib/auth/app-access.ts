@@ -2,6 +2,10 @@ import { cache } from "react";
 
 import { compactProfilePhotoUrl } from "@/lib/profile-photo";
 import { getSessionPayload } from "@/lib/auth/session";
+import {
+  readCachedUserRecord,
+  writeCachedUserRecord,
+} from "@/lib/cache/user-record-cache";
 import { prisma } from "@/lib/prisma";
 
 // Расширенный select под текущего пользователя — покрывает одновременно
@@ -27,6 +31,7 @@ const accessUserSelect = {
   ratingAvg: true,
   ratingCount: true,
   completedAssignmentsCount: true,
+  balanceRub: true,
   bio: true,
   phone: true,
   isPhoneVerified: true,
@@ -45,9 +50,10 @@ const accessUserSelect = {
   },
   verifications: {
     orderBy: { createdAt: "desc" as const },
-    take: 1,
+    take: 8,
     select: {
       status: true,
+      type: true,
     },
   },
 } as const;
@@ -56,6 +62,11 @@ export type CurrentUserRecord = NonNullable<
   Awaited<ReturnType<typeof loadCurrentUserRecord>>
 >;
 
+type CachedUser = Awaited<ReturnType<typeof prisma.user.findUnique<{
+  where: { id: string };
+  select: typeof accessUserSelect;
+}>>>;
+
 async function loadCurrentUserRecord() {
   const session = await getSessionPayload();
 
@@ -63,10 +74,21 @@ async function loadCurrentUserRecord() {
     return null;
   }
 
+  // Сначала пробуем in-memory TTL-кеш — он шерится между разными
+  // навигациями одного пользователя (React `cache()` живёт только в
+  // пределах одного рендера, см. user-record-cache.ts). Это убирает
+  // wide-select fat-SQL на каждый тап в нижней навигации Mini App.
+  const cached = await readCachedUserRecord<CachedUser>(session.userId);
+  if (cached !== undefined) {
+    return cached ? { session, user: cached } : null;
+  }
+
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
     select: accessUserSelect,
   });
+
+  await writeCachedUserRecord<CachedUser>(session.userId, user);
 
   if (!user) {
     return null;

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSessionPayload } from "@/lib/auth/session";
 import { decodeInlineProfilePhoto } from "@/lib/profile-photo";
+import { hasActiveConsent } from "@/server/services/legal-consent-service";
 
 type RouteParams = {
   params: Promise<{ userId: string }>;
@@ -13,6 +14,13 @@ export async function GET(request: Request, { params }: RouteParams) {
   }
 
   const { userId } = await params;
+  if (
+    session.userId !== userId &&
+    !(await hasActiveConsent(userId, "PUBLIC_PROFILE_DISTRIBUTION"))
+  ) {
+    return new Response("Profile is not shared", { status: 403 });
+  }
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { photoUrl: true },

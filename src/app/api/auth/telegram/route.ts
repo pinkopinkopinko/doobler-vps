@@ -78,7 +78,6 @@ export async function POST(request: NextRequest) {
         firstName: telegramUser.first_name,
         lastName: telegramUser.last_name ?? null,
         username: telegramUser.username ?? null,
-        photoUrl: telegramUser.photo_url ?? null,
       },
     });
 

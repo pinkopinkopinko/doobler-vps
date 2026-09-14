@@ -1,6 +1,7 @@
 import {
   ApplicationStatus,
   AssignmentStatus,
+  Prisma,
   ShiftPostStatus,
 } from "@/generated/prisma/client";
 
@@ -8,8 +9,14 @@ import { demoApplications } from "@/lib/demo-data";
 import { isDevFallbackEnabled, logDevFallbackUsed } from "@/lib/dev-fallback";
 import { sendTelegramMessage } from "@/lib/notifications/telegram";
 import { buildCompactProfilePhotoSource } from "@/lib/profile-photo";
+import { invalidateCachedUserRecord } from "@/lib/cache/user-record-cache";
 import { prisma } from "@/lib/prisma";
 import { applicationSchema, reviewSchema } from "@/lib/validations/shift-post";
+
+function getShiftDetailsUrl(shiftPostId: string) {
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://doobler.ru").replace(/\/$/, "");
+  return `${baseUrl}/telegram/shifts/${shiftPostId}`;
+}
 
 function allowDevDataFallback() {
   return isDevFallbackEnabled("data");
@@ -25,12 +32,17 @@ function shouldUseDemoFallback(error: unknown) {
       "forbidden",
       "owner_cannot_apply",
       "assignment_not_completed",
+      "assignment_not_completable",
       "applicant_not_found",
       "applicant_banned",
       "shift_not_found",
       "shift_not_open",
       "cannot_apply_to_own_shift",
       "already_assigned_on_date",
+      "already_applied",
+      "assignment_not_cancellable",
+      "assignment_not_no_showable",
+      "shift_not_started",
       "review_already_exists",
     ]);
     if (businessErrors.has(error.message)) {
@@ -227,6 +239,14 @@ export async function listApplicationsForShift(shiftPostId: string) {
   }
 }
 
+// Лимит «Моих откликов» по умолчанию. У активного работника за сезон
+// легко набегает 100+ откликов, и без `take` мы тащили всю историю с
+// joins на ShiftPost/createdBy/Assignment/Reviews/Applicant.City. 50
+// последних — это «недавняя активность», для архива (если когда-нибудь
+// понадобится) можно будет добавить пагинацию по cursor через индекс
+// `(applicantUserId, createdAt)`.
+const MY_APPLICATIONS_LIMIT = 50;
+
 export async function listMyApplications(userId: string) {
   try {
     const applications = await prisma.application.findMany({
@@ -276,6 +296,7 @@ export async function listMyApplications(userId: string) {
         },
       },
       orderBy: { createdAt: "desc" },
+      take: MY_APPLICATIONS_LIMIT,
     });
 
     return applications.map(buildApplicationCard);
@@ -342,6 +363,10 @@ export async function listApplicationsForEmployer(employerUserId: string) {
         },
       },
       orderBy: [{ createdAt: "desc" }],
+      // Тот же резон, что и в listMyApplications: у владельца с
+      // десятком активных смен накапливаются сотни откликов в истории.
+      // Покажем 50 свежих, остальное — через карточку каждой смены.
+      take: MY_APPLICATIONS_LIMIT,
     });
 
     return applications.map(buildApplicationCard);
@@ -353,6 +378,34 @@ export async function listApplicationsForEmployer(employerUserId: string) {
     return buildDemoFallbackResult("listApplicationsForEmployer", error, () =>
       demoApplications.filter((application) => myDemoShiftIds.has(application.shiftPostId)),
     );
+  }
+}
+
+/**
+ * Возвращает прошлый статус отклика работника для SSR карточки смены.
+ * Повторный отклик всё равно запрещён уникальной парой shift/user, но
+ * статус нужен UI, чтобы отдельно объяснить добровольный отказ.
+ */
+export async function getUserApplicationStatusForShift(
+  shiftPostId: string,
+  applicantUserId: string,
+): Promise<ApplicationStatus | null> {
+  try {
+    const application = await prisma.application.findUnique({
+      where: {
+        shiftPostId_applicantUserId: {
+          shiftPostId,
+          applicantUserId,
+        },
+      },
+      select: { status: true },
+    });
+    return application?.status ?? null;
+  } catch (error) {
+    // Не валим страницу из-за этой проверки — в худшем случае пользователь
+    // увидит активную кнопку и схватит дружелюбную 409 от сервера.
+    console.error("[application-service] getUserApplicationStatusForShift failed", error);
+    return null;
   }
 }
 
@@ -375,7 +428,17 @@ export async function applyToShift(shiftPostId: string, applicantUserId: string,
       }),
       prisma.shiftPost.findUnique({
         where: { id: shiftPostId },
-        select: { id: true, status: true, createdByUserId: true, shiftDate: true },
+        select: {
+          id: true,
+          status: true,
+          createdByUserId: true,
+          shiftDate: true,
+          createdBy: {
+            select: {
+              telegramId: true,
+            },
+          },
+        },
       }),
     ]);
 
@@ -420,16 +483,41 @@ export async function applyToShift(shiftPostId: string, applicantUserId: string,
       throw new Error("already_assigned_on_date");
     }
 
-    const application = await prisma.application.create({
-      data: {
-        shiftPostId,
-        applicantUserId,
-        message: data.message,
-        status: ApplicationStatus.APPLIED,
-      },
-    });
+    try {
+      const application = await prisma.application.create({
+        data: {
+          shiftPostId,
+          applicantUserId,
+          message: data.message,
+          status: ApplicationStatus.APPLIED,
+        },
+      });
 
-    return application;
+      void sendTelegramMessage({
+        chatId: shiftPost.createdBy.telegramId,
+        text: "На вашу смену поступил отклик. Откройте приложение, чтобы посмотреть кандидата",
+        button: {
+          text: "Открыть приложение",
+          webAppUrl: getShiftDetailsUrl(shiftPost.id),
+        },
+      }).catch((error) => {
+        console.warn("[tg-notify] application-created employer-msg failed", {
+          message: error instanceof Error ? error.message : "unknown",
+        });
+      });
+
+      return application;
+    } catch (createError) {
+      // @@unique([shiftPostId, applicantUserId]) — пользователь уже
+      // откликался. Превращаем сырое P2002 в дружелюбный business error.
+      if (
+        createError instanceof Prisma.PrismaClientKnownRequestError &&
+        createError.code === "P2002"
+      ) {
+        throw new Error("already_applied");
+      }
+      throw createError;
+    }
   } catch (error) {
     if (!shouldUseDemoFallback(error)) {
       throw error;
@@ -463,8 +551,11 @@ export async function confirmApplication(applicationId: string, employerUserId: 
         throw new Error("forbidden");
       }
 
-      const existingAssignment = await tx.assignment.findUnique({
-        where: { shiftPostId: application.shiftPostId },
+      const existingAssignment = await tx.assignment.findFirst({
+        where: {
+          shiftPostId: application.shiftPostId,
+          status: { in: [AssignmentStatus.CONFIRMED, AssignmentStatus.IN_PROGRESS] },
+        },
       });
 
       if (existingAssignment) {
@@ -505,7 +596,7 @@ export async function confirmApplication(applicationId: string, employerUserId: 
       });
 
       return { assignment: createdAssignment, alreadyConfirmed: false, application, employer };
-    });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
     // Notifications outside the transaction — they must not hold DB locks.
     if (!result.alreadyConfirmed) {
@@ -527,7 +618,7 @@ export async function confirmApplication(applicationId: string, employerUserId: 
             firstName: employer.firstName,
             lastName: employer.lastName,
           })}\n` +
-          "Откройте Mini App, чтобы увидеть детали.",
+          "Откройте приложение, чтобы увидеть детали.",
       }).catch((error) => {
         console.warn("[tg-notify] confirm-application worker-msg failed", {
           message: error instanceof Error ? error.message : "unknown",
@@ -564,6 +655,200 @@ export async function confirmApplication(applicationId: string, employerUserId: 
   }
 }
 
+export async function cancelConfirmedAssignment(assignmentId: string, workerUserId: string) {
+  try {
+    const assignment = await prisma.assignment.findUniqueOrThrow({
+      where: { id: assignmentId },
+      include: {
+        shiftPost: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+        worker: {
+          select: {
+            firstName: true,
+            lastName: true,
+            username: true,
+          },
+        },
+        employer: {
+          select: {
+            telegramId: true,
+          },
+        },
+      },
+    });
+
+    if (assignment.workerUserId !== workerUserId) {
+      throw new Error("forbidden");
+    }
+
+    if (assignment.status !== AssignmentStatus.CONFIRMED) {
+      throw new Error("assignment_not_cancellable");
+    }
+
+    const cancelledAt = new Date();
+    const cancelledAssignment = await prisma.$transaction(async (tx) => {
+      const transition = await tx.assignment.updateMany({
+        where: {
+          id: assignmentId,
+          workerUserId,
+          status: AssignmentStatus.CONFIRMED,
+        },
+        data: {
+          status: AssignmentStatus.CANCELLED,
+          cancelledAt,
+        },
+      });
+
+      if (transition.count === 0) {
+        throw new Error("assignment_not_cancellable");
+      }
+
+      await tx.application.update({
+        where: { id: assignment.applicationId },
+        data: { status: ApplicationStatus.CANCELLED_BY_WORKER },
+      });
+
+      await tx.shiftPost.update({
+        where: { id: assignment.shiftPostId },
+        data: {
+          status: ShiftPostStatus.PUBLISHED,
+          closedAt: null,
+        },
+      });
+
+      return tx.assignment.findUniqueOrThrow({
+        where: { id: assignmentId },
+      });
+    });
+
+    void sendTelegramMessage({
+      chatId: assignment.employer.telegramId,
+      text:
+        `Исполнитель отказался от подтверждённой смены «${assignment.shiftPost.title}».\n` +
+        `Сотрудник: ${formatTelegramContact(assignment.worker)}\n` +
+        "Объявление снова открыто для откликов.",
+    }).catch((error) => {
+      console.warn("[tg-notify] cancel-assignment employer-msg failed", {
+        message: error instanceof Error ? error.message : "unknown",
+      });
+    });
+
+    return cancelledAssignment;
+  } catch (error) {
+    if (!shouldUseDemoFallback(error)) {
+      throw error;
+    }
+    return buildDemoFallbackResult("cancelConfirmedAssignment", error, () => ({
+      id: assignmentId,
+      workerUserId,
+      status: AssignmentStatus.CANCELLED,
+      cancelledAt: new Date(),
+    }));
+  }
+}
+
+export async function markAssignmentNoShow(assignmentId: string, employerUserId: string) {
+  try {
+    const assignment = await prisma.assignment.findUniqueOrThrow({
+      where: { id: assignmentId },
+      include: {
+        shiftPost: {
+          select: {
+            id: true,
+            title: true,
+            shiftDate: true,
+            startAt: true,
+          },
+        },
+        worker: {
+          select: {
+            telegramId: true,
+          },
+        },
+      },
+    });
+
+    if (assignment.employerUserId !== employerUserId) {
+      throw new Error("forbidden");
+    }
+
+    if (
+      assignment.status !== AssignmentStatus.CONFIRMED &&
+      assignment.status !== AssignmentStatus.IN_PROGRESS
+    ) {
+      throw new Error("assignment_not_no_showable");
+    }
+
+    const scheduledStart = assignment.shiftPost.startAt ?? assignment.shiftPost.shiftDate;
+    if (scheduledStart.getTime() > Date.now()) {
+      throw new Error("shift_not_started");
+    }
+
+    const markedAt = new Date();
+    const noShowAssignment = await prisma.$transaction(async (tx) => {
+      const transition = await tx.assignment.updateMany({
+        where: {
+          id: assignmentId,
+          employerUserId,
+          status: { in: [AssignmentStatus.CONFIRMED, AssignmentStatus.IN_PROGRESS] },
+        },
+        data: {
+          status: AssignmentStatus.NO_SHOW,
+          cancelledAt: markedAt,
+        },
+      });
+
+      if (transition.count === 0) {
+        throw new Error("assignment_not_no_showable");
+      }
+
+      await tx.application.update({
+        where: { id: assignment.applicationId },
+        data: { status: ApplicationStatus.NO_SHOW },
+      });
+
+      await tx.shiftPost.update({
+        where: { id: assignment.shiftPostId },
+        data: {
+          status: ShiftPostStatus.CLOSED,
+          closedAt: markedAt,
+        },
+      });
+
+      return tx.assignment.findUniqueOrThrow({
+        where: { id: assignmentId },
+      });
+    });
+
+    void sendTelegramMessage({
+      chatId: assignment.worker.telegramId,
+      text:
+        `По смене «${assignment.shiftPost.title}» работодатель отметил неявку.\n` +
+        "Если это ошибка, обратитесь в поддержку через @dooblerhelp_bot.",
+    }).catch((error) => {
+      console.warn("[tg-notify] no-show worker-msg failed", {
+        message: error instanceof Error ? error.message : "unknown",
+      });
+    });
+
+    return noShowAssignment;
+  } catch (error) {
+    if (!shouldUseDemoFallback(error)) {
+      throw error;
+    }
+    return buildDemoFallbackResult("markAssignmentNoShow", error, () => ({
+      id: assignmentId,
+      employerUserId,
+      status: AssignmentStatus.NO_SHOW,
+      cancelledAt: new Date(),
+    }));
+  }
+}
+
 export async function completeAssignment(assignmentId: string, actorUserId: string) {
   try {
     const assignment = await prisma.assignment.findUniqueOrThrow({
@@ -581,6 +866,13 @@ export async function completeAssignment(assignmentId: string, actorUserId: stri
       return assignment;
     }
 
+    if (
+      assignment.status !== AssignmentStatus.CONFIRMED &&
+      assignment.status !== AssignmentStatus.IN_PROGRESS
+    ) {
+      throw new Error("assignment_not_completable");
+    }
+
     const completedAt = new Date();
 
     const updatedAssignment = await prisma.$transaction(async (tx) => {
@@ -588,7 +880,7 @@ export async function completeAssignment(assignmentId: string, actorUserId: stri
       const transition = await tx.assignment.updateMany({
         where: {
           id: assignmentId,
-          status: { not: AssignmentStatus.COMPLETED },
+          status: { in: [AssignmentStatus.CONFIRMED, AssignmentStatus.IN_PROGRESS] },
         },
         data: {
           status: AssignmentStatus.COMPLETED,
@@ -629,6 +921,10 @@ export async function completeAssignment(assignmentId: string, actorUserId: stri
 
       return nextAssignment;
     });
+
+    // completedAssignmentsCount влияет на бейджи в profile-shell.
+    await invalidateCachedUserRecord(updatedAssignment.workerUserId);
+    await invalidateCachedUserRecord(updatedAssignment.employerUserId);
 
     return updatedAssignment;
   } catch (error) {
@@ -702,6 +998,10 @@ export async function createAssignmentReview(
         },
       });
 
+      // ratingAvg/ratingCount тоже в кешируемом select — сбрасываем,
+      // чтобы новый рейтинг отразился в Mini App сразу.
+      await invalidateCachedUserRecord(subjectUserId);
+
       const subjectUser =
         subjectUserId === assignment.workerUserId ? assignment.worker : assignment.employer;
 
@@ -710,7 +1010,7 @@ export async function createAssignmentReview(
 
     void sendTelegramMessage({
       chatId: result.subjectTelegramId,
-      text: "По вашей завершённой смене оставили отзыв. Откройте Mini App, чтобы посмотреть детали.",
+      text: "По вашей завершённой смене оставили отзыв. Откройте приложение, чтобы посмотреть детали.",
     }).catch((error) => {
       console.warn("[tg-notify] review-message failed", {
         message: error instanceof Error ? error.message : "unknown",

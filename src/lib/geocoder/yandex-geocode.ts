@@ -1,6 +1,8 @@
 import { demoCities, demoRegions } from "@/lib/demo-data";
 import { isDevFallbackEnabled, logDevFallbackUsed } from "@/lib/dev-fallback";
+import { fetchDaData } from "@/lib/geocoder/dadata-fetch";
 import { prisma } from "@/lib/prisma";
+import { formatCompactShiftAddress } from "@/lib/utils";
 
 type CityContext = {
   cityId: string;
@@ -46,6 +48,8 @@ export type VerifiedAddress = {
   street: string | null;
   house: string | null;
   precision: string | null;
+  lat: number | null;
+  lng: number | null;
 };
 
 type VerifyAddressSelectionInput = {
@@ -213,13 +217,20 @@ function mapPrecision(data: DaDataSuggestionData | undefined) {
   return "other";
 }
 
+function parseCoordinate(value: string | null | undefined) {
+  const coordinate = Number(value);
+
+  return Number.isFinite(coordinate) ? coordinate : null;
+}
+
 async function requestDaDataSuggest(params: {
   apiKey: string;
   city: CityContext;
   query: string;
   count: number;
+  timeoutMs?: number;
 }) {
-  const response = await fetch(
+  const response = await fetchDaData(
     "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
     {
       method: "POST",
@@ -239,6 +250,7 @@ async function requestDaDataSuggest(params: {
       }),
       cache: "no-store",
     },
+    params.timeoutMs,
   );
 
   if (!response.ok) {
@@ -257,8 +269,13 @@ async function requestDaDataSuggest(params: {
   return (await response.json()) as DaDataSuggestResponse;
 }
 
-async function requestDaDataFindById(apiKey: string, city: CityContext, fiasId: string) {
-  const response = await fetch(
+async function requestDaDataFindById(
+  apiKey: string,
+  city: CityContext,
+  fiasId: string,
+  timeoutMs?: number,
+) {
+  const response = await fetchDaData(
     "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/address",
     {
       method: "POST",
@@ -273,6 +290,7 @@ async function requestDaDataFindById(apiKey: string, city: CityContext, fiasId: 
       }),
       cache: "no-store",
     },
+    timeoutMs,
   );
 
   if (!response.ok) {
@@ -299,15 +317,18 @@ function mapVerifiedSuggestion(
   }
 
   const data = suggestion.data;
-  const formattedAddress =
+  const rawFormattedAddress =
     stripPostalCode(suggestion.unrestricted_value) ||
     stripPostalCode(suggestion.value) ||
     null;
   const district = extractMeaningfulDistrict(suggestion, city);
 
-  if (!formattedAddress) {
+  if (!rawFormattedAddress) {
     return null;
   }
+
+  const formattedAddress =
+    formatCompactShiftAddress(city.cityName, district, rawFormattedAddress) || rawFormattedAddress;
 
   return {
     formattedAddress,
@@ -321,6 +342,8 @@ function mapVerifiedSuggestion(
     street: data?.street_with_type?.trim() ?? data?.street?.trim() ?? null,
     house: data?.house?.trim() ?? null,
     precision: mapPrecision(data),
+    lat: parseCoordinate(data?.geo_lat),
+    lng: parseCoordinate(data?.geo_lon),
   };
 }
 
@@ -347,14 +370,22 @@ export async function verifyAddressSelection(input: VerifyAddressSelectionInput)
     throw new Error("ADDRESS_NOT_FOUND");
   }
 
+  // Anti-tamper re-verify при создании смены — это разовый POST, юзер уже
+  // выбрал адрес из подсказки и ждёт submit. Тут можно потерпеть до 8 секунд
+  // ради того, чтобы координаты гарантированно записались в ShiftPost.lat/lng.
+  // Без них статическая карта на странице смены показывает CSS-плейсхолдер
+  // вместо реального превью Яндекс.Карты.
+  const VERIFY_TIMEOUT_MS = 8_000;
+
   const payload =
     looksLikeFiasId(input.expectedUri)
-      ? await requestDaDataFindById(apiKey, city, input.expectedUri!.trim())
+      ? await requestDaDataFindById(apiKey, city, input.expectedUri!.trim(), VERIFY_TIMEOUT_MS)
       : await requestDaDataSuggest({
           apiKey,
           city,
           query,
           count: 1,
+          timeoutMs: VERIFY_TIMEOUT_MS,
         });
 
   const suggestion = payload.suggestions?.[0];
@@ -380,6 +411,7 @@ export async function verifyAddressSelection(input: VerifyAddressSelectionInput)
     formattedAddress: verified.formattedAddress,
     district: verified.district,
     precision: verified.precision,
+    hasCoords: typeof verified.lat === "number" && typeof verified.lng === "number",
   });
 
   return verified;

@@ -76,6 +76,7 @@ export const ApplicationStatus = {
   REJECTED: 'REJECTED',
   WITHDRAWN: 'WITHDRAWN',
   CONFIRMED: 'CONFIRMED',
+  NO_SHOW: 'NO_SHOW',
   CANCELLED_BY_WORKER: 'CANCELLED_BY_WORKER',
   CANCELLED_BY_EMPLOYER: 'CANCELLED_BY_EMPLOYER'
 } as const
@@ -113,6 +114,16 @@ export const VerificationStatus = {
 } as const
 
 export type VerificationStatus = (typeof VerificationStatus)[keyof typeof VerificationStatus]
+
+
+export const IdentityVerificationStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  NEEDS_MORE_PHOTOS: 'NEEDS_MORE_PHOTOS'
+} as const
+
+export type IdentityVerificationStatus = (typeof IdentityVerificationStatus)[keyof typeof IdentityVerificationStatus]
 
 
 export const ReportStatus = {

@@ -1,5 +1,6 @@
 import { fail, ok } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { requireTrustedMutationRequest } from "@/lib/auth/mutation-guard";
 import { checkInMemoryRateLimit } from "@/lib/rate-limit/in-memory";
 import { buildRateLimitResponse } from "@/lib/rate-limit/response";
 import {
@@ -35,6 +36,11 @@ export async function POST(request: Request) {
     return fail("Нужен вход через Telegram.", 401);
   }
 
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: current.telegramId,
+  });
+  if (untrusted) return untrusted;
+
   const body = (await request.json().catch(() => ({}))) as { peerUserId?: string };
   const peerUserId = body.peerUserId?.trim();
 
@@ -42,7 +48,7 @@ export async function POST(request: Request) {
     return fail("peerUserId обязателен.", 400);
   }
 
-  const minuteCheck = checkInMemoryRateLimit({
+  const minuteCheck = await checkInMemoryRateLimit({
     key: `chat-create-min:${current.id}`,
     ...NEW_CHAT_PER_MINUTE,
   });
@@ -50,7 +56,7 @@ export async function POST(request: Request) {
     return buildRateLimitResponse(minuteCheck.retryAfterMs);
   }
 
-  const hourCheck = checkInMemoryRateLimit({
+  const hourCheck = await checkInMemoryRateLimit({
     key: `chat-create-hour:${current.id}`,
     ...NEW_CHAT_PER_HOUR,
   });
@@ -76,6 +82,11 @@ export async function POST(request: Request) {
           return fail("Пользователь не найден.", 404);
         case "USER_BANNED":
           return fail("Пользователь заблокирован.", 403);
+        case "OWNER_PEER_FORBIDDEN":
+          return fail(
+            "Нельзя написать владельцу первым. Дождитесь, пока он откроет чат с вами.",
+            403,
+          );
       }
     }
     console.error("[chats] create failed", error);

@@ -4,6 +4,8 @@ import { ShiftCard } from "@/components/shifts/shift-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getSessionPayload } from "@/lib/auth/session";
 import { demoShiftPosts } from "@/lib/demo-data";
+import { withPlatformPrefix } from "@/lib/routing/platform";
+import { getRequestPlatformPrefix } from "@/lib/routing/platform-server";
 import { listApplicationsForEmployer } from "@/server/services/application-service";
 import { listMyShiftPosts } from "@/server/services/shift-post-service";
 
@@ -11,6 +13,7 @@ export const dynamic = "force-dynamic";
 
 export default async function PostsPage() {
   const session = await getSessionPayload();
+  const hrefPrefix = await getRequestPlatformPrefix();
   const [shifts, applications] = session
     ? await Promise.all([
         listMyShiftPosts(session.userId),
@@ -27,12 +30,12 @@ export default async function PostsPage() {
 
       <section className="space-y-4">
         {shifts.length ? (
-          shifts.map((shift) => <ShiftCard key={shift.id} shift={shift} />)
+          shifts.map((shift) => <ShiftCard key={shift.id} shift={shift} hrefPrefix={hrefPrefix} />)
         ) : (
           <EmptyState
             title="У вас пока нет объявлений"
             description="Создайте первую смену, чтобы начать получать отклики от сотрудников и подменных работников."
-            actionHref="/shifts/new"
+            actionHref={withPlatformPrefix("/shifts/new", hrefPrefix)}
             actionLabel="Создать смену"
           />
         )}
@@ -43,12 +46,12 @@ export default async function PostsPage() {
           Кандидаты по вашим объявлениям
         </h2>
         {applications.length ? (
-          <ApplicationsList applications={applications} canConfirm />
+          <ApplicationsList applications={applications} canConfirm hrefPrefix={hrefPrefix} />
         ) : (
           <EmptyState
             title="Кандидатов пока нет"
             description="Как только на ваши объявления начнут откликаться сотрудники, они появятся здесь."
-            actionHref="/shifts/new"
+            actionHref={withPlatformPrefix("/shifts/new", hrefPrefix)}
             actionLabel="Опубликовать смену"
           />
         )}

@@ -3,9 +3,14 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { LoaderCircle, MessageSquarePlus } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { fetchWithTelegramAuth } from "@/lib/auth/client";
 import { ChatAvatar } from "@/components/chat/chat-avatar";
+import {
+  getPlatformPrefixFromPathname,
+  withPlatformPrefix,
+} from "@/lib/routing/platform";
 
 type ConversationRow = {
   id: string;
@@ -49,6 +54,8 @@ function formatTimestamp(value: string) {
 }
 
 export function ChatsIndex() {
+  const pathname = usePathname();
+  const platformPrefix = getPlatformPrefixFromPathname(pathname);
   const [rows, setRows] = useState<ConversationRow[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -121,13 +128,13 @@ export function ChatsIndex() {
         </p>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-center">
           <Link
-            href="/applications"
+            href={withPlatformPrefix("/applications", platformPrefix)}
             className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[#3387d1] px-5 text-[14px] font-medium text-white"
           >
             Перейти к откликам
           </Link>
           <Link
-            href="/shifts"
+            href={withPlatformPrefix("/shifts", platformPrefix)}
             className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[#eef3f7] px-5 text-[14px] font-medium text-[#101214]"
           >
             Открыть смены
@@ -154,8 +161,8 @@ export function ChatsIndex() {
         return (
           <li key={row.id}>
             <Link
-              href={`/chats/${row.id}`}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-[#f8fbfd]"
+              href={withPlatformPrefix(`/chats/${row.id}`, platformPrefix)}
+              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted"
             >
               <ChatAvatar
                 firstName={row.peer.firstName}

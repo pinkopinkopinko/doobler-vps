@@ -43,6 +43,11 @@ services:
     build:
       context: ..
       dockerfile: deploy/Dockerfile
+      # NEXT_PUBLIC_* пробрасываем как ARG, потому что Next.js
+      # инлайнит их в client bundle НА ЭТАПЕ БИЛДА. Если задать только
+      # runtime env — счётчики не загрузятся на продакшне.
+      args:
+        NEXT_PUBLIC_YANDEX_METRIKA_ID: ${NEXT_PUBLIC_YANDEX_METRIKA_ID:-}
     image: doobler-app:latest
     container_name: doobler-app
     restart: unless-stopped
@@ -57,6 +62,12 @@ services:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME}
       TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET}
+      TELEGRAM_DROP_PENDING_UPDATES: ${TELEGRAM_DROP_PENDING_UPDATES:-false}
+      MAX_BOT_TOKEN: ${MAX_BOT_TOKEN:-}
+      MAX_BOT_URL: ${MAX_BOT_URL:-https://max.ru/id163205081110_bot}
+      MAX_WEBHOOK_SECRET: ${MAX_WEBHOOK_SECRET:-}
+      APP_URL: ${APP_URL:-https://doobler.ru}
+      DOMAIN: ${DOMAIN:-doobler.ru}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
       NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME}
       ALLOW_DEV_AUTH_FALLBACK: "false"
@@ -66,6 +77,20 @@ services:
       UPLOADS_DIR: /var/lib/doobler/uploads
       LOG_VERBOSE: "false"
       NEXT_PUBLIC_LOG_VERBOSE: "false"
+      # DaData Suggestions API для адресных подсказок и проверки адреса.
+      DADATA_API_KEY: ${DADATA_API_KEY}
+      # Прокси для исходящих запросов из РФ. Node.js 22 native fetch
+      # использует эти переменные только с --use-env-proxy.
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      NO_PROXY: "postgres,redis,localhost,127.0.0.1,app,nginx"
+      NODE_OPTIONS: "--dns-result-order=ipv4first --use-env-proxy"
+      # SEO verification meta-теги. Server-rendered, рантайма достаточно.
+      YANDEX_VERIFICATION: ${YANDEX_VERIFICATION:-}
+      GOOGLE_SITE_VERIFICATION: ${GOOGLE_SITE_VERIFICATION:-}
+      # SEO counters — дублируем в runtime для server-side чтения, но в client
+      # они уже инлайнены через args выше.
+      NEXT_PUBLIC_YANDEX_METRIKA_ID: ${NEXT_PUBLIC_YANDEX_METRIKA_ID:-}
     volumes:
       - uploads_data:/var/lib/doobler/uploads
     networks:
@@ -75,6 +100,54 @@ services:
       resources:
         limits:
           memory: 2g
+
+  document-cleaner:
+    image: doobler-app:latest
+    container_name: doobler-document-cleaner
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      UPLOADS_DIR: /var/lib/doobler/uploads
+    volumes:
+      - uploads_data:/var/lib/doobler/uploads
+    networks:
+      - internal
+    command: ["sh", "-lc", "while true; do npm run documents:purge; sleep 24h; done"]
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+  main-bot-poller:
+    profiles:
+      - manual-poller
+    image: doobler-app:latest
+    container_name: doobler-main-bot-poller
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_started
+    command: ["node", "/app/scripts/main-bot-poller.mjs"]
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET}
+      MAIN_BOT_POLLER_APP_URL: http://app:3000/api/bot/webhook
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      NO_PROXY: "postgres,redis,localhost,127.0.0.1,app,nginx"
+      NODE_OPTIONS: "--dns-result-order=ipv4first --use-env-proxy"
+    volumes:
+      - ../scripts/main-bot-poller.mjs:/app/scripts/main-bot-poller.mjs:ro
+    networks:
+      - internal
+    deploy:
+      resources:
+        limits:
+          memory: 128m
 
   support-bot:
     build:
@@ -108,7 +181,7 @@ services:
           memory: 256m
 
   nginx:
-    # Кастомный образ с njs-модулем для edge-валидации Telegram initData.
+    # Кастомный образ с njs-модулем для edge-валидации Telegram/MAX initData.
     # См. ./nginx/Dockerfile и ./nginx/njs/validate-init-data.js.
     build:
       context: ./nginx
@@ -133,6 +206,7 @@ services:
       # Токен для njs-модуля. Entrypoint-hook пишет его в
       # /etc/nginx/njs/.bot-token при старте контейнера, njs читает оттуда.
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      MAX_BOT_TOKEN: ${MAX_BOT_TOKEN:-}
 
   certbot:
     image: certbot/certbot:latest

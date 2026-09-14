@@ -26,6 +26,7 @@ export type ApplicationStatus =
   | "REJECTED"
   | "WITHDRAWN"
   | "CONFIRMED"
+  | "NO_SHOW"
   | "CANCELLED_BY_WORKER"
   | "CANCELLED_BY_EMPLOYER";
 
@@ -36,6 +37,14 @@ export type AssignmentStatus =
   | "NO_SHOW"
   | "CANCELLED"
   | "DISPUTED";
+
+export type ShiftAttendanceScore = {
+  percentage: number;
+  completedCount: number;
+  failedCount: number;
+  totalCount: number;
+  warning: boolean;
+};
 
 export type VerificationStatus = "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
 
@@ -68,6 +77,7 @@ export type UserSummary = {
   ratingCount: number;
   completedAssignmentsCount: number;
   verificationStatus: VerificationStatus;
+  employerVerificationStatus: VerificationStatus | null;
   isPhoneVerified: boolean;
 };
 
@@ -82,6 +92,8 @@ export type ShiftCard = {
   regionName: string;
   district: string;
   address: string;
+  lat?: number | null;
+  lng?: number | null;
   landmark: string | null;
   shiftDate: string;
   startAt: string | null;
@@ -93,7 +105,6 @@ export type ShiftCard = {
   description: string;
   createdByName: string;
   applicationsCount: number;
-  favorite: boolean;
 };
 
 export type ApplicationEmployerView = {
@@ -140,8 +151,10 @@ export type ApplicationCard = {
 export type ProfileView = UserSummary & {
   regionId?: string | null;
   cityId?: string | null;
+  balanceRub: number;
   bio: string | null;
   phone: string | null;
+  shiftAttendance: ShiftAttendanceScore | null;
   badges: string[];
   recentReviews: Array<{
     id: string;

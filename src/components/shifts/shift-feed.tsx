@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 
 import { ShiftCard } from "@/components/shifts/shift-card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { withPlatformPrefix } from "@/lib/routing/platform";
 import type { ShiftCard as ShiftCardType } from "@/lib/types";
 
 const ShiftFilters = dynamic(
@@ -38,6 +39,7 @@ type ShiftFeedProps = {
   dateTo?: string;
   paymentMin?: string;
   paymentMax?: string;
+  hrefPrefix?: string;
 };
 
 export function ShiftFeed({
@@ -53,6 +55,7 @@ export function ShiftFeed({
   dateTo = "",
   paymentMin = "",
   paymentMax = "",
+  hrefPrefix = "",
 }: ShiftFeedProps) {
   return (
     <div>
@@ -86,13 +89,13 @@ export function ShiftFeed({
         <EmptyState
           title="По этим фильтрам ничего не найдено"
           description="Попробуйте расширить диапазон дат, убрать ограничение по району или поменять компанию."
-          actionHref="/shifts"
+          actionHref={withPlatformPrefix("/shifts", hrefPrefix)}
           actionLabel="Сбросить фильтры"
         />
       ) : (
         <div className="space-y-4">
           {shifts.map((shift) => (
-            <ShiftCard key={shift.id} shift={shift} />
+            <ShiftCard key={shift.id} shift={shift} hrefPrefix={hrefPrefix} />
           ))}
         </div>
       )}

@@ -119,7 +119,7 @@ if [[ ! -f "${CERT_PATH}" ]]; then
     cat > "${TMP_CONF}" <<EOF
 server {
     listen 80;
-    server_name ${DOMAIN};
+    server_name ${DOMAIN} www.${DOMAIN};
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
     }
@@ -138,7 +138,9 @@ EOF
         certbot/certbot:latest \
         certonly --webroot -w /var/www/certbot \
             --email "${ACME_EMAIL}" --agree-tos --no-eff-email \
-            -d "${DOMAIN}"
+            --cert-name "${DOMAIN}" \
+            -d "${DOMAIN}" \
+            -d "www.${DOMAIN}"
 
     # Возвращаем полный конфиг с TLS.
     mv "${BACKUP_CONF}" "${TMP_CONF}"

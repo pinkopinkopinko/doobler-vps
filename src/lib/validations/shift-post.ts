@@ -10,13 +10,13 @@ const PHOTO_UPLOAD_PATH_RE = /^\/api\/uploads\/[a-z0-9]+$/;
 export const shiftPostSchema = z
   .object({
     pickupPointId: z.string().optional().nullable(),
-    title: z.string().trim().min(5).max(120),
+    title: z.string().trim().min(5, "Вам нужно добавить заголовок").max(120),
     type: z.enum(["URGENT_REPLACEMENT", "DAY_SHIFT"]),
-    marketplaceId: z.string().min(1),
-    cityId: z.string().min(1),
-    regionId: z.string().min(1),
+    marketplaceId: z.string().min(1, "Выберите маркетплейс"),
+    cityId: z.string().min(1, "Выберите город"),
+    regionId: z.string().min(1, "Укажите регион"),
     district: z.string().trim().max(120).optional().nullable().transform((value) => value ?? ""),
-    address: z.string().trim().min(5).max(255),
+    address: z.string().trim().min(5, "Введите адрес").max(255),
     addressSuggestionUri: z.string().trim().optional().nullable(),
     landmark: z.string().trim().max(255).optional().nullable(),
     description: z
@@ -25,7 +25,7 @@ export const shiftPostSchema = z
         z.string().max(1000).optional(),
       )
       .transform((value) => value ?? ""),
-    shiftDate: z.string().min(1),
+    shiftDate: z.string().min(1, "Выберите дату смены"),
     startAt: z.string().optional().nullable(),
     endAt: z.string().optional().nullable(),
     paymentAmountRub: z.preprocess(
@@ -101,7 +101,7 @@ export const profileSchema = z
     cityId: z.string().min(1),
     regionId: z.string().min(1),
     district: z.string().max(120).optional().nullable(),
-    roles: z.array(z.enum(["OWNER", "MANAGER", "EMPLOYEE", "TEMP_WORKER", "MODERATOR"])).min(1),
+    roles: z.array(z.enum(["OWNER", "EMPLOYEE", "TEMP_WORKER"])).min(1),
     marketplaces: z.array(z.enum(["OZON", "WB", "YANDEX", "OTHER"])).default([]),
   })
   .superRefine((value, ctx) => {
@@ -121,14 +121,22 @@ export const profileSchema = z
       });
     }
 
-    if (
-      (value.roles.includes("EMPLOYEE") || value.roles.includes("TEMP_WORKER")) &&
-      !value.experienceSummary?.trim()
-    ) {
+    const isWorker =
+      value.roles.includes("EMPLOYEE") || value.roles.includes("TEMP_WORKER");
+
+    if (isWorker && !value.experienceSummary?.trim()) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Для сотрудника нужно указать опыт работы.",
         path: ["experienceSummary"],
+      });
+    }
+
+    if (!value.cityId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Выберите город профиля.",
+        path: ["cityId"],
       });
     }
   });

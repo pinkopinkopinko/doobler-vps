@@ -3,15 +3,21 @@ import Link from "next/link";
 import { AssignmentActions } from "@/components/applications/assignment-actions";
 import { ConfirmApplicationButton } from "@/components/applications/confirm-application-button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { withPlatformPrefix } from "@/lib/routing/platform";
 import type { ApplicationCard as ApplicationCardType } from "@/lib/types";
 import { formatExperienceYears, getApplicationStatusLabel } from "@/lib/utils";
 
 type ApplicationsListProps = {
   applications: ApplicationCardType[];
   canConfirm?: boolean;
+  hrefPrefix?: string;
 };
 
-export function ApplicationsList({ applications, canConfirm = false }: ApplicationsListProps) {
+export function ApplicationsList({
+  applications,
+  canConfirm = false,
+  hrefPrefix = "",
+}: ApplicationsListProps) {
   return (
     <div className="space-y-4">
       {applications.map((application) => (
@@ -70,7 +76,7 @@ export function ApplicationsList({ applications, canConfirm = false }: Applicati
 
           <div className="mt-4">
             <Link
-              href={`/profiles/${application.applicant.id}`}
+              href={withPlatformPrefix(`/profiles/${application.applicant.id}`, hrefPrefix)}
               className="inline-flex rounded-full bg-[#dfe8f1] px-4 py-3 text-[14px] font-semibold text-[#1f3a52]"
             >
               Смотреть профиль сотрудника
@@ -96,6 +102,10 @@ export function ApplicationsList({ applications, canConfirm = false }: Applicati
                 <p className="text-[13px] text-[#7f8791]">
                   {application.assignment.status === "COMPLETED"
                     ? "Смена завершена. Теперь можно оставить отзыв."
+                    : application.assignment.status === "CANCELLED"
+                      ? "Сотрудник отказался. Можно подтвердить другого кандидата."
+                    : application.assignment.status === "NO_SHOW"
+                      ? "Сотрудник не вышел на смену. Это учтено в показателе выхода."
                     : "Кандидат подтверждён. После окончания смены закройте её здесь."}
                 </p>
               ) : null}

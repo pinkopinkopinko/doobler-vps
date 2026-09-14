@@ -1,8 +1,11 @@
 import { cache } from "react";
 
+import { AssignmentStatus } from "@/generated/prisma/client";
 import { getCurrentUserRecord } from "@/lib/auth/app-access";
+import { invalidateCachedUserRecord } from "@/lib/cache/user-record-cache";
 import { compactProfilePhotoUrl, validateProfilePhotoUrl } from "@/lib/profile-photo";
-import type { ProfileView } from "@/lib/types";
+import { calculateShiftAttendance } from "@/lib/shift-attendance";
+import type { AppRole, ProfileView } from "@/lib/types";
 import { isProfileComplete } from "@/lib/profile-completion";
 import { prisma } from "@/lib/prisma";
 import { profileSchema } from "@/lib/validations/shift-post";
@@ -25,6 +28,7 @@ const profileShellSelect = {
   ratingAvg: true,
   ratingCount: true,
   completedAssignmentsCount: true,
+  balanceRub: true,
   bio: true,
   phone: true,
   isPhoneVerified: true,
@@ -40,18 +44,41 @@ const profileShellSelect = {
   },
   verifications: {
     orderBy: { createdAt: "desc" as const },
-    take: 1,
+    take: 8,
+    select: {
+      status: true,
+      type: true,
+    },
   },
 } as const;
 
 const profileFullSelect = {
   ...profileShellSelect,
+  workerAssignments: {
+    where: {
+      status: {
+        in: [
+          AssignmentStatus.COMPLETED,
+          AssignmentStatus.NO_SHOW,
+          AssignmentStatus.CANCELLED,
+        ],
+      },
+    },
+    select: {
+      status: true,
+      application: {
+        select: {
+          status: true,
+        },
+      },
+    },
+  },
   receivedReviews: {
     include: { author: true },
     orderBy: { createdAt: "desc" as const },
     take: 5,
   },
-} as const;
+};
 
 function mapProfileBase(
   user: {
@@ -72,17 +99,24 @@ function mapProfileBase(
     ratingAvg: number;
     ratingCount: number;
     completedAssignmentsCount: number;
+    balanceRub?: number;
     bio: string | null;
     phone: string | null;
     isPhoneVerified: boolean;
     roles: Array<{ role: ProfileView["roles"][number] }>;
     city: { name: string } | null;
-    verifications: Array<{ status: ProfileView["verificationStatus"] }>;
+    verifications: Array<{
+      status: ProfileView["verificationStatus"];
+      type: "WORKER_ID" | "SELFIE" | "EMPLOYER_PVZ" | "MANUAL";
+    }>;
   },
   options?: { compactPhoto?: boolean },
 ) {
   const roles = user.roles.map((role) => role.role);
   const photoUrl = options?.compactPhoto ? compactProfilePhotoUrl(user.photoUrl) : user.photoUrl;
+  const employerVerificationStatus =
+    user.verifications.find((verification) => verification.type === "EMPLOYER_PVZ")?.status ??
+    null;
 
   return {
     id: user.id,
@@ -104,7 +138,9 @@ function mapProfileBase(
     ratingAvg: user.ratingAvg,
     ratingCount: user.ratingCount,
     completedAssignmentsCount: user.completedAssignmentsCount,
+    balanceRub: user.balanceRub ?? 0,
     verificationStatus: user.verifications[0]?.status ?? "PENDING",
+    employerVerificationStatus,
     bio: user.bio,
     phone: user.phone,
     isPhoneVerified: user.isPhoneVerified,
@@ -130,7 +166,7 @@ function withPhoneBadge(
     return badges;
   }
 
-  return [badges[0] ?? "РџСЂРѕС„РёР»СЊ", "РќРѕРјРµСЂ С‚РµР»РµС„РѕРЅР° РїРѕРґС‚РІРµСЂР¶РґС‘РЅ", ...badges.slice(1)];
+  return [badges[0] ?? "Профиль", "Номер телефона подтверждён", ...badges.slice(1)];
 }
 
 /**
@@ -163,6 +199,7 @@ export const getProfileShell = cache(async (userId: string): Promise<ProfileView
       const profile = mapProfileBase(cachedRecord.user, { compactPhoto: true });
       return {
         ...profile,
+        shiftAttendance: null,
         badges: withPhoneBadge(profile, buildBadges(profile)),
         recentReviews: [],
       };
@@ -181,6 +218,7 @@ export const getProfileShell = cache(async (userId: string): Promise<ProfileView
 
     return {
       ...profile,
+      shiftAttendance: null,
       badges: withPhoneBadge(profile, buildBadges(profile)),
       recentReviews: [],
     };
@@ -188,10 +226,11 @@ export const getProfileShell = cache(async (userId: string): Promise<ProfileView
     // КРИТИЧНО: НЕ подставлять demoProfile (это «Игорь Панов»), иначе под любым
     // юзером будет светиться чужой профиль. Лучше вернуть null и дать UI
     // нормально среагировать (notFound / 401 / повторить запрос).
-    console.error("[profile-service] getProfileShell failed", {
-      userId,
-      message: error instanceof Error ? error.message : "unknown",
-    });
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(
+      `[profile-service] getProfileShell failed for user ${userId}: ${message}`,
+      error,
+    );
     return null;
   }
 });
@@ -211,6 +250,12 @@ export const getProfile = cache(async (userId: string): Promise<ProfileView | nu
 
     return {
       ...profile,
+      shiftAttendance: calculateShiftAttendance(
+        user.workerAssignments.map((assignment) => ({
+          status: assignment.status,
+          applicationStatus: assignment.application.status,
+        })),
+      ),
       badges: withPhoneBadge(profile, buildBadges(profile)),
       recentReviews: user.receivedReviews.map((review) => ({
         id: review.id,
@@ -223,10 +268,11 @@ export const getProfile = cache(async (userId: string): Promise<ProfileView | nu
   } catch (error) {
     // НЕ подставляем demoProfile: это приводило к тому, что любой юзер при
     // временной ошибке БД видел чужие данные. Лучше null, чем чужой профиль.
-    console.error("[profile-service] getProfile failed", {
-      userId,
-      message: error instanceof Error ? error.message : "unknown",
-    });
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(
+      `[profile-service] getProfile failed for user ${userId}: ${message}`,
+      error,
+    );
     return null;
   }
 });
@@ -267,7 +313,7 @@ export async function updateProfile(userId: string, input: unknown) {
     });
 
     const existingRoles = existingUser?.roles.map((role) => role.role) ?? [];
-    const nextRoles = new Set(data.roles);
+    const nextRoles = new Set<AppRole>(data.roles);
 
     if (existingRoles.includes("MANAGER")) {
       nextRoles.add("MANAGER");
@@ -313,6 +359,11 @@ export async function updateProfile(userId: string, input: unknown) {
         });
       }
     });
+
+    // Профиль/роли изменились — сбрасываем in-memory кеш User-record'а,
+    // чтобы (app)/layout и pages сразу увидели новые данные, а не ждали
+    // TTL. Иначе после "Сохранить" юзер до 30 сек видит старое имя/город.
+    await invalidateCachedUserRecord(userId);
 
     return getProfile(userId);
   } catch (error) {

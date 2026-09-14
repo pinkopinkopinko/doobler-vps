@@ -12,13 +12,21 @@ import { BottomNav } from "@/components/navigation/bottom-nav";
 import { SplashFrame, SplashSpinner } from "@/components/layout/splash-frame";
 import { fetchWithTelegramAuth } from "@/lib/auth/client";
 import { isVerboseLoggingEnabled } from "@/lib/log";
-import type { AppRole } from "@/lib/types";
+import {
+  getPlatformPrefixFromPathname,
+  stripPlatformPrefix,
+  withPlatformPrefix,
+} from "@/lib/routing/platform";
+import type { AppRole, VerificationStatus } from "@/lib/types";
 
 const APP_SHELL_CACHE_KEY = "dubler:app-shell-session";
+const MIN_BOOTSTRAP_LOADING_MS = 1400;
+const POST_AUTH_REFRESH_LOADING_MS = 800;
 
 type CachedShellState = {
   onboardingCompleted: boolean;
   roles: AppRole[];
+  employerVerificationStatus: VerificationStatus | null;
   isBanned: boolean;
   bannedProfile: {
     id: string;
@@ -36,6 +44,10 @@ type CachedShellState = {
 function logShellDebug(event: string, payload: Record<string, unknown>) {
   if (!isVerboseLoggingEnabled) return;
   console.info(`[tg-debug] shell:${event}`, payload);
+}
+
+function delay(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 function readCachedShellState(): CachedShellState | null {
@@ -66,6 +78,7 @@ function readCachedShellState(): CachedShellState | null {
     return {
       onboardingCompleted: parsed.onboardingCompleted,
       roles: parsed.roles,
+      employerVerificationStatus: parsed.employerVerificationStatus ?? null,
       isBanned: parsed.isBanned,
       bannedProfile: parsed.bannedProfile ?? null,
       cachedAt: parsed.cachedAt,
@@ -75,7 +88,11 @@ function readCachedShellState(): CachedShellState | null {
   }
 }
 
-function writeCachedShellState(state: { onboardingCompleted: boolean; roles: AppRole[] }) {
+function writeCachedShellState(state: {
+  onboardingCompleted: boolean;
+  roles: AppRole[];
+  employerVerificationStatus: VerificationStatus | null;
+}) {
   if (typeof window === "undefined") {
     return;
   }
@@ -85,6 +102,7 @@ function writeCachedShellState(state: { onboardingCompleted: boolean; roles: App
     JSON.stringify({
         onboardingCompleted: state.onboardingCompleted,
         roles: state.roles,
+        employerVerificationStatus: state.employerVerificationStatus,
         isBanned: false,
         bannedProfile: null,
         cachedAt: Date.now(),
@@ -102,6 +120,7 @@ function writeBannedShellState(profile: CachedShellState["bannedProfile"]) {
     JSON.stringify({
       onboardingCompleted: true,
       roles: [],
+      employerVerificationStatus: null,
       isBanned: true,
       bannedProfile: profile,
       cachedAt: Date.now(),
@@ -120,6 +139,8 @@ function clearCachedShellState() {
 export function AppShell({ children }: PropsWithChildren) {
   const router = useRouter();
   const pathname = usePathname();
+  const platformPrefix = getPlatformPrefixFromPathname(pathname);
+  const logicalPathname = stripPlatformPrefix(pathname);
   // IMPORTANT: do not read sessionStorage during render. It would diverge from the
   // server-rendered HTML and trigger a hydration mismatch. We hydrate from cache
   // synchronously inside a layout effect, before the browser paints.
@@ -127,6 +148,8 @@ export function AppShell({ children }: PropsWithChildren) {
   const [authFailed, setAuthFailed] = useState(false);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
   const [roles, setRoles] = useState<AppRole[]>([]);
+  const [employerVerificationStatus, setEmployerVerificationStatus] =
+    useState<VerificationStatus | null>(null);
   const [isBanned, setIsBanned] = useState<boolean>(false);
   const [bannedProfile, setBannedProfile] = useState<CachedShellState["bannedProfile"]>(null);
 
@@ -138,9 +161,9 @@ export function AppShell({ children }: PropsWithChildren) {
     /* eslint-disable react-hooks/set-state-in-effect */
     setOnboardingCompleted(cached.onboardingCompleted);
     setRoles(cached.roles);
+    setEmployerVerificationStatus(cached.employerVerificationStatus ?? null);
     setIsBanned(cached.isBanned);
     setBannedProfile(cached.bannedProfile);
-    setBootstrapped(true);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
@@ -148,16 +171,23 @@ export function AppShell({ children }: PropsWithChildren) {
     function handleProfileUpdated(event: Event) {
       const detail = (event as CustomEvent<ProfileUpdatedEventDetail>).detail;
       const nextRoles = Array.isArray(detail?.roles) ? detail.roles : roles;
+      const nextEmployerVerificationStatus =
+        "employerVerificationStatus" in (detail ?? {})
+          ? (detail.employerVerificationStatus ?? null)
+          : employerVerificationStatus;
       if (typeof detail?.onboardingCompleted === "boolean") {
         setOnboardingCompleted(detail.onboardingCompleted);
         setRoles(nextRoles);
+        setEmployerVerificationStatus(nextEmployerVerificationStatus);
         writeCachedShellState({
           onboardingCompleted: detail.onboardingCompleted,
           roles: nextRoles,
+          employerVerificationStatus: nextEmployerVerificationStatus,
         });
         logShellDebug("profile-updated", {
           onboardingCompleted: detail.onboardingCompleted,
           roles: nextRoles,
+          employerVerificationStatus: nextEmployerVerificationStatus,
         });
       }
     }
@@ -167,12 +197,15 @@ export function AppShell({ children }: PropsWithChildren) {
     return () => {
       window.removeEventListener("profile:updated", handleProfileUpdated);
     };
-  }, [roles]);
+  }, [employerVerificationStatus, roles]);
 
   useEffect(() => {
     let ignore = false;
 
     async function bootstrap() {
+      const startedAt = Date.now();
+      let shouldRefreshServerTree = false;
+
       logShellDebug("bootstrap-start", {
         pathname: window.location.pathname,
         userAgent: window.navigator.userAgent,
@@ -185,6 +218,7 @@ export function AppShell({ children }: PropsWithChildren) {
           ? (((await meRes.json().catch(() => null)) as {
               onboardingCompleted?: boolean;
               roles?: AppRole[];
+              employerVerificationStatus?: VerificationStatus | null;
               isBanned?: boolean;
               bannedProfile?: CachedShellState["bannedProfile"];
             } | null) ?? null)
@@ -207,10 +241,13 @@ export function AppShell({ children }: PropsWithChildren) {
               ? mePayload.onboardingCompleted
               : null;
           const nextRoles = mePayload?.roles ?? [];
+          const nextEmployerVerificationStatus = mePayload?.employerVerificationStatus ?? null;
           const nextIsBanned = mePayload?.isBanned === true;
           const nextBannedProfile = mePayload?.bannedProfile ?? null;
+          shouldRefreshServerTree = meRes.ok && Boolean(mePayload);
           setOnboardingCompleted(nextOnboardingCompleted);
           setRoles(nextRoles);
+          setEmployerVerificationStatus(nextEmployerVerificationStatus);
           setIsBanned(nextIsBanned);
           setBannedProfile(nextBannedProfile);
           if (meRes.ok && nextOnboardingCompleted !== null) {
@@ -220,6 +257,7 @@ export function AppShell({ children }: PropsWithChildren) {
               writeCachedShellState({
                 onboardingCompleted: nextOnboardingCompleted,
                 roles: nextRoles,
+                employerVerificationStatus: nextEmployerVerificationStatus,
               });
             }
           } else {
@@ -237,15 +275,30 @@ export function AppShell({ children }: PropsWithChildren) {
           setAuthFailed(true);
           setOnboardingCompleted(null);
           setRoles([]);
+          setEmployerVerificationStatus(null);
           setIsBanned(false);
           setBannedProfile(null);
           clearCachedShellState();
         }
       } finally {
         if (!ignore) {
+          if (shouldRefreshServerTree) {
+            router.refresh();
+            await delay(POST_AUTH_REFRESH_LOADING_MS);
+          }
+
+          const elapsedMs = Date.now() - startedAt;
+          if (elapsedMs < MIN_BOOTSTRAP_LOADING_MS) {
+            await delay(MIN_BOOTSTRAP_LOADING_MS - elapsedMs);
+          }
+        }
+
+        if (!ignore) {
           setBootstrapped(true);
           logShellDebug("bootstrap-finished", {
             pathname: window.location.pathname,
+            waitedMs: Date.now() - startedAt,
+            refreshedServerTree: shouldRefreshServerTree,
           });
         }
       }
@@ -256,7 +309,7 @@ export function AppShell({ children }: PropsWithChildren) {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     logShellDebug("state", {
@@ -265,6 +318,7 @@ export function AppShell({ children }: PropsWithChildren) {
       isBanned,
       onboardingCompleted,
       roles,
+      employerVerificationStatus,
       pathname,
     });
 
@@ -272,29 +326,40 @@ export function AppShell({ children }: PropsWithChildren) {
       return;
     }
 
-    const onOnboardingPage = pathname === "/onboarding";
+    const onOnboardingPage = logicalPathname === "/onboarding";
 
     if (!onboardingCompleted && !onOnboardingPage) {
       logShellDebug("redirect", {
         from: pathname,
-        to: "/onboarding",
+        to: withPlatformPrefix("/onboarding", platformPrefix),
         reason: "onboarding_required",
       });
-      router.replace("/onboarding");
+      router.replace(withPlatformPrefix("/onboarding", platformPrefix));
       return;
     }
 
     if (onboardingCompleted && onOnboardingPage) {
       logShellDebug("redirect", {
         from: pathname,
-        to: "/home",
+        to: withPlatformPrefix("/shifts", platformPrefix),
         reason: "onboarding_completed",
       });
-      router.replace("/home");
+      router.replace(withPlatformPrefix("/shifts", platformPrefix));
     }
-  }, [authFailed, bootstrapped, isBanned, onboardingCompleted, pathname, roles, router]);
+  }, [
+    authFailed,
+    bootstrapped,
+    employerVerificationStatus,
+    isBanned,
+    logicalPathname,
+    onboardingCompleted,
+    pathname,
+    platformPrefix,
+    roles,
+    router,
+  ]);
 
-  const showBottomNav = pathname !== "/onboarding";
+  const showBottomNav = logicalPathname !== "/onboarding";
 
   if (!bootstrapped) {
     return (
@@ -332,7 +397,7 @@ export function AppShell({ children }: PropsWithChildren) {
               Не удалось войти через Telegram
             </div>
             <div style={{ fontSize: 12, opacity: 0.75, lineHeight: 1.45 }}>
-              Закройте Mini App, отправьте боту /start и откройте приложение заново.
+              Закройте приложение, отправьте боту /start и откройте его заново.
               Если открыто в обычном браузере, Telegram не отдаёт initData.
             </div>
             <button
@@ -349,7 +414,7 @@ export function AppShell({ children }: PropsWithChildren) {
   }
 
   return (
-    <AppSessionProvider value={{ roles, onboardingCompleted }}>
+    <AppSessionProvider value={{ roles, employerVerificationStatus, onboardingCompleted }}>
       <div className="app-shell mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-[#eef3f7] px-4 pt-4">
         <div className="flex-1 pb-6">{children}</div>
         {showBottomNav ? <BottomNav /> : null}

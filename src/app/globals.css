@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #18202b;
   --muted: #f4f7fb;
@@ -13,13 +14,49 @@
   --accent-secondary: #4caf8d;
   --accent-secondary-foreground: #f4fffb;
   --danger: #df4f5f;
+  --danger-foreground: #ffffff;
+  --danger-soft: #f9e7e5;
+  --danger-soft-foreground: #b35b54;
+  --success: #2f8a59;
+  --success-foreground: #ffffff;
+  --success-soft: #e9f6ef;
+  --success-soft-foreground: #2f7a53;
+  --warning: #c27a2c;
+  --warning-foreground: #ffffff;
+  --warning-soft: #fff7ea;
+  --warning-soft-foreground: #7f6a4f;
   --shadow-card: 0 18px 48px rgba(25, 61, 109, 0.08);
   --nav-height: 78px;
 }
 
 @theme inline {
+  /* Семантические токены для НОВЫХ компонентов. См. AGENTS.md → "Цвета и темы".
+     Использовать `text-foreground`, `bg-card`, `border-border` и т.п. вместо
+     `text-black` / `text-gray-700` / `bg-white`. Старый код переезжает по
+     мере правок. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-secondary-foreground: var(--accent-secondary-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-soft-foreground: var(--danger-soft-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-success-soft-foreground: var(--success-soft-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-soft-foreground: var(--warning-soft-foreground);
   --font-sans: var(--font-wix-madefor-display);
   --font-mono: var(--font-wix-madefor-display);
 }
@@ -37,11 +74,28 @@ html[data-tg-scheme="dark"] {
   --accent-secondary: #53b19a;
   --accent-secondary-foreground: #0c1d1a;
   --danger: #ff7d7d;
+  --danger-foreground: #2c0e0e;
+  --danger-soft: #6b3b3b;
+  --danger-soft-foreground: #ffc4bd;
+  --success: #64c394;
+  --success-foreground: #07210f;
+  --success-soft: #1f4033;
+  --success-soft-foreground: #91d8b3;
+  --warning: #f0c778;
+  --warning-foreground: #2a1c05;
+  --warning-soft: #253443;
+  --warning-soft-foreground: #f0c778;
   --shadow-card: 0 18px 48px rgba(4, 11, 19, 0.32);
 }
 
 html {
   background: var(--background);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 * {
@@ -104,10 +158,54 @@ textarea {
   backdrop-filter: none;
 }
 
+.blacklist-warning-card {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid color-mix(in srgb, var(--danger) 18%, transparent);
+  border-radius: 26px;
+  background:
+    linear-gradient(115deg, color-mix(in srgb, var(--danger) 8%, transparent), transparent 48%),
+    linear-gradient(180deg, var(--danger-soft), var(--danger-soft));
+  padding: 11px 10px;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    filter 140ms ease;
+}
+
+.blacklist-warning-card:hover {
+  border-color: var(--danger);
+  filter: brightness(1.03);
+  transform: translateY(-1px);
+}
+
+.blacklist-warning-card__icon {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--card) 44%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 24%, transparent);
+  color: var(--danger);
+  font-size: 18px;
+  font-weight: 600;
+}
+
 /* Full dark color layer.
    Keeps the existing Tailwind layout classes intact and only remaps colors when
    Telegram reports dark mode. html[data-theme="dark"] is kept for local previews. */
 :where(html[data-tg-scheme="dark"], html[data-theme="dark"]) {
+  /* color-scheme сообщает браузеру, что страница в тёмной теме — без него
+     нативные `<select>`/`<input type=date>` и системные скроллбары рендерятся
+     светлыми и теряют контраст внутри тёмных карточек (см. фильтр «Район»
+     в /shifts на тёмной теме Telegram). */
+  color-scheme: dark;
   --background: #11161c;
   --foreground: #eef3f7;
   --muted: #202b36;
@@ -233,6 +331,19 @@ textarea {
   color: #f0c778 !important;
 }
 
+/* Translucent white pills inside the warning verification card read as washed
+   out near-white in dark mode, and amber text on that pill loses all contrast.
+   Replace with a subtle dark surface so the amber text is readable. */
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"])
+  [class~="bg-[#fff7eb]"] [class~="bg-white/70"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"])
+  [class~="bg-[#fff7ea]"] [class~="bg-white/70"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"])
+  [class~="bg-[#fff4e8]"] [class~="bg-white/70"] {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  box-shadow: inset 0 0 0 1px rgba(240, 199, 120, 0.14);
+}
+
 :where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#b35b54]"],
 :where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#c25a4f]"],
 :where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-[#c44747]"],
@@ -257,6 +368,81 @@ textarea {
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24) !important;
 }
 
+/* === hover:/focus: вариации для tailwind arbitrary-цветов ===
+   Атрибут-селектор `[class~="bg-[#xxx]"]` НЕ матчит классы вида
+   `hover:bg-[#xxx]` / `focus:bg-[#xxx]` (в DOM они так и хранятся). Без
+   этого правила любая `hover:bg-[#светлый-цвет]` ломает темную тему —
+   например в чате при наведении становится светлым. Лечим разом для всех
+   light surface'ов: при ховере/фокусе подкладываем `--muted` из темной
+   палитры. Это компромисс: исходный hex теряется, но визуально остаётся
+   эффект «подсветка ряда», что и нужно. Если в каком-то месте нужен
+   уникальный hover-цвет — переходить на семантический `hover:bg-muted`
+   или `hover:bg-card` (см. AGENTS.md). */
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"])
+  [class*="hover:bg-[#"]:hover,
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"])
+  [class*="focus:bg-[#"]:focus,
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"])
+  [class*="active:bg-[#"]:active {
+  background-color: var(--muted) !important;
+}
+
+/* === Named tailwind colors override (app user-flow) ===
+   Дизайн местами использует `bg-rose-50` / `bg-emerald-50` / `bg-amber-50`
+   и текст `text-rose-700` / `text-emerald-700` / `text-amber-800` для
+   статус-плашек. Атрибут-селекторы выше ловят только `[#hex]`-классы,
+   поэтому именованные tailwind-цвета приходится перекрывать отдельно.
+   Замена 1:1 на наши `--*-soft` токены. Админка (slate-*) сюда НЕ входит —
+   она сейчас намеренно light-only. */
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-rose-50"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-rose-100"] {
+  background-color: var(--danger-soft) !important;
+}
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-rose-500"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-rose-600"] {
+  background-color: var(--danger) !important;
+}
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-rose-700"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-rose-800"] {
+  color: var(--danger-soft-foreground) !important;
+}
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="border-rose-100"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="border-rose-200"] {
+  border-color: rgba(255, 196, 189, 0.18) !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-emerald-50"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-emerald-100"] {
+  background-color: var(--success-soft) !important;
+}
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-emerald-500"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-emerald-600"] {
+  background-color: var(--success) !important;
+}
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-emerald-600"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-emerald-700"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-emerald-800"] {
+  color: var(--success-soft-foreground) !important;
+}
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="border-emerald-100"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="border-emerald-200"] {
+  border-color: rgba(145, 216, 179, 0.18) !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-amber-50"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-amber-100"] {
+  background-color: var(--warning-soft) !important;
+}
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="bg-amber-500"] {
+  background-color: var(--warning) !important;
+}
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-amber-700"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-amber-800"],
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) [class~="text-amber-900"] {
+  color: var(--warning-soft-foreground) !important;
+}
+
 :where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .soft-action-link {
   background-color: #d8ecff !important;
   color: #102232 !important;
@@ -267,8 +453,155 @@ textarea {
   border-top: 1px solid #eef1f4;
 }
 
+.chat-conversation-header,
+.chat-messages-scroll,
+.chat-composer {
+  border: 0 !important;
+  outline: 0 !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .chat-shift-context {
+  background-color: #203b34 !important;
+  color: #aee8cb !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .chat-shift-context p:first-child {
+  color: #ffffff !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .chat-shift-context p:last-child {
+  color: #aee8cb !important;
+}
+
+.shift-static-map {
+  position: relative;
+  height: 168px;
+  overflow: hidden;
+  border: 1px solid rgba(16, 18, 20, 0.06);
+  border-radius: 24px;
+  background:
+    linear-gradient(105deg, transparent 0 46%, rgba(255, 255, 255, 0.36) 46% 50%, transparent 50%),
+    linear-gradient(155deg, transparent 0 59%, rgba(255, 255, 255, 0.28) 59% 63%, transparent 63%),
+    linear-gradient(24deg, transparent 0 40%, rgba(255, 255, 255, 0.5) 40% 43%, transparent 43%),
+    radial-gradient(circle at 18% 24%, #bfe5f7 0 28%, transparent 29%),
+    radial-gradient(circle at 86% 12%, #d5edc6 0 18%, transparent 19%),
+    linear-gradient(135deg, #d9f0cb 0 34%, #f7f0c9 34% 46%, #e9e4d6 46% 100%);
+  isolation: isolate;
+}
+
+.shift-static-map__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.26) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+  background-size: 46px 46px;
+  opacity: 0.8;
+}
+
+.shift-static-map__road {
+  position: absolute;
+  height: 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 0 0 2px rgba(242, 206, 91, 0.52) inset;
+}
+
+.shift-static-map__road--one {
+  left: -28px;
+  top: 102px;
+  width: 260px;
+  transform: rotate(-31deg);
+}
+
+.shift-static-map__road--two {
+  right: -42px;
+  top: 58px;
+  width: 240px;
+  transform: rotate(38deg);
+}
+
+.shift-static-map__road--three {
+  bottom: 28px;
+  left: 76px;
+  width: 210px;
+  transform: rotate(3deg);
+}
+
+.shift-static-map__pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  border-radius: 50% 50% 50% 12px;
+  background: #df3447;
+  box-shadow: 0 14px 28px rgba(223, 52, 71, 0.34);
+  rotate: -45deg;
+  transform: translate(-50%, -70%);
+}
+
+.shift-static-map__pin::after {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #fff;
+  content: "";
+}
+
+.shift-static-map__logo {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  z-index: 3;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #34383c;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 8px;
+}
+
 :where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .chat-list-card > li + li {
   border-top-color: rgba(230, 238, 245, 0.06) !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .chat-conversation-header,
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .chat-composer {
+  background-color: #1b2630 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .chat-messages-scroll {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .shift-static-map {
+  border-color: rgba(230, 238, 245, 0.08) !important;
+  background:
+    linear-gradient(105deg, transparent 0 46%, rgba(255, 255, 255, 0.14) 46% 50%, transparent 50%),
+    linear-gradient(155deg, transparent 0 59%, rgba(255, 255, 255, 0.12) 59% 63%, transparent 63%),
+    linear-gradient(24deg, transparent 0 40%, rgba(255, 255, 255, 0.16) 40% 43%, transparent 43%),
+    radial-gradient(circle at 18% 24%, #244f65 0 28%, transparent 29%),
+    radial-gradient(circle at 86% 12%, #314f3d 0 18%, transparent 19%),
+    linear-gradient(135deg, #243f35 0 34%, #4a4428 34% 46%, #26333a 46% 100%) !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .shift-static-map__road {
+  background: rgba(224, 231, 237, 0.28) !important;
+  box-shadow: 0 0 0 2px rgba(245, 191, 73, 0.26) inset !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"]) .shift-static-map__logo {
+  background: rgba(20, 31, 39, 0.78) !important;
+  color: #d9e5ee !important;
 }
 
 :where(html[data-tg-scheme="dark"], html[data-theme="dark"]) input,
@@ -282,4 +615,10 @@ textarea {
 :where(html[data-tg-scheme="dark"], html[data-theme="dark"]) input::placeholder,
 :where(html[data-tg-scheme="dark"], html[data-theme="dark"]) textarea::placeholder {
   color: #72808d !important;
+}
+
+:where(html[data-tg-scheme="dark"], html[data-theme="dark"])
+  .native-date-time-field::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.25);
+  opacity: 0.9;
 }

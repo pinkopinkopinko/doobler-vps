@@ -102,7 +102,6 @@ describe("POST /api/auth/telegram", () => {
         firstName: "Ильфар",
         lastName: "Набиуллин",
         username: "ilfar",
-        photoUrl: "https://example.com/avatar.jpg",
       },
     });
     expect(createSessionToken).toHaveBeenCalledWith({
@@ -176,6 +175,23 @@ describe("POST /api/auth/telegram", () => {
         telegramId: "777",
       },
     });
+  });
+
+  it("denies login when auth fallback is enabled but no explicit dev user is configured", async () => {
+    inspectTelegramInitData.mockReturnValue({
+      ok: false,
+      reason: "invalid_hash",
+      authDate: 1_714_571_200,
+      initDataLength: 32,
+    });
+    isDevFallbackEnabled.mockReturnValue(true);
+    getDevelopmentTelegramUser.mockReturnValue(null);
+
+    const response = await POST(makeRequest({ initData: "broken-init-data" }));
+
+    expect(response.status).toBe(401);
+    expect(prisma.user.upsert).not.toHaveBeenCalled();
+    expect(createSessionToken).not.toHaveBeenCalled();
   });
 
   it("returns 500 when the user upsert fails after successful inspection", async () => {

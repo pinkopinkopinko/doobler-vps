@@ -1,5 +1,6 @@
 import { fail, ok } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { requireTrustedMutationRequest } from "@/lib/auth/mutation-guard";
 import { getSessionPayload } from "@/lib/auth/session";
 import { isOwnerRole } from "@/lib/profile-completion";
 import {
@@ -44,6 +45,11 @@ export async function POST(request: Request) {
   if (!isOwnerRole(roles)) {
     return fail("Только владелец может назначать управляющего.", 403);
   }
+
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: session.telegramId,
+  });
+  if (untrusted) return untrusted;
 
   const body = (await request.json().catch(() => null)) as { username?: string } | null;
 

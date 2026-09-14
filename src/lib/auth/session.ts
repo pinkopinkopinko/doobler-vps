@@ -36,8 +36,18 @@ export async function setSessionCookie(token: string) {
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    // КРИТИЧНО: Mini App открывается в iframe внутри web.telegram.org,
+    // и без `SameSite=None` браузер считает cookie third-party и не
+    // отправляет её обратно после `setSessionCookie` — авторизация на
+    // Telegram Web ломалась именно из-за этого (auth/telegram 200, но
+    // следующий auth/me 401: cookie не пришла назад).
+    //
+    // По спецификации `SameSite=None` обязывает выставить `Secure=true`,
+    // иначе браузер cookie вообще не примет. Поэтому в любом env (даже
+    // dev) cookie ставится только по HTTPS. Локально тестировать Mini App
+    // и так нужно через HTTPS-туннель (ngrok), так что это совместимо.
+    sameSite: "none",
+    secure: true,
     path: "/",
     maxAge: 60 * 60 * 24 * 30,
   });

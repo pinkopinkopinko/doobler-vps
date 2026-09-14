@@ -267,11 +267,11 @@ export type AssignmentOrderByWithRelationInput = {
 
 export type AssignmentWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  shiftPostId?: string
   applicationId?: string
   AND?: Prisma.AssignmentWhereInput | Prisma.AssignmentWhereInput[]
   OR?: Prisma.AssignmentWhereInput[]
   NOT?: Prisma.AssignmentWhereInput | Prisma.AssignmentWhereInput[]
+  shiftPostId?: Prisma.StringFilter<"Assignment"> | string
   workerUserId?: Prisma.StringFilter<"Assignment"> | string
   employerUserId?: Prisma.StringFilter<"Assignment"> | string
   status?: Prisma.EnumAssignmentStatusFilter<"Assignment"> | $Enums.AssignmentStatus
@@ -286,7 +286,7 @@ export type AssignmentWhereUniqueInput = Prisma.AtLeast<{
   worker?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   employer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   reviews?: Prisma.ReviewListRelationFilter
-}, "id" | "shiftPostId" | "applicationId">
+}, "id" | "applicationId">
 
 export type AssignmentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -333,7 +333,7 @@ export type AssignmentCreateInput = {
   cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentInput
+  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentsInput
   application: Prisma.ApplicationCreateNestedOneWithoutAssignmentInput
   worker: Prisma.UserCreateNestedOneWithoutWorkerAssignmentsInput
   employer: Prisma.UserCreateNestedOneWithoutEmployerAssignmentsInput
@@ -365,7 +365,7 @@ export type AssignmentUpdateInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentNestedInput
+  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentsNestedInput
   application?: Prisma.ApplicationUpdateOneRequiredWithoutAssignmentNestedInput
   worker?: Prisma.UserUpdateOneRequiredWithoutWorkerAssignmentsNestedInput
   employer?: Prisma.UserUpdateOneRequiredWithoutEmployerAssignmentsNestedInput
@@ -578,36 +578,46 @@ export type AssignmentUncheckedUpdateManyWithoutEmployerNestedInput = {
   deleteMany?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
 }
 
-export type AssignmentCreateNestedOneWithoutShiftPostInput = {
-  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput>
-  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutShiftPostInput
-  connect?: Prisma.AssignmentWhereUniqueInput
+export type AssignmentCreateNestedManyWithoutShiftPostInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput> | Prisma.AssignmentCreateWithoutShiftPostInput[] | Prisma.AssignmentUncheckedCreateWithoutShiftPostInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutShiftPostInput | Prisma.AssignmentCreateOrConnectWithoutShiftPostInput[]
+  createMany?: Prisma.AssignmentCreateManyShiftPostInputEnvelope
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
 }
 
-export type AssignmentUncheckedCreateNestedOneWithoutShiftPostInput = {
-  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput>
-  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutShiftPostInput
-  connect?: Prisma.AssignmentWhereUniqueInput
+export type AssignmentUncheckedCreateNestedManyWithoutShiftPostInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput> | Prisma.AssignmentCreateWithoutShiftPostInput[] | Prisma.AssignmentUncheckedCreateWithoutShiftPostInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutShiftPostInput | Prisma.AssignmentCreateOrConnectWithoutShiftPostInput[]
+  createMany?: Prisma.AssignmentCreateManyShiftPostInputEnvelope
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
 }
 
-export type AssignmentUpdateOneWithoutShiftPostNestedInput = {
-  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput>
-  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutShiftPostInput
-  upsert?: Prisma.AssignmentUpsertWithoutShiftPostInput
-  disconnect?: Prisma.AssignmentWhereInput | boolean
-  delete?: Prisma.AssignmentWhereInput | boolean
-  connect?: Prisma.AssignmentWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssignmentUpdateToOneWithWhereWithoutShiftPostInput, Prisma.AssignmentUpdateWithoutShiftPostInput>, Prisma.AssignmentUncheckedUpdateWithoutShiftPostInput>
+export type AssignmentUpdateManyWithoutShiftPostNestedInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput> | Prisma.AssignmentCreateWithoutShiftPostInput[] | Prisma.AssignmentUncheckedCreateWithoutShiftPostInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutShiftPostInput | Prisma.AssignmentCreateOrConnectWithoutShiftPostInput[]
+  upsert?: Prisma.AssignmentUpsertWithWhereUniqueWithoutShiftPostInput | Prisma.AssignmentUpsertWithWhereUniqueWithoutShiftPostInput[]
+  createMany?: Prisma.AssignmentCreateManyShiftPostInputEnvelope
+  set?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  disconnect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  delete?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  update?: Prisma.AssignmentUpdateWithWhereUniqueWithoutShiftPostInput | Prisma.AssignmentUpdateWithWhereUniqueWithoutShiftPostInput[]
+  updateMany?: Prisma.AssignmentUpdateManyWithWhereWithoutShiftPostInput | Prisma.AssignmentUpdateManyWithWhereWithoutShiftPostInput[]
+  deleteMany?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
 }
 
-export type AssignmentUncheckedUpdateOneWithoutShiftPostNestedInput = {
-  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput>
-  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutShiftPostInput
-  upsert?: Prisma.AssignmentUpsertWithoutShiftPostInput
-  disconnect?: Prisma.AssignmentWhereInput | boolean
-  delete?: Prisma.AssignmentWhereInput | boolean
-  connect?: Prisma.AssignmentWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssignmentUpdateToOneWithWhereWithoutShiftPostInput, Prisma.AssignmentUpdateWithoutShiftPostInput>, Prisma.AssignmentUncheckedUpdateWithoutShiftPostInput>
+export type AssignmentUncheckedUpdateManyWithoutShiftPostNestedInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput> | Prisma.AssignmentCreateWithoutShiftPostInput[] | Prisma.AssignmentUncheckedCreateWithoutShiftPostInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutShiftPostInput | Prisma.AssignmentCreateOrConnectWithoutShiftPostInput[]
+  upsert?: Prisma.AssignmentUpsertWithWhereUniqueWithoutShiftPostInput | Prisma.AssignmentUpsertWithWhereUniqueWithoutShiftPostInput[]
+  createMany?: Prisma.AssignmentCreateManyShiftPostInputEnvelope
+  set?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  disconnect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  delete?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  update?: Prisma.AssignmentUpdateWithWhereUniqueWithoutShiftPostInput | Prisma.AssignmentUpdateWithWhereUniqueWithoutShiftPostInput[]
+  updateMany?: Prisma.AssignmentUpdateManyWithWhereWithoutShiftPostInput | Prisma.AssignmentUpdateManyWithWhereWithoutShiftPostInput[]
+  deleteMany?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
 }
 
 export type AssignmentCreateNestedOneWithoutApplicationInput = {
@@ -669,7 +679,7 @@ export type AssignmentCreateWithoutWorkerInput = {
   cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentInput
+  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentsInput
   application: Prisma.ApplicationCreateNestedOneWithoutAssignmentInput
   employer: Prisma.UserCreateNestedOneWithoutEmployerAssignmentsInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutAssignmentInput
@@ -709,7 +719,7 @@ export type AssignmentCreateWithoutEmployerInput = {
   cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentInput
+  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentsInput
   application: Prisma.ApplicationCreateNestedOneWithoutAssignmentInput
   worker: Prisma.UserCreateNestedOneWithoutWorkerAssignmentsInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutAssignmentInput
@@ -825,45 +835,25 @@ export type AssignmentCreateOrConnectWithoutShiftPostInput = {
   create: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput>
 }
 
-export type AssignmentUpsertWithoutShiftPostInput = {
-  update: Prisma.XOR<Prisma.AssignmentUpdateWithoutShiftPostInput, Prisma.AssignmentUncheckedUpdateWithoutShiftPostInput>
-  create: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput>
-  where?: Prisma.AssignmentWhereInput
+export type AssignmentCreateManyShiftPostInputEnvelope = {
+  data: Prisma.AssignmentCreateManyShiftPostInput | Prisma.AssignmentCreateManyShiftPostInput[]
+  skipDuplicates?: boolean
 }
 
-export type AssignmentUpdateToOneWithWhereWithoutShiftPostInput = {
-  where?: Prisma.AssignmentWhereInput
+export type AssignmentUpsertWithWhereUniqueWithoutShiftPostInput = {
+  where: Prisma.AssignmentWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssignmentUpdateWithoutShiftPostInput, Prisma.AssignmentUncheckedUpdateWithoutShiftPostInput>
+  create: Prisma.XOR<Prisma.AssignmentCreateWithoutShiftPostInput, Prisma.AssignmentUncheckedCreateWithoutShiftPostInput>
+}
+
+export type AssignmentUpdateWithWhereUniqueWithoutShiftPostInput = {
+  where: Prisma.AssignmentWhereUniqueInput
   data: Prisma.XOR<Prisma.AssignmentUpdateWithoutShiftPostInput, Prisma.AssignmentUncheckedUpdateWithoutShiftPostInput>
 }
 
-export type AssignmentUpdateWithoutShiftPostInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumAssignmentStatusFieldUpdateOperationsInput | $Enums.AssignmentStatus
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  application?: Prisma.ApplicationUpdateOneRequiredWithoutAssignmentNestedInput
-  worker?: Prisma.UserUpdateOneRequiredWithoutWorkerAssignmentsNestedInput
-  employer?: Prisma.UserUpdateOneRequiredWithoutEmployerAssignmentsNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutAssignmentNestedInput
-}
-
-export type AssignmentUncheckedUpdateWithoutShiftPostInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  applicationId?: Prisma.StringFieldUpdateOperationsInput | string
-  workerUserId?: Prisma.StringFieldUpdateOperationsInput | string
-  employerUserId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumAssignmentStatusFieldUpdateOperationsInput | $Enums.AssignmentStatus
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutAssignmentNestedInput
+export type AssignmentUpdateManyWithWhereWithoutShiftPostInput = {
+  where: Prisma.AssignmentScalarWhereInput
+  data: Prisma.XOR<Prisma.AssignmentUpdateManyMutationInput, Prisma.AssignmentUncheckedUpdateManyWithoutShiftPostInput>
 }
 
 export type AssignmentCreateWithoutApplicationInput = {
@@ -875,7 +865,7 @@ export type AssignmentCreateWithoutApplicationInput = {
   cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentInput
+  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentsInput
   worker: Prisma.UserCreateNestedOneWithoutWorkerAssignmentsInput
   employer: Prisma.UserCreateNestedOneWithoutEmployerAssignmentsInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutAssignmentInput
@@ -921,7 +911,7 @@ export type AssignmentUpdateWithoutApplicationInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentNestedInput
+  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentsNestedInput
   worker?: Prisma.UserUpdateOneRequiredWithoutWorkerAssignmentsNestedInput
   employer?: Prisma.UserUpdateOneRequiredWithoutEmployerAssignmentsNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutAssignmentNestedInput
@@ -951,7 +941,7 @@ export type AssignmentCreateWithoutReviewsInput = {
   cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentInput
+  shiftPost: Prisma.ShiftPostCreateNestedOneWithoutAssignmentsInput
   application: Prisma.ApplicationCreateNestedOneWithoutAssignmentInput
   worker: Prisma.UserCreateNestedOneWithoutWorkerAssignmentsInput
   employer: Prisma.UserCreateNestedOneWithoutEmployerAssignmentsInput
@@ -997,7 +987,7 @@ export type AssignmentUpdateWithoutReviewsInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentNestedInput
+  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentsNestedInput
   application?: Prisma.ApplicationUpdateOneRequiredWithoutAssignmentNestedInput
   worker?: Prisma.UserUpdateOneRequiredWithoutWorkerAssignmentsNestedInput
   employer?: Prisma.UserUpdateOneRequiredWithoutEmployerAssignmentsNestedInput
@@ -1055,7 +1045,7 @@ export type AssignmentUpdateWithoutWorkerInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentNestedInput
+  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentsNestedInput
   application?: Prisma.ApplicationUpdateOneRequiredWithoutAssignmentNestedInput
   employer?: Prisma.UserUpdateOneRequiredWithoutEmployerAssignmentsNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutAssignmentNestedInput
@@ -1099,7 +1089,7 @@ export type AssignmentUpdateWithoutEmployerInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentNestedInput
+  shiftPost?: Prisma.ShiftPostUpdateOneRequiredWithoutAssignmentsNestedInput
   application?: Prisma.ApplicationUpdateOneRequiredWithoutAssignmentNestedInput
   worker?: Prisma.UserUpdateOneRequiredWithoutWorkerAssignmentsNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutAssignmentNestedInput
@@ -1125,6 +1115,64 @@ export type AssignmentUncheckedUpdateManyWithoutEmployerInput = {
   shiftPostId?: Prisma.StringFieldUpdateOperationsInput | string
   applicationId?: Prisma.StringFieldUpdateOperationsInput | string
   workerUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssignmentStatusFieldUpdateOperationsInput | $Enums.AssignmentStatus
+  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AssignmentCreateManyShiftPostInput = {
+  id?: string
+  applicationId: string
+  workerUserId: string
+  employerUserId: string
+  status?: $Enums.AssignmentStatus
+  confirmedAt?: Date | string
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssignmentUpdateWithoutShiftPostInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssignmentStatusFieldUpdateOperationsInput | $Enums.AssignmentStatus
+  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  application?: Prisma.ApplicationUpdateOneRequiredWithoutAssignmentNestedInput
+  worker?: Prisma.UserUpdateOneRequiredWithoutWorkerAssignmentsNestedInput
+  employer?: Prisma.UserUpdateOneRequiredWithoutEmployerAssignmentsNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutAssignmentNestedInput
+}
+
+export type AssignmentUncheckedUpdateWithoutShiftPostInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  applicationId?: Prisma.StringFieldUpdateOperationsInput | string
+  workerUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  employerUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssignmentStatusFieldUpdateOperationsInput | $Enums.AssignmentStatus
+  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutAssignmentNestedInput
+}
+
+export type AssignmentUncheckedUpdateManyWithoutShiftPostInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  applicationId?: Prisma.StringFieldUpdateOperationsInput | string
+  workerUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  employerUserId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumAssignmentStatusFieldUpdateOperationsInput | $Enums.AssignmentStatus
   confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null

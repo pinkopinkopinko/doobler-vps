@@ -1,0 +1,16 @@
+{
+  "source": "https://t.me/Blacklist_pvz",
+  "generatedAt": "2026-06-12T11:05:27.819Z",
+  "method": "telegram-api-telethon",
+  "messages": 2797,
+  "extractedTelegramIds": 667,
+  "manualAddedIds": 1,
+  "removedPreviousDisputedIds": [
+    "1487724270",
+    "5079571330",
+    "8328031712"
+  ],
+  "compactCount": 668,
+  "latestRawFile": "blacklist-pvz-api-raw-20260612-110245.json",
+  "latestApiIdsFile": "telegram-ids-api-20260612-110245.json"
+}

@@ -20,6 +20,7 @@ const { prisma, tx, sendTelegramMessage } = vi.hoisted(() => ({
     },
     application: {
       create: vi.fn(),
+      findUnique: vi.fn(),
       findUniqueOrThrow: vi.fn(),
       update: vi.fn(),
       updateMany: vi.fn(),
@@ -39,6 +40,7 @@ const { prisma, tx, sendTelegramMessage } = vi.hoisted(() => ({
       update: vi.fn(),
     },
     assignment: {
+      findFirst: vi.fn(),
       findUnique: vi.fn(),
       findUniqueOrThrow: vi.fn(),
       create: vi.fn(),
@@ -72,9 +74,12 @@ vi.mock("@/lib/dev-fallback", () => ({
 
 import {
   applyToShift,
+  cancelConfirmedAssignment,
   completeAssignment,
   confirmApplication,
   createAssignmentReview,
+  getUserApplicationStatusForShift,
+  markAssignmentNoShow,
 } from "./application-service";
 
 describe("applyToShift", () => {
@@ -218,6 +223,31 @@ describe("applyToShift", () => {
   });
 });
 
+describe("getUserApplicationStatusForShift", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns a worker cancellation status for the shift details button", async () => {
+    prisma.application.findUnique.mockResolvedValue({
+      status: "CANCELLED_BY_WORKER",
+    });
+
+    const result = await getUserApplicationStatusForShift("shift-1", "worker-1");
+
+    expect(prisma.application.findUnique).toHaveBeenCalledWith({
+      where: {
+        shiftPostId_applicantUserId: {
+          shiftPostId: "shift-1",
+          applicantUserId: "worker-1",
+        },
+      },
+      select: { status: true },
+    });
+    expect(result).toBe("CANCELLED_BY_WORKER");
+  });
+});
+
 describe("confirmApplication", () => {
   afterEach(() => {
     vi.clearAllMocks();
@@ -248,7 +278,7 @@ describe("confirmApplication", () => {
       firstName: "Анна",
       lastName: "Левина",
     });
-    tx.assignment.findUnique.mockResolvedValue(null);
+    tx.assignment.findFirst.mockResolvedValue(null);
     tx.assignment.create.mockResolvedValue({
       id: "assignment-1",
       shiftPostId: "shift-1",
@@ -323,7 +353,7 @@ describe("confirmApplication", () => {
       firstName: "Анна",
       lastName: "Левина",
     });
-    tx.assignment.findUnique.mockResolvedValue({
+    tx.assignment.findFirst.mockResolvedValue({
       id: "assignment-existing",
       shiftPostId: "shift-1",
       applicationId: "application-1",
@@ -375,10 +405,159 @@ describe("confirmApplication", () => {
 
     await expect(confirmApplication("application-1", "intruder")).rejects.toThrow("forbidden");
 
-    expect(tx.assignment.findUnique).not.toHaveBeenCalled();
+    expect(tx.assignment.findFirst).not.toHaveBeenCalled();
     expect(tx.assignment.create).not.toHaveBeenCalled();
     expect(tx.application.update).not.toHaveBeenCalled();
     expect(tx.shiftPost.update).not.toHaveBeenCalled();
+    expect(sendTelegramMessage).not.toHaveBeenCalled();
+  });
+});
+
+describe("cancelConfirmedAssignment", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("records a worker refusal and reopens the shift", async () => {
+    prisma.assignment.findUniqueOrThrow.mockResolvedValue({
+      id: "assignment-1",
+      shiftPostId: "shift-1",
+      applicationId: "application-1",
+      workerUserId: "worker-1",
+      status: "CONFIRMED",
+      shiftPost: { id: "shift-1", title: "Смена на завтра" },
+      worker: { firstName: "Иван", lastName: "Петров", username: "worker_user" },
+      employer: { telegramId: "10001" },
+    });
+    prisma.$transaction.mockImplementation(async (callback) => callback(tx));
+    tx.assignment.updateMany.mockResolvedValue({ count: 1 });
+    tx.application.update.mockResolvedValue({});
+    tx.shiftPost.update.mockResolvedValue({});
+    tx.assignment.findUniqueOrThrow.mockResolvedValue({
+      id: "assignment-1",
+      status: "CANCELLED",
+    });
+
+    const result = await cancelConfirmedAssignment("assignment-1", "worker-1");
+
+    expect(tx.assignment.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "assignment-1",
+        workerUserId: "worker-1",
+        status: "CONFIRMED",
+      },
+      data: {
+        status: "CANCELLED",
+        cancelledAt: expect.any(Date),
+      },
+    });
+    expect(tx.application.update).toHaveBeenCalledWith({
+      where: { id: "application-1" },
+      data: { status: "CANCELLED_BY_WORKER" },
+    });
+    expect(tx.shiftPost.update).toHaveBeenCalledWith({
+      where: { id: "shift-1" },
+      data: { status: "PUBLISHED", closedAt: null },
+    });
+    expect(sendTelegramMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ chatId: "10001" }),
+    );
+    expect(result).toMatchObject({ id: "assignment-1", status: "CANCELLED" });
+  });
+
+  it("does not let another user cancel the assignment", async () => {
+    prisma.assignment.findUniqueOrThrow.mockResolvedValue({
+      id: "assignment-1",
+      workerUserId: "worker-1",
+      status: "CONFIRMED",
+      shiftPost: { id: "shift-1", title: "Смена на завтра" },
+      worker: { firstName: "Иван", lastName: "Петров", username: "worker_user" },
+      employer: { telegramId: "10001" },
+    });
+
+    await expect(cancelConfirmedAssignment("assignment-1", "intruder")).rejects.toThrow(
+      "forbidden",
+    );
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+});
+
+describe("markAssignmentNoShow", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("records a missed shift after it has started and notifies the worker", async () => {
+    prisma.assignment.findUniqueOrThrow.mockResolvedValue({
+      id: "assignment-1",
+      applicationId: "application-1",
+      shiftPostId: "shift-1",
+      employerUserId: "owner-1",
+      status: "CONFIRMED",
+      shiftPost: {
+        id: "shift-1",
+        title: "Смена в пункте",
+        shiftDate: new Date("2026-05-01T00:00:00.000Z"),
+        startAt: new Date("2026-05-01T08:00:00.000Z"),
+      },
+      worker: { telegramId: "10002" },
+    });
+    prisma.$transaction.mockImplementation(async (callback) => callback(tx));
+    tx.assignment.updateMany.mockResolvedValue({ count: 1 });
+    tx.application.update.mockResolvedValue({});
+    tx.shiftPost.update.mockResolvedValue({});
+    tx.assignment.findUniqueOrThrow.mockResolvedValue({
+      id: "assignment-1",
+      status: "NO_SHOW",
+    });
+
+    const result = await markAssignmentNoShow("assignment-1", "owner-1");
+
+    expect(tx.assignment.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "assignment-1",
+        employerUserId: "owner-1",
+        status: { in: ["CONFIRMED", "IN_PROGRESS"] },
+      },
+      data: {
+        status: "NO_SHOW",
+        cancelledAt: expect.any(Date),
+      },
+    });
+    expect(tx.application.update).toHaveBeenCalledWith({
+      where: { id: "application-1" },
+      data: { status: "NO_SHOW" },
+    });
+    expect(tx.shiftPost.update).toHaveBeenCalledWith({
+      where: { id: "shift-1" },
+      data: { status: "CLOSED", closedAt: expect.any(Date) },
+    });
+    expect(sendTelegramMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ chatId: "10002" }),
+    );
+    expect(result).toMatchObject({ id: "assignment-1", status: "NO_SHOW" });
+  });
+
+  it("does not record a no-show before the shift begins", async () => {
+    prisma.assignment.findUniqueOrThrow.mockResolvedValue({
+      id: "assignment-1",
+      applicationId: "application-1",
+      shiftPostId: "shift-1",
+      employerUserId: "owner-1",
+      status: "CONFIRMED",
+      shiftPost: {
+        id: "shift-1",
+        title: "Будущая смена",
+        shiftDate: new Date("2099-05-01T00:00:00.000Z"),
+        startAt: new Date("2099-05-01T08:00:00.000Z"),
+      },
+      worker: { telegramId: "10002" },
+    });
+
+    await expect(markAssignmentNoShow("assignment-1", "owner-1")).rejects.toThrow(
+      "shift_not_started",
+    );
+    expect(prisma.$transaction).not.toHaveBeenCalled();
     expect(sendTelegramMessage).not.toHaveBeenCalled();
   });
 });
@@ -411,7 +590,7 @@ describe("completeAssignment", () => {
     expect(tx.assignment.updateMany).toHaveBeenCalledWith({
       where: {
         id: "assignment-1",
-        status: { not: "COMPLETED" },
+        status: { in: ["CONFIRMED", "IN_PROGRESS"] },
       },
       data: expect.objectContaining({
         status: "COMPLETED",
@@ -463,6 +642,21 @@ describe("completeAssignment", () => {
       id: "assignment-1",
       status: "COMPLETED",
     });
+  });
+
+  it("does not complete an assignment already marked as a no-show", async () => {
+    prisma.assignment.findUniqueOrThrow.mockResolvedValue({
+      id: "assignment-1",
+      shiftPostId: "shift-1",
+      employerUserId: "owner-1",
+      workerUserId: "worker-1",
+      status: "NO_SHOW",
+    });
+
+    await expect(completeAssignment("assignment-1", "owner-1")).rejects.toThrow(
+      "assignment_not_completable",
+    );
+    expect(prisma.$transaction).not.toHaveBeenCalled();
   });
 });
 

@@ -1,4 +1,6 @@
-import { getMiniAppUrl } from "@/lib/telegram/bot";
+import { getMiniAppUrlWithLoginToken } from "@/lib/telegram/bot";
+
+const TELEGRAM_NOTIFICATION_TIMEOUT_MS = 8_000;
 
 type NotifyArgs = {
   conversationId: string;
@@ -35,8 +37,9 @@ export async function notifyPeerAboutNewMessage(args: NotifyArgs): Promise<void>
     return;
   }
 
-  const appUrl = getMiniAppUrl().replace(/\/home$/, "");
-  const chatUrl = `${appUrl}/chats/${args.conversationId}`;
+  const chatUrl = await getMiniAppUrlWithLoginToken(`/chats/${args.conversationId}`, {
+    telegramId: args.peerTelegramId,
+  });
   const previewBody = escapeHtml(buildPreview(args));
   const author = escapeHtml(args.authorDisplayName);
 
@@ -62,10 +65,14 @@ export async function notifyPeerAboutNewMessage(args: NotifyArgs): Promise<void>
     },
   };
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), TELEGRAM_NOTIFICATION_TIMEOUT_MS);
+
   try {
     const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
       body: JSON.stringify(payload),
     });
     if (!response.ok) {
@@ -73,5 +80,7 @@ export async function notifyPeerAboutNewMessage(args: NotifyArgs): Promise<void>
     }
   } catch (error) {
     console.warn("[chat-notifier] telegram fetch failed", error);
+  } finally {
+    clearTimeout(timeoutId);
   }
 }

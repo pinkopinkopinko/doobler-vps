@@ -56,6 +56,7 @@ enum ApplicationStatus {
   REJECTED
   WITHDRAWN
   CONFIRMED
+  NO_SHOW
   CANCELLED_BY_WORKER
   CANCELLED_BY_EMPLOYER
 }
@@ -81,6 +82,13 @@ enum VerificationStatus {
   APPROVED
   REJECTED
   EXPIRED
+}
+
+enum IdentityVerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  NEEDS_MORE_PHOTOS
 }
 
 enum ReportStatus {
@@ -139,6 +147,7 @@ model User {
   ratingAvg                 Float           @default(0)
   ratingCount               Int             @default(0)
   completedAssignmentsCount Int             @default(0)
+  balanceRub                Int             @default(0)
   isActive                  Boolean         @default(true)
   isBanned                  Boolean         @default(false)
   banReason                 String?
@@ -156,6 +165,7 @@ model User {
   managerPickupPointAccesses PickupPointManagerAccess[] @relation("PickupPointManagerAccessUser")
   ownerGrantedManagerAccesses PickupPointManagerAccess[] @relation("PickupPointManagerAccessOwner")
   createdShiftPosts         ShiftPost[]     @relation("ShiftPostCreator")
+  createdShiftTemplates     ShiftTemplate[] @relation("ShiftTemplateCreator")
   applications              Application[]
   workerAssignments         Assignment[]    @relation("AssignmentWorker")
   employerAssignments       Assignment[]    @relation("AssignmentEmployer")
@@ -165,9 +175,12 @@ model User {
   moderatedReports          Report[]        @relation("ReportModerator")
   verifications             Verification[]  @relation("VerificationUser")
   reviewedVerifications     Verification[]  @relation("VerificationReviewer")
+  identityVerifications     IdentityVerification[] @relation("IdentityVerificationUser")
+  reviewedIdentityVerifications IdentityVerification[] @relation("IdentityVerificationReviewer")
   notifications             Notification[]
-  favorites                 Favorite[]
+  shiftNotificationFilter    ShiftNotificationFilter?
   auditLogs                 AuditLog[]
+  legalEvents               UserLegalEvent[]
   conversationParticipations ConversationParticipant[]
   sentMessages              Message[]       @relation("MessageAuthor")
   uploadedMedia             MediaUpload[]
@@ -217,6 +230,7 @@ model Region {
   users          User[]
   pickupPoints   PickupPoint[]
   shiftPosts     ShiftPost[]
+  shiftTemplates ShiftTemplate[]
 }
 
 model City {
@@ -233,6 +247,8 @@ model City {
   users       User[]
   pickupPoints PickupPoint[]
   shiftPosts  ShiftPost[]
+  shiftTemplates ShiftTemplate[]
+  shiftNotificationFilters ShiftNotificationFilter[]
 
   @@unique([regionId, slug])
   @@index([regionId])
@@ -248,6 +264,7 @@ model Marketplace {
 
   pickupPoints PickupPoint[]
   shiftPosts   ShiftPost[]
+  shiftTemplates ShiftTemplate[]
 }
 
 model PickupPoint {
@@ -273,6 +290,7 @@ model PickupPoint {
   region        Region         @relation(fields: [regionId], references: [id])
   city          City           @relation(fields: [cityId], references: [id])
   shiftPosts    ShiftPost[]
+  shiftTemplates ShiftTemplate[]
   verifications Verification[] @relation("VerificationPickupPoint")
   managerAccesses PickupPointManagerAccess[]
 
@@ -309,6 +327,8 @@ model ShiftPost {
   status                  ShiftPostStatus    @default(PUBLISHED)
   district                String
   address                 String
+  lat                     Decimal?           @db.Decimal(9, 6)
+  lng                     Decimal?           @db.Decimal(9, 6)
   landmark                String?
   description             String
   shiftDate               DateTime
@@ -332,8 +352,7 @@ model ShiftPost {
   city       City         @relation(fields: [cityId], references: [id])
   marketplace Marketplace @relation(fields: [marketplaceId], references: [id])
   applications Application[]
-  assignment   Assignment?
-  favorites    Favorite[]
+  assignments  Assignment[]
 
   @@index([cityId, status, shiftDate])
   @@index([cityId, status, isUrgent, publishedAt])
@@ -343,6 +362,42 @@ model ShiftPost {
   @@index([createdByUserId, createdAt])
   @@index([createdByUserId, status, createdAt])
   @@index([isUrgent, publishedAt])
+  @@index([lat, lng])
+}
+
+model ShiftTemplate {
+  id                      String          @id @default(cuid())
+  createdByUserId         String
+  name                    String
+  pickupPointId           String?
+  regionId                String
+  cityId                  String
+  marketplaceId           String
+  title                   String
+  type                    ShiftPostType
+  district                String
+  address                 String
+  addressSuggestionUri    String?
+  landmark                String?
+  description             String
+  startTime               String?
+  endTime                 String?
+  paymentAmountRub        Int
+  paymentType             PaymentType     @default(FIXED_SHIFT)
+  experienceLevelRequired ExperienceLevel @default(NO_EXPERIENCE)
+  isUrgent                Boolean         @default(false)
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+
+  createdBy   User         @relation("ShiftTemplateCreator", fields: [createdByUserId], references: [id], onDelete: Cascade)
+  pickupPoint PickupPoint? @relation(fields: [pickupPointId], references: [id], onDelete: SetNull)
+  region      Region       @relation(fields: [regionId], references: [id])
+  city        City         @relation(fields: [cityId], references: [id])
+  marketplace Marketplace  @relation(fields: [marketplaceId], references: [id])
+
+  @@unique([createdByUserId, name])
+  @@index([createdByUserId, updatedAt])
+  @@index([pickupPointId])
 }
 
 model Application {
@@ -372,7 +427,7 @@ model Application {
 
 model Assignment {
   id             String           @id @default(cuid())
-  shiftPostId    String           @unique
+  shiftPostId    String
   applicationId  String           @unique
   workerUserId   String
   employerUserId String
@@ -392,6 +447,7 @@ model Assignment {
 
   @@index([workerUserId])
   @@index([employerUserId])
+  @@index([shiftPostId])
   @@index([workerUserId, status, completedAt])
   @@index([employerUserId, status, completedAt])
   @@index([status])
@@ -437,6 +493,7 @@ model Report {
   @@index([status])
   @@index([riskLevel])
   @@index([riskLevel, createdAt])
+  @@index([reporterUserId, targetType, targetId, status])
 }
 
 model Verification {
@@ -460,6 +517,37 @@ model Verification {
   @@index([status])
 }
 
+model IdentityVerification {
+  id               String                     @id @default(cuid())
+  userId           String
+  reviewedByUserId String?
+  status           IdentityVerificationStatus @default(PENDING)
+  adminNote        String?
+  reviewedAt       DateTime?
+  createdAt        DateTime                   @default(now())
+  updatedAt        DateTime                   @updatedAt
+
+  user       User                  @relation("IdentityVerificationUser", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy User?                 @relation("IdentityVerificationReviewer", fields: [reviewedByUserId], references: [id])
+  photos     IdentityVerificationPhoto[]
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model IdentityVerificationPhoto {
+  id             String   @id @default(cuid())
+  verificationId String
+  mediaId        String
+  createdAt      DateTime @default(now())
+
+  verification IdentityVerification @relation(fields: [verificationId], references: [id], onDelete: Cascade)
+  media        MediaUpload          @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([mediaId])
+  @@index([verificationId])
+}
+
 model Notification {
   id          String             @id @default(cuid())
   userId      String
@@ -478,18 +566,28 @@ model Notification {
   @@index([status])
   @@index([createdAt])
   @@index([userId, status, createdAt])
+  @@index([userId, createdAt])
 }
 
-model Favorite {
-  id         String   @id @default(cuid())
-  userId     String
-  shiftPostId String
-  createdAt  DateTime @default(now())
+model ShiftNotificationFilter {
+  id               String            @id @default(cuid())
+  userId           String            @unique
+  isEnabled        Boolean           @default(true)
+  cityId           String?
+  district         String?
+  marketplaceCodes MarketplaceCode[]
+  urgentOnly       Boolean           @default(false)
+  paymentMinRub    Int?
+  paymentMaxRub    Int?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  shiftPost ShiftPost @relation(fields: [shiftPostId], references: [id], onDelete: Cascade)
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  city City? @relation(fields: [cityId], references: [id], onDelete: SetNull)
 
-  @@unique([userId, shiftPostId])
+  @@index([cityId, isEnabled])
+  @@index([userId, isEnabled])
+  @@index([isEnabled, updatedAt])
 }
 
 model AuditLog {
@@ -504,6 +602,23 @@ model AuditLog {
   actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
 
   @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model UserLegalEvent {
+  id              String   @id @default(cuid())
+  userId          String
+  purpose         String
+  action          String
+  documentVersion String
+  textSnapshot    String
+  source          String?
+  metaJson        Json?
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose, createdAt])
   @@index([createdAt])
 }
 
@@ -597,6 +712,71 @@ model MediaUpload {
 
   uploader    User                @relation(fields: [uploaderUserId], references: [id], onDelete: Cascade)
   attachments MessageAttachment[]
+  identityVerificationPhotos IdentityVerificationPhoto[]
 
   @@index([uploaderUserId, createdAt])
+}
+
+model SupportTicket {
+  id             BigInt    @id @default(autoincrement())
+  status         String    @default("open")
+  userChatId     String?   @map("user_chat_id")
+  userTelegramId String?   @map("user_telegram_id")
+  username       String?
+  displayName    String?   @map("display_name")
+  dublerUserId   String?   @map("dubler_user_id")
+  subject        String?
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  closedAt       DateTime? @map("closed_at") @db.Timestamptz(6)
+
+  telegramChatId BigInt? @map("telegram_chat_id")
+  telegramUserId BigInt? @map("telegram_user_id")
+  fullName       String? @map("full_name")
+
+  supportMessages SupportMessage[]
+  ticketMessages  SupportTicketMessage[]
+
+  @@index([userChatId, status, updatedAt(sort: Desc)], map: "support_tickets_user_open_idx")
+  @@index([status, updatedAt(sort: Desc)], map: "support_tickets_status_updated_idx")
+  @@index([telegramChatId, status], map: "support_tickets_chat_status_idx")
+  @@map("support_tickets")
+}
+
+model SupportMessage {
+  id                BigInt   @id @default(autoincrement())
+  ticketId          BigInt   @map("ticket_id")
+  sender            String?
+  telegramMessageId BigInt?  @map("telegram_message_id")
+  text              String?
+  fileId            String?  @map("file_id")
+  fileType          String?  @map("file_type")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId], map: "support_messages_ticket_id_idx")
+  @@map("support_messages")
+}
+
+model SupportTicketMessage {
+  id                BigInt   @id @default(autoincrement())
+  ticketId          BigInt   @map("ticket_id")
+  direction         String?
+  telegramMessageId BigInt?  @map("telegram_message_id")
+  adminMessageId    BigInt?  @map("admin_message_id")
+  kind              String?
+  body              String?
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  fromAdmin        Boolean? @map("from_admin")
+  text             String?
+  attachmentFileId String?  @map("attachment_file_id")
+  attachmentType   String?  @map("attachment_type")
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, createdAt(sort: Desc)], map: "support_ticket_messages_ticket_idx")
+  @@index([ticketId], map: "support_ticket_messages_ticket_id_idx")
+  @@map("support_ticket_messages")
 }

@@ -82,7 +82,7 @@ export function BannedUserScreen({ user }: BannedUserScreenProps) {
           </div>
 
           <div className="rounded-[24px] bg-[#f8fbfd] px-4 py-4 text-[14px] leading-6 text-[#5f6975]">
-            <p className="font-semibold text-[#101214]">Доступ к Mini App ограничен</p>
+            <p className="font-semibold text-[#101214]">Доступ к приложению ограничен</p>
             {user.banReason ? (
               <div className="mt-3 rounded-[18px] bg-[#fde7e5] px-3 py-2">
                 <p className="text-[12px] font-semibold uppercase tracking-wide text-[#cf534a]">

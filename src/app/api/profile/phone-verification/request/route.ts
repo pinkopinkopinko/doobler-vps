@@ -1,14 +1,24 @@
 import { fail, ok } from "@/lib/api";
+import { requireTrustedMutationRequest } from "@/lib/auth/mutation-guard";
 import { getSessionPayload } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import { sendPhoneVerificationRequest } from "@/lib/telegram/bot";
+import {
+  ConsentRequiredError,
+  requireActiveConsent,
+} from "@/server/services/legal-consent-service";
 
-export async function POST() {
+export async function POST(request: Request) {
   const session = await getSessionPayload();
 
   if (!session) {
     return fail("Нужен вход через Telegram.", 401);
   }
+
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: session.telegramId,
+  });
+  if (untrusted) return untrusted;
 
   const user = await prisma.user.findUnique({
     where: {
@@ -34,6 +44,7 @@ export async function POST() {
   }
 
   try {
+    await requireActiveConsent(user.id, "PHONE_PROCESSING");
     await sendPhoneVerificationRequest(user.telegramId, {
       id: Number(user.telegramId),
       first_name: user.firstName,
@@ -44,6 +55,9 @@ export async function POST() {
       message: "Бот отправил кнопку для подтверждения номера телефона.",
     });
   } catch (error) {
+    if (error instanceof ConsentRequiredError) {
+      return fail(error.message, 409);
+    }
     console.error("[phone-verification] request failed", {
       userId: user.id,
       telegramId: user.telegramId,

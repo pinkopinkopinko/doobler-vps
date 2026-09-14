@@ -31,6 +31,8 @@ yarn-error.log*
 .pnpm-debug.log*
 .app-start*.log
 .ngrok*.log
+.codex-*.log
+.postgres-*.log
 
 # env files (can opt-in for committing if needed)
 .env*
@@ -46,4 +48,3 @@ next-env.d.ts
 /uploads
 /backups
 .dev-ngrok-url
-.devin/

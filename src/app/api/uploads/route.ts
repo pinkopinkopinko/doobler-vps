@@ -1,6 +1,7 @@
 import { fail, ok } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
-import { validateUpload } from "@/lib/chat/uploads";
+import { requireTrustedMutationRequest } from "@/lib/auth/mutation-guard";
+import { validateUpload, validateUploadBytes } from "@/lib/chat/uploads";
 import { prisma } from "@/lib/prisma";
 import { buildStorageKey, writeMedia } from "@/server/services/media-storage";
 
@@ -9,6 +10,11 @@ export async function POST(request: Request) {
   if (!current) {
     return fail("Нужен вход через Telegram.", 401);
   }
+
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: current.telegramId,
+  });
+  if (untrusted) return untrusted;
 
   let formData: FormData;
   try {
@@ -36,6 +42,11 @@ export async function POST(request: Request) {
 
   try {
     const buffer = new Uint8Array(await file.arrayBuffer());
+    const contentValidation = validateUploadBytes(validation.mimeType, buffer);
+    if (!contentValidation.ok) {
+      return fail(contentValidation.message, 400);
+    }
+
     const storageKey = buildStorageKey(scope, validation.extension);
     await writeMedia(storageKey, buffer);
 

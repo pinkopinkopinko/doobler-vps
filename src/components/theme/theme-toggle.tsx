@@ -3,68 +3,79 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
-import {
-  clearManualThemeOverride,
-  getCurrentTheme,
-  setManualThemeOverride,
-  type ThemeMode,
-} from "@/lib/telegram/webapp";
+import { cn } from "@/lib/utils";
+
+type ThemeMode = "light" | "dark";
+
+const THEME_STORAGE_KEY = "doobler-theme";
+
+function applyTheme(mode: ThemeMode) {
+  const root = document.documentElement;
+  root.dataset.theme = mode;
+  root.dataset.tgScheme = mode;
+  window.localStorage.setItem(THEME_STORAGE_KEY, mode);
+}
+
+function getInitialTheme(): ThemeMode {
+  if (typeof window === "undefined") {
+    return "light";
+  }
+
+  const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored === "dark" || stored === "light") {
+    return stored;
+  }
+
+  return document.documentElement.dataset.tgScheme === "dark" ? "dark" : "light";
+}
 
 export function ThemeToggle() {
   const [mode, setMode] = useState<ThemeMode>("light");
-  const [source, setSource] = useState("device");
 
   useEffect(() => {
-    function syncFromDocument() {
-      setMode(getCurrentTheme());
-      setSource(document.documentElement.dataset.themeSource ?? "device");
-    }
+    const frameId = window.requestAnimationFrame(() => {
+      const nextMode = getInitialTheme();
+      setMode(nextMode);
+      applyTheme(nextMode);
+    });
 
-    syncFromDocument();
-    window.addEventListener("doobler-theme-applied", syncFromDocument);
-
-    return () => {
-      window.removeEventListener("doobler-theme-applied", syncFromDocument);
-    };
+    return () => window.cancelAnimationFrame(frameId);
   }, []);
 
   function handleToggle() {
-    setManualThemeOverride(mode === "dark" ? "light" : "dark");
-  }
-
-  function handleResetToDevice() {
-    clearManualThemeOverride();
+    const nextMode = mode === "dark" ? "light" : "dark";
+    setMode(nextMode);
+    applyTheme(nextMode);
   }
 
   const isDark = mode === "dark";
-  const isAuto = source === "device";
 
   return (
     <button
       type="button"
-      aria-label={
-        isDark
-          ? "Переключить на светлую тему. Двойное нажатие вернет авто-тему устройства."
-          : "Переключить на темную тему. Двойное нажатие вернет авто-тему устройства."
-      }
+      aria-label={isDark ? "Включить светлую тему" : "Включить темную тему"}
       aria-pressed={isDark}
       onClick={handleToggle}
-      onDoubleClick={handleResetToDevice}
-      title={isAuto ? "Тема следует устройству" : "Двойной клик: снова следовать теме устройства"}
-      className="relative inline-flex h-10 w-[78px] shrink-0 items-center rounded-full bg-white p-1 shadow-[0_12px_28px_rgba(20,27,33,0.08)] transition-colors"
+      className="relative inline-flex h-10 w-[78px] shrink-0 rounded-full bg-white p-1 shadow-[0_12px_28px_rgba(20,27,33,0.08)] transition-colors"
     >
-      <span className="pointer-events-none relative z-10 flex h-8 w-full items-center justify-between px-1.5">
-        <Sun className="h-4 w-4 text-[#f0a928]" />
-        <Moon className="h-4 w-4 text-[#7d8895]" />
+      {/* Полукапсула: прямоугольник 50% + overflow-hidden у родителя — без «летающего» круга */}
+      <span className="relative isolate h-8 w-full overflow-hidden rounded-full">
+        <span
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-y-0 left-0 z-0 w-1/2 bg-[#3387d1] shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] transition-transform duration-200 ease-out",
+            isDark ? "translate-x-full" : "translate-x-0",
+          )}
+        />
+        <span className="pointer-events-none relative z-10 grid h-8 w-full grid-cols-2 items-stretch">
+          <span className="flex items-center justify-center leading-none">
+            <Sun className="size-[18px] shrink-0 text-[#f0a928]" strokeWidth={2} aria-hidden />
+          </span>
+          <span className="flex items-center justify-center leading-none">
+            <Moon className="size-[18px] shrink-0 text-[#7d8895]" strokeWidth={2} aria-hidden />
+          </span>
+        </span>
       </span>
-      {isAuto ? (
-        <span className="pointer-events-none absolute left-1/2 top-1 z-20 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-[#42a16d] shadow-[0_0_0_2px_rgba(66,161,109,0.16)]" />
-      ) : null}
-      <span
-        className={`absolute top-1 z-0 h-8 w-8 rounded-full bg-[#3387d1] shadow-[0_6px_14px_rgba(20,27,33,0.18)] transition-transform ${
-          isDark ? "translate-x-[38px]" : "translate-x-0"
-        }`}
-      />
     </button>
   );
 }

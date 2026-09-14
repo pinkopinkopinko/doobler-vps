@@ -1,5 +1,6 @@
 import { fail, ok } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { requireTrustedMutationRequest } from "@/lib/auth/mutation-guard";
 import { prisma } from "@/lib/prisma";
 
 function hasModeratorRole(
@@ -23,6 +24,11 @@ export async function POST(request: Request, { params }: RouteParams) {
   if (!isModerator) {
     return fail("Недостаточно прав.", 403);
   }
+
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: user.telegramId,
+  });
+  if (untrusted) return untrusted;
 
   const { id } = await params;
   const body = (await request.json().catch(() => ({}))) as { resolutionNote?: string };

@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import { createReadStream } from "node:fs";
 import { mkdir, readFile, stat, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -71,6 +72,26 @@ export async function readMedia(storageKey: string): Promise<Buffer> {
   const { absolutePath } = getMediaAbsolutePath(storageKey);
 
   return readFile(absolutePath);
+}
+
+export async function statMedia(storageKey: string) {
+  const { absolutePath } = getMediaAbsolutePath(storageKey);
+  const info = await stat(absolutePath);
+
+  if (!info.isFile()) {
+    throw new Error("Media is not a file");
+  }
+
+  return {
+    byteSize: info.size,
+    mtime: info.mtime,
+  };
+}
+
+export function createMediaReadStream(storageKey: string) {
+  const { absolutePath } = getMediaAbsolutePath(storageKey);
+
+  return createReadStream(absolutePath);
 }
 
 export async function deleteMedia(storageKey: string): Promise<void> {

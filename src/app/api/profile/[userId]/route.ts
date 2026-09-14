@@ -1,6 +1,7 @@
 import { fail, ok } from "@/lib/api";
 import { getSessionPayload } from "@/lib/auth/session";
 import { getProfile, redactProfileForViewer } from "@/server/services/profile-service";
+import { hasActiveConsent } from "@/server/services/legal-consent-service";
 
 type RouteParams = {
   params: Promise<{ userId: string }>;
@@ -16,6 +17,10 @@ export async function GET(_: Request, { params }: RouteParams) {
   }
 
   const { userId } = await params;
+  if (session.userId !== userId && !(await hasActiveConsent(userId, "PUBLIC_PROFILE_DISTRIBUTION"))) {
+    return fail("Пользователь не открыл публичный доступ к своему профилю.", 403);
+  }
+
   const profile = await getProfile(userId);
 
   if (!profile) {

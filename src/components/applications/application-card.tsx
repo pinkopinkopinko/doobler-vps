@@ -4,6 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { AssignmentActions } from "@/components/applications/assignment-actions";
 import { StartChatButton } from "@/components/chat/start-chat-button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { withPlatformPrefix } from "@/lib/routing/platform";
 import type { ApplicationCard as ApplicationCardType } from "@/lib/types";
 import {
   formatDate,
@@ -21,6 +22,7 @@ type ApplicationCardProps = {
    *              работника-кандидата, блок работодателя скрываем.
    */
   perspective?: "worker" | "employer";
+  hrefPrefix?: string;
 };
 
 function buildEmployerName(employer: ApplicationCardType["employer"]) {
@@ -32,7 +34,11 @@ function buildApplicantLocation(applicant: ApplicationCardType["applicant"]) {
   return [applicant.cityName, applicant.district].filter(Boolean).join(", ");
 }
 
-export function ApplicationCard({ application, perspective = "worker" }: ApplicationCardProps) {
+export function ApplicationCard({
+  application,
+  perspective = "worker",
+  hrefPrefix = "",
+}: ApplicationCardProps) {
   const showEmployerBlock = perspective === "worker";
   const employer = application.employer;
   const employerName = buildEmployerName(employer);
@@ -75,6 +81,8 @@ export function ApplicationCard({ application, perspective = "worker" }: Applica
             Статус назначения:{" "}
             {application.assignment.status === "COMPLETED"
               ? "смена завершена"
+              : application.assignment.status === "NO_SHOW"
+                ? "отмечена неявка"
               : "исполнитель подтверждён"}
           </p>
         ) : null}
@@ -108,8 +116,8 @@ export function ApplicationCard({ application, perspective = "worker" }: Applica
               </p>
             </div>
             <Link
-              href={`/profiles/${employer.id}`}
-              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-white px-3 text-[13px] font-medium !text-[#101214] shadow-[inset_0_0_0_1px_rgba(16,18,20,0.2)] [&_svg]:!text-[#101214]"
+              href={withPlatformPrefix(`/profiles/${employer.id}`, hrefPrefix)}
+              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-white px-3 text-[13px] font-medium text-[#101214] shadow-[inset_0_0_0_1px_rgba(16,18,20,0.2)]"
             >
               <ExternalLink className="h-3.5 w-3.5 text-[#101214]" />
               Профиль
@@ -126,12 +134,21 @@ export function ApplicationCard({ application, perspective = "worker" }: Applica
             assignmentStatus={application.assignment.status}
             reviewSubmitted={application.assignment.workerReviewSubmitted}
             canComplete={false}
+            canCancel
             reviewTargetLabel="работодателе"
             reviewPlaceholder="Как прошла смена, всё ли было честно по оплате и условиям?"
           />
           {application.assignment.status === "COMPLETED" ? (
             <p className="text-[13px] text-[#667381]">
               Смена завершена. Можно оставить отзыв о работодателе.
+            </p>
+          ) : application.assignment.status === "CANCELLED" ? (
+            <p className="text-[13px] text-[#667381]">
+              Вы отказались от подтверждённой смены.
+            </p>
+          ) : application.assignment.status === "NO_SHOW" ? (
+            <p className="text-[13px] text-[#667381]">
+              Работодатель отметил, что вы не вышли на смену.
             </p>
           ) : (
             <p className="text-[13px] text-[#667381]">

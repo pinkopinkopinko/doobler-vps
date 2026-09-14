@@ -93,7 +93,6 @@ describe("POST /api/auth/bot-token", () => {
     expect(prisma.botLoginToken.updateMany).toHaveBeenCalledWith({
       where: {
         token: "token-1",
-        usedAt: null,
         expiresAt: { gt: expect.any(Date) },
       },
       data: { usedAt: expect.any(Date) },
@@ -120,22 +119,51 @@ describe("POST /api/auth/bot-token", () => {
     });
   });
 
-  it("rejects a reused bot token", async () => {
+  it("reuses a valid bot token until it expires", async () => {
     prisma.botLoginToken.findUnique.mockResolvedValue({
       token: "token-1",
       telegramId: "123456",
+      username: "ilfar",
+      firstName: "Ильфар",
+      lastName: "Набиуллин",
       expiresAt: new Date(Date.now() + 60_000),
       usedAt: new Date(Date.now() - 1_000),
     });
+    prisma.botLoginToken.updateMany.mockResolvedValue({ count: 1 });
+    prisma.botLoginToken.findUniqueOrThrow.mockResolvedValue({
+      token: "token-1",
+      telegramId: "123456",
+      username: "ilfar",
+      firstName: "Ильфар",
+      lastName: "Набиуллин",
+    });
+    prisma.user.upsert.mockResolvedValue({
+      id: "user-1",
+      telegramId: "123456",
+      username: "ilfar",
+      isOnboardingCompleted: true,
+    });
+    createSessionToken.mockResolvedValue("session-token");
+    setSessionCookie.mockResolvedValue(undefined);
 
     const response = await POST(makeRequest({ token: "token-1", initData: "" }));
     const payload = await response.json();
 
-    expect(response.status).toBe(401);
-    expect(prisma.botLoginToken.updateMany).not.toHaveBeenCalled();
-    expect(prisma.user.upsert).not.toHaveBeenCalled();
+    expect(response.status).toBe(200);
+    expect(prisma.botLoginToken.updateMany).toHaveBeenCalledWith({
+      where: {
+        token: "token-1",
+        expiresAt: { gt: expect.any(Date) },
+      },
+      data: { usedAt: expect.any(Date) },
+    });
+    expect(prisma.user.upsert).toHaveBeenCalled();
+    expect(setSessionCookie).toHaveBeenCalledWith("session-token");
     expect(payload).toMatchObject({
-      error: expect.any(String),
+      user: {
+        id: "user-1",
+        telegramId: "123456",
+      },
     });
   });
 

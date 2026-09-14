@@ -9,6 +9,9 @@ export function SplashGradient({ children }: { children: ReactNode }) {
   return (
     <div
       className="mx-auto relative flex min-h-screen w-full max-w-[430px] flex-col"
+      // Splash намеренно одно-темный: брендовый светлый градиент с тёмным
+      // текстом, тема Telegram сюда не доезжает (это loading-экран до
+      // bootstrap'а). theme-color-disable-line
       style={{ background: GRADIENT_BG, color: "#15131c" }}
     >
       <style>{SPIN_KEYFRAMES}</style>

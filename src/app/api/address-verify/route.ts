@@ -1,4 +1,5 @@
 import { fail, ok } from "@/lib/api";
+import { requireTrustedMutationRequest } from "@/lib/auth/mutation-guard";
 import { getSessionPayload } from "@/lib/auth/session";
 import { verifyAddressSelection } from "@/lib/geocoder/yandex-geocode";
 import { checkInMemoryRateLimit } from "@/lib/rate-limit/in-memory";
@@ -20,6 +21,11 @@ export async function POST(request: Request) {
     return fail("Нужен вход через Telegram.", 401);
   }
 
+  const untrusted = requireTrustedMutationRequest(request, {
+    sessionTelegramId: session.telegramId,
+  });
+  if (untrusted) return untrusted;
+
   let body: { cityId?: string; query?: string; uri?: string | null } | null = null;
 
   try {
@@ -40,7 +46,7 @@ export async function POST(request: Request) {
     return fail("Введите минимум 3 символа адреса.", 400);
   }
 
-  const minuteCheck = checkInMemoryRateLimit({
+  const minuteCheck = await checkInMemoryRateLimit({
     key: `dadata-verify-min:${session.userId}`,
     ...PER_MINUTE_LIMIT,
   });
@@ -48,7 +54,7 @@ export async function POST(request: Request) {
     return buildRateLimitResponse(minuteCheck.retryAfterMs);
   }
 
-  const dayCheck = checkInMemoryRateLimit({
+  const dayCheck = await checkInMemoryRateLimit({
     key: `dadata-verify-day:${session.userId}`,
     ...PER_DAY_LIMIT,
   });

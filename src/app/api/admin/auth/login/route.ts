@@ -5,6 +5,7 @@ import {
   setAdminSessionCookie,
   validateAdminCredentials,
 } from "@/lib/auth/admin-session";
+import { requireSameOriginMutationRequest } from "@/lib/auth/mutation-guard";
 import { peekDbRateLimit, recordDbAttempt } from "@/lib/rate-limit/db";
 import { getClientIp } from "@/lib/rate-limit/ip";
 
@@ -24,6 +25,9 @@ function buildRetryAfterSeconds(ms: number) {
 }
 
 export async function POST(request: Request) {
+  const untrusted = requireSameOriginMutationRequest(request);
+  if (untrusted) return untrusted;
+
   if (!hasConfiguredAdminCredentials()) {
     return fail("Админ-логин не настроен на сервере.", 503);
   }
